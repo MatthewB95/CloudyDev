@@ -42,7 +42,7 @@ function loadMessages() {
     var data = snap.val();
     displayMessage(snap.key, data.name, data.text, data.profilePicUrl, data.imageUrl);
   };
-
+  // Restrict messages displayed
   // firebase.database().ref('/messages/').limitToLast(12).on('child_added', callback);
   // firebase.database().ref('/messages/').limitToLast(12).on('child_changed', callback);
   firebase.database().ref('/messages/').on('child_added', callback);
