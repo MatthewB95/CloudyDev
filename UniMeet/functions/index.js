@@ -14,7 +14,7 @@ exports.addWelcomeMessages = functions.auth.user().onCreate(async (user) => {
     // Saves the new welcome message into the database
     // which then displays it in the FriendlyChat clients.
     await admin.database().ref('messages').push({
-      name: 'Firebase Bot',
+      name: 'UniMeet Bot',
       profilePicUrl: '/images/firebase-logo.png', // Firebase logo
       text: `${fullName} signed in for the first time! Welcome!`,
     });
@@ -47,3 +47,21 @@ exports.sendNotifications = functions.database.ref('/messages/{messageId}').onCr
         console.log('Notifications have been sent and tokens cleaned up.');
       }
     });
+    
+    // Cleans up the tokens that are no longer valid.
+    function cleanupTokens(response, tokens) {
+     // For each notification we check if there was an error.
+     const tokensToRemove = {};
+     response.results.forEach((result, index) => {
+       const error = result.error;
+       if (error) {
+         console.error('Failure sending notification to', tokens[index], error);
+         // Cleanup the tokens who are not registered anymore.
+         if (error.code === 'messaging/invalid-registration-token' ||
+             error.code === 'messaging/registration-token-not-registered') {
+           tokensToRemove[`/fcmTokens/${tokens[index]}`] = null;
+         }
+       }
+     });
+     return admin.database().ref().update(tokensToRemove);
+    }
