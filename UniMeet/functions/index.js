@@ -65,3 +65,6 @@ exports.sendNotifications = functions.database.ref('/messages/{messageId}').onCr
      });
      return admin.database().ref().update(tokensToRemove);
     }
+
+// Below is test code area
+
