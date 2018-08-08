@@ -18,12 +18,17 @@ html, body {
   font-family: 'Roboto', 'Helvetica', sans-serif;
 }
 
+media (min-width: 840px)
+.mdl-cell--6-col, .mdl-cell--6-col-desktop.mdl-cell--6-col-desktop {
+    width: 100% !important;
+}
+
 .mdl-color--light-blue-700 {
-    background-color: #4caf50 !important;
+    background-color: #7b6dee !important;
 }
 
 .mdl-color--amber-400 {
-background-color: #4caf50 !important;
+background-color: #7b6dee !important;
 }
 
 main, #messages-card {
