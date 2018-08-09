@@ -21,6 +21,9 @@ exports.addWelcomeMessages = functions.auth.user().onCreate(async (user) => {
     console.log('Welcome message written to database.');
   }); */
 
+
+
+
 // Sends a notifications to all users when a new message is posted.
 exports.sendNotifications = functions.database.ref('/messages/{messageId}').onCreate(
     async (snapshot) => {
@@ -76,10 +79,12 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
 
   //get uid and google display name of new user
 
-  var uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+  //var uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+  var uid = user.uid;
+  var displayName = user.displayName;
 
   var data = {
-    name: "name here",
+    name: displayName,
     current_degree: "please select your degree",
   };
 
