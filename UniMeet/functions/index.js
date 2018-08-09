@@ -67,4 +67,26 @@ exports.sendNotifications = functions.database.ref('/messages/{messageId}').onCr
     }
 
 // Below is test code area
+var db = admin.firestore();
 
+/**
+ * creates a document with UID as the id in the 'student' collection.
+ */
+exports.createStudentProfile = functions.auth.user().onCreate((user) => {
+
+  //get uid and google display name of new user
+
+  var uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+  var data = {
+    name: "name here",
+    current_degree: "please select your degree",
+  };
+
+  //add a new document into collection
+  var setDoc = db.collection('student').doc(uid).set(data);
+
+  return setDoc.then(res => {
+    console.log('set: ', res);
+  });
+});
