@@ -78,8 +78,6 @@ var db = admin.firestore();
 exports.createStudentProfile = functions.auth.user().onCreate((user) => {
 
   //get uid and google display name of new user
-
-  //var uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
   var uid = user.uid;
   var displayName = user.displayName;
 
