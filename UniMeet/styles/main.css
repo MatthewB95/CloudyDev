@@ -78,13 +78,16 @@ main, #messages-card {
 .message-container:first-of-type {
   border-top-width: 0;
 }
+
 .message-container {
-  display: block;
-  margin-top: 10px;
-  border-top: 1px solid #f3f3f3;
-  padding-top: 10px;
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
+    display: block;
+    margin-top: 10px;
+    border-top: 1px solid #f3f3f3;
+    background-color: #eee;
+    padding-top: 10px;
+    border-radius: 20px 20px 20px 0px;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
 }
 .message-container.visible {
   opacity: 1;
