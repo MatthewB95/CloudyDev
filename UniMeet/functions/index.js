@@ -83,13 +83,64 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
 
   var data = {
     name: displayName,
-    current_degree: "please select your degree",
+    gender: "M/F",
+    university: "Please select your University",
+    current_degree: "Please select your degree",
+    course_1: "Please pick your first course",
+    course_2: "Please pick your second course",
+    course_3: "Please pick your third course",
+    course_4: "Please pick your fourth course",
+    interest_1: "Please choose your favourite interest/hobby",
+    interest_2: "Please choose your second favourite interest/hobby",
+    interest_3: "Please choose your third favourite interest/hobby",
   };
 
-  //add a new document into collection
+  //add new student profile document into student collection
   var setDoc = db.collection('student').doc(uid).set(data);
 
   return setDoc.then(res => {
     console.log('set: ', res);
-  });
+  }); 
+});
+
+//when profile is updated in firestore database checks if profile 
+//has been filled out correctly before passing to matching function
+exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpdate((Change, Context) => {
+    //Gets object representing updated document
+    const newValue = Change.after.data();
+
+    //gets object representing document before update
+    const oldValue = Change.before.data();
+
+    //access particular fields from new updated object (newValue)
+    const name = newValue.name;
+    const gender = newValue.gender;
+    const university = newValue.university;
+    const current_degree = newValue.current_degree;
+    const course_1 = newValue.course_1;
+    const course_2 = newValue.course_2;
+    const course_3 = newValue.course_3;
+    const course_4 = newValue.course_4;
+    const interest_1 = newValue.interest_1;
+    const interest_2 = newValue.interest_2;
+    const interest_3 = newValue.interest_3;
+
+    //access particular fields from old object (oldValue)
+    const oldName = oldValue.name;
+    const oldGender = oldValue.gender;
+    const oldUniversity = oldValue.university;
+    const oldCurrent_degree = oldValue.current_degree;
+    const oldCourse_1 = oldValue.course_1;
+    const oldCourse_2 = oldValue.course_2;
+    const oldCourse_3 = oldValue.course_3;
+    const oldCourse_4 = oldValue.course_4;
+    const oldInterest_1 = oldValue.interest_1;
+    const oldInterest_2 = oldValue.interest_2;
+    const oldInterest_3 = oldValue.interest_3;
+
+    var pass = false;
+
+    //call matching function here
+    
+
 });

@@ -1,6 +1,7 @@
 {
   "projects": {
     "UniMeet": "gradjobseek",
-    "default": "unimeet-92f9f"
+    "default": "unimeet-92f9f",
+    "uniMeet": "unimeet-92f9f"
   }
 }
