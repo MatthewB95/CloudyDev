@@ -138,9 +138,20 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const oldInterest_2 = oldValue.interest_2;
     const oldInterest_3 = oldValue.interest_3;
 
-    var pass = false;
+    //var pass = false;
 
     //call matching function here
-    
+
+    //this retrieves all students who go to the same Uni as the student who updated their profile
+    var uniRef = db.collection('student');
+    var query = uniRef.where('university', '==', university).get().then(snapshot => {
+      snapshot.forEach(doc => {
+        console.log(doc.id, '=>', doc.data());
+      });
+    })
+    .catch(err => {
+      console.log('Error getting documents', err);
+    });
+
 
 });
