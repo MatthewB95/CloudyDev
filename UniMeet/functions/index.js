@@ -82,6 +82,7 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
   var displayName = user.displayName;
 
   var data = {
+    uid: uid,
     name: displayName,
     gender: "M/F",
     university: "Please select your University",
@@ -106,13 +107,15 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
 //when profile is updated in firestore database checks if profile 
 //has been filled out correctly before passing to matching function
 exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpdate((Change, Context) => {
-    //Gets object representing updated document
+
+      //Gets object representing updated document
     const newValue = Change.after.data();
 
     //gets object representing document before update
     const oldValue = Change.before.data();
-
+    
     //access particular fields from new updated object (newValue)
+    const uid = newValue.uid;
     const name = newValue.name;
     const gender = newValue.gender;
     const university = newValue.university;
@@ -138,20 +141,38 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const oldInterest_2 = oldValue.interest_2;
     const oldInterest_3 = oldValue.interest_3;
 
-    //var pass = false;
+    //need variable with current users UID (current user being matched)
 
-    //call matching function here
+    //creates a reference to the firestore 'student' collection
+    var studRef = db.collection('student');
 
-    //this retrieves all students who go to the same Uni as the student who updated their profile
-    var uniRef = db.collection('student');
-    var query = uniRef.where('university', '==', university).get().then(snapshot => {
+    //this retrieves all students who go to the same Uni and are in the same degree as the student who updated their profile
+    var query = studRef.where('university', '==', university).where('current_degree', '==', current_degree).get().then(snapshot => {
       snapshot.forEach(doc => {
         console.log(doc.id, '=>', doc.data());
+        //console.log(doc.id, '=>', doc.data().name);
+        
+        var tarStudUid = doc.id;
+      if (tarStudUid != uid){
+        //data being saved to users match list
+        var matchData = {
+          [tarStudUid]: 0,
+          version: 1,
+        }
+          //add new student profile document into student collection
+          var setMatchDoc = db.collection('match').doc(uid).set(matchData);
+
+          //return and log
+          return setMatchDoc.then(res => {
+              console.log('set: ', res);
+          });
+        }
       });
     })
     .catch(err => {
       console.log('Error getting documents', err);
     });
-
-
+  
+    //doc.data().name;
+    
 });
