@@ -29,7 +29,12 @@
                            // this value to authenticate with your backend server, if
                            // you have one. Use User.getToken() instead.
             }
-        
+
+            // Set profile picture
+            document.getElementById('profilePicture').innerHTML = "<img src=" + photoUrl + " width='200' height='200' style='border-radius: 50%' />";
+        	
+        	// Designate Firestore documents to write to.
+        	// Needs to be made secure later on by requesting token instead of UID.
             const docRef = firestore.doc("student/" + uid);
         
             const nameOutput = document.querySelector("#nameOutput");
@@ -40,6 +45,8 @@
             const degreeTextField = document.querySelector("#degreeField");
             const saveButton = document.querySelector("#saveButton");
 
+
+            // Autofills form fields with the user's existing profile information 
             docRef.get().then(function (doc) {
                 if (doc && doc.exists) {
                     const myData = doc.data();
@@ -50,7 +57,8 @@
             }).catch(function (error) {
                 console.log("Failed to retrieve error: ", error)
             });
-        
+        	
+        	// Updates the user's profile information when they hit save
             document.getElementById("profileForm").addEventListener("submit", function() {
                 const nameToSave = nameTextField.value;
                 const universityToSave = universityTextField.value;
@@ -67,7 +75,7 @@
                 });
             })
         
-            // get update from firestore and update ui
+            // Check for Firestore changes and update text labels
             var getRealTimeUpdates = function() {
               docRef.onSnapshot(function(doc) {
                 if (doc && doc.exists) {
@@ -79,7 +87,7 @@
               });
             }
             
-            // Continuously Check for updates
+            // Continuously check for updates
             getRealTimeUpdates();
 
         } else {
@@ -88,8 +96,5 @@
             document.location.href="/";
         }
     });
-
-    
-
 
 //])();
