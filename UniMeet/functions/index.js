@@ -102,6 +102,23 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
   return setDoc.then(res => {
     console.log('set: ', res);
   }); 
+  
+});
+
+//set up new students Match list:
+exports.createStudentMatchList = functions.auth.user().onCreate((user) => {
+  
+  var uid = user.uid;
+
+  var mData = {
+    version: 0,
+  }
+
+  var setMatchDoc = db.collection('match').doc(uid).set(mData);
+
+  return setMatchDoc.then(res => {
+    console.log('set: ', res);
+  }); 
 });
 
 //when profile is updated in firestore database checks if profile 
@@ -149,24 +166,29 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     //this retrieves all students who go to the same Uni and are in the same degree as the student who updated their profile
     var query = studRef.where('university', '==', university).where('current_degree', '==', current_degree).get().then(snapshot => {
       snapshot.forEach(doc => {
-        console.log(doc.id, '=>', doc.data());
-        //console.log(doc.id, '=>', doc.data().name);
+          console.log(doc.id, '=>', doc.data());
+          //console.log(doc.id, '=>', doc.data().name);
         
-        var tarStudUid = doc.id;
-      if (tarStudUid != uid){
-        //data being saved to users match list
-        var matchData = {
-          [tarStudUid]: 0,
-          version: 1,
-        }
-          //add new student profile document into student collection
-          var setMatchDoc = db.collection('match').doc(uid).set(matchData);
-
-          //return and log
-          return setMatchDoc.then(res => {
-              console.log('set: ', res);
-          });
-        }
+          var tarStudUid = doc.id;
+          if (tarStudUid != uid){
+                //data being saved to users match list
+                var matchData = {
+                  [tarStudUid]: 0,
+                  version: 1,
+                }
+                var matchtData = {
+                  [uid]: 0,
+                  version: 1,
+                }
+                //Update match list of user whose profile updated
+                var setMatchDoc = db.collection('match').doc(uid).update(matchData);
+                //Update match list of students the user matched with
+                var setTMatchDoc = db.collection('match').doc(tarStudUid).update(matchtData);
+                //return and log both writes to Firestore Database
+                return (setMatchDoc, setTMatchDoc).then(res => {
+                    console.log('set: ', res);
+                });
+          } //NEED TO MAKE THIS ADD CURRENT USER TO ALL USERS HE/SHE MATCHED WITHS LISTS ALSO
       });
     })
     .catch(err => {
@@ -174,5 +196,4 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     });
   
     //doc.data().name;
-    
 });
