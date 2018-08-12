@@ -50,9 +50,9 @@
             docRef.get().then(function (doc) {
                 if (doc && doc.exists) {
                     const myData = doc.data();
-                    document.getElementById('nameField').value = myData.Name;
-                    document.getElementById('universityField').value = myData.University;
-                    document.getElementById('degreeField').value = myData.Degree;
+                    document.getElementById('nameField').value = myData.name;
+                    document.getElementById('universityField').value = myData.university;
+                    document.getElementById('degreeField').value = myData.current_degree;
                 }
             }).catch(function (error) {
                 console.log("Failed to retrieve error: ", error)
@@ -64,10 +64,10 @@
                 const universityToSave = universityTextField.value;
                 const degreeToSave = degreeTextField.value;
                 console.log("Saving Name: " + nameToSave + ", University: " + universityToSave + ", Degree: " + degreeToSave + " to Firestore");
-                docRef.set({
-                    Name: nameToSave,
-                    University: universityToSave,
-                    Degree: degreeToSave
+                docRef.update({
+                    name: nameToSave,
+                    university: universityToSave,
+                    current_degree: degreeToSave
                 }).then(function() {
                     console.log("Successfully Updated Profile.");
                 }).catch(function (error) {
@@ -80,9 +80,9 @@
               docRef.onSnapshot(function(doc) {
                 if (doc && doc.exists) {
                   const myData = doc.data();
-                  nameOutput.innerText = myData.Name;
-                  universityOutput.innerText = myData.University;
-                  degreeOutput.innerText = myData.Degree;
+                  nameOutput.innerText = myData.name;
+                  universityOutput.innerText = myData.university;
+                  degreeOutput.innerText = myData.current_degree;
                 }
               });
             }
