@@ -158,8 +158,6 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const oldInterest_2 = oldValue.interest_2;
     const oldInterest_3 = oldValue.interest_3;
 
-    //need variable with current users UID (current user being matched)
-
     //creates a reference to the firestore 'student' collection
     var studRef = db.collection('student');
 
@@ -176,6 +174,7 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                   [tarStudUid]: 0,
                   version: 1,
                 }
+                //data being saved to other students match lists
                 var matchtData = {
                   [uid]: 0,
                   version: 1,
@@ -188,12 +187,10 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                 return (setMatchDoc, setTMatchDoc).then(res => {
                     console.log('set: ', res);
                 });
-          } //NEED TO MAKE THIS ADD CURRENT USER TO ALL USERS HE/SHE MATCHED WITHS LISTS ALSO
+          }
       });
     })
     .catch(err => {
       console.log('Error getting documents', err);
     });
-  
-    //doc.data().name;
 });
