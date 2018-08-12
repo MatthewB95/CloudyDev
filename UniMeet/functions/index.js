@@ -73,7 +73,9 @@ exports.sendNotifications = functions.database.ref('/messages/{messageId}').onCr
 var db = admin.firestore();
 
 /**
- * creates a document with UID as the id in the 'student' collection.
+ * creates document with UID as it's id in the 'student' collection
+ * that has all of the profile information fields.
+ * also creates each users match list document in the database.
  */
 exports.createStudentProfile = functions.auth.user().onCreate((user) => {
 
@@ -81,6 +83,7 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
   var uid = user.uid;
   var displayName = user.displayName;
 
+  //user profile fields
   var data = {
     uid: uid,
     name: displayName,
@@ -95,30 +98,20 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
     interest_2: "Please choose your second favourite interest/hobby",
     interest_3: "Please choose your third favourite interest/hobby",
   };
-
-  //add new student profile document into student collection
-  var setDoc = db.collection('student').doc(uid).set(data);
-
-  return setDoc.then(res => {
-    console.log('set: ', res);
-  }); 
-  
-});
-
-//set up new students Match list:
-exports.createStudentMatchList = functions.auth.user().onCreate((user) => {
-  
-  var uid = user.uid;
-
+  //match list fields
   var mData = {
     version: 0,
   }
 
+  //add new student profile document into student collection
+  var setDoc = db.collection('student').doc(uid).set(data);
+  //add new student match list document into match collection
   var setMatchDoc = db.collection('match').doc(uid).set(mData);
-
-  return setMatchDoc.then(res => {
+  //return and log documents
+  return (setDoc, setMatchDoc).then(res => {
     console.log('set: ', res);
   }); 
+  
 });
 
 //when profile is updated in firestore database checks if profile 
