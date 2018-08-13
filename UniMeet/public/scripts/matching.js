@@ -17,11 +17,8 @@ const settings = { /* your settings... */
 };
 firestore.settings(settings);
 
-alert("Opened");
-
 firebase.auth().onAuthStateChanged(function (user) {
 	if (user) {
-		alert("User signed in");
 		// User is signed in.
 		var user = firebase.auth().currentUser;
 		var uid
@@ -36,14 +33,14 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 
 function loadMatches(uid) {
-	alert("loadMatches");
 	const docRef = firestore.doc("match/" + uid);
 	docRef.get().then(function (doc) {
-		
 		if (doc && doc.exists) {
 			const myData = doc.data();
-			console.log(myData);
-			populateCollectionView();
+			console.log("Object: ", myData);
+			console.log("Values: ", Object.values(myData));
+			console.log("Count: ", Object.values(myData).length);
+			populateCollectionView(myData);
 		}
 	}).catch(function (error) {
 		console.log("Failed to retrieve error: ", error)
@@ -51,7 +48,7 @@ function loadMatches(uid) {
 }
 
 
-function populateCollectionView() {
+function populateCollectionView(matchedData) {
 
 	var i;
 	var containingCard;
@@ -65,55 +62,82 @@ function populateCollectionView() {
 	var favouriteShortcut;
 	var moreShortcut;
 
-	for (i = 0; i < 10; i++) {
+	//var matchedValues = Object.values(matchedData);
 
-		containingCard = document.createElement('div');
-		containingCard.setAttribute('class', 'col-lg-4 col-md-6 col-sm-12 text-center');
+	//matchedData.values.count
 
-		card = document.createElement('div');
-		card.setAttribute('class', 'matched_profile_card');
-		containingCard.appendChild(card);
+	//for (var key in matchedData) {
 
-		profileImage = document.createElement('img');
-		profileImage.src = "images/profile_placeholder.png";
-		profileImage.setAttribute('class', 'profile_image');
-		card.appendChild(profileImage);
+	//	}
 
-		nameLabel = document.createElement('h1');
-		nameLabel.setAttribute('class', 'profile_name_title');
-		nameLabel.innerHTML = "Mark Camerone";
-		card.appendChild(nameLabel);
+	//for (i = 0; i < matchedValues.length; i++) {
+	for (var key in Object(matchedData)) {
 
-		degreeLabel = document.createElement('h2');
-		degreeLabel.innerHTML = "Bachelor of Information Technology";
-		degreeLabel.setAttribute('class', 'profile_degree_title');
-		card.appendChild(degreeLabel);
+		if (key != "version") {
 
-		infoLabel = document.createElement('h3');
-		infoLabel.innerHTML = "21 | RMIT University | Year 3";
-		infoLabel.setAttribute('class', 'profile_info_title');
-		card.appendChild(infoLabel);
+			console.log("Loading Profile");
+			const docRef = firestore.doc("student/" + key);
 
-		shortcutsContainer = document.createElement('div');
-		shortcutsContainer.setAttribute("class", "shortcut_container");
-		card.appendChild(shortcutsContainer);
+			docRef.get().then(function (doc) {
+				if (doc && doc.exists) {
+					const myData = doc.data();
+					console.log("Returning value");
 
-		messageShortcut = document.createElement('img');
-		messageShortcut.src = "images/firebase-logo.png";
-		messageShortcut.setAttribute('class', 'shortcut_item');
-		shortcutsContainer.appendChild(messageShortcut);
+					containingCard = document.createElement('div');
+					containingCard.setAttribute('class', 'col-lg-4 col-md-6 col-sm-12 text-center');
 
-		favouriteShortcut = document.createElement('img');
-		favouriteShortcut.src = "images/firebase-logo.png";
-		favouriteShortcut.setAttribute('class', 'shortcut_item');
-		shortcutsContainer.appendChild(favouriteShortcut);
+					card = document.createElement('div');
+					card.setAttribute('class', 'matched_profile_card');
+					containingCard.appendChild(card);
 
-		moreShortcut = document.createElement('img');
-		moreShortcut.src = "images/firebase-logo.png";
-		moreShortcut.setAttribute('class', 'shortcut_item');
-		shortcutsContainer.appendChild(moreShortcut);
+					profileImage = document.createElement('img');
+					profileImage.src = "images/profile_placeholder.png";
+					profileImage.setAttribute('class', 'profile_image');
+					card.appendChild(profileImage);
+
+					console.log("AT NAME");
+					nameLabel = document.createElement('h1');
+					nameLabel.setAttribute('class', 'profile_name_title');
+					nameLabel.innerHTML = myData.name;
+					card.appendChild(nameLabel);
+
+					degreeLabel = document.createElement('h2');
+					degreeLabel.innerHTML = myData.current_degree;
+					degreeLabel.setAttribute('class', 'profile_degree_title');
+					card.appendChild(degreeLabel);
+
+					infoLabel = document.createElement('h3');
+					infoLabel.innerHTML = myData.university;
+					infoLabel.setAttribute('class', 'profile_info_title');
+					card.appendChild(infoLabel);
+
+					shortcutsContainer = document.createElement('div');
+					shortcutsContainer.setAttribute("class", "shortcut_container");
+					card.appendChild(shortcutsContainer);
+
+					messageShortcut = document.createElement('img');
+					messageShortcut.src = "images/firebase-logo.png";
+					messageShortcut.setAttribute('class', 'shortcut_item');
+					shortcutsContainer.appendChild(messageShortcut);
+
+					favouriteShortcut = document.createElement('img');
+					favouriteShortcut.src = "images/firebase-logo.png";
+					favouriteShortcut.setAttribute('class', 'shortcut_item');
+					shortcutsContainer.appendChild(favouriteShortcut);
+
+					moreShortcut = document.createElement('img');
+					moreShortcut.src = "images/firebase-logo.png";
+					moreShortcut.setAttribute('class', 'shortcut_item');
+					shortcutsContainer.appendChild(moreShortcut);
 
 
-		document.getElementById("matchedCollectionView").appendChild(containingCard);
+					document.getElementById("matchedCollectionView").appendChild(containingCard);
+
+				}
+			}).catch(function (error) {
+				console.log("Failed to retrieve error: ", error);
+			});
+
+		}
 	}
 }
