@@ -91,11 +91,10 @@ function populateCollectionView(matchedData) {
 					containingCard.appendChild(card);
 
 					profileImage = document.createElement('img');
-					profileImage.src = "images/profile_placeholder.png";
 					profileImage.setAttribute('class', 'profile_image');
+					profileImage.src = "images/purple_profile_placeholder.png";
 					card.appendChild(profileImage);
 
-					console.log("AT NAME");
 					nameLabel = document.createElement('h1');
 					nameLabel.setAttribute('class', 'profile_name_title');
 					nameLabel.innerHTML = myData.name;

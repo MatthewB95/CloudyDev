@@ -1,0 +1,46 @@
+@charset "UTF-8";
+/* CSS Document */
+
+.nav_profile_image {
+	display:  block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 58px;
+	width: 50%;
+	border-radius: 50%;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li a {
+    display: block;
+}
+
+.nav_profile_title {
+	margin: 32px 0px;
+	color: white;
+	text-align: center;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: normal;
+	font-size: 20px;
+}
+
+.nav_menu_items {
+	margin: 16px 0px;
+	color: white;
+/*	text-align: center;*/
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: normal;
+	font-size: 16px;
+}
+
+.nav_separator_Line {
+	height: 2px;
+	width: 80%;
+	background-color: white;
+		
+	margin-left: auto;
+	margin-right: auto;
+}
