@@ -1,41 +1,82 @@
-[debug] [2018-08-14T06:30:48.173Z] ----------------------------------------------------------------------
-[debug] [2018-08-14T06:30:48.176Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only hosting
-[debug] [2018-08-14T06:30:48.176Z] CLI Version:   4.0.1
-[debug] [2018-08-14T06:30:48.176Z] Platform:      darwin
-[debug] [2018-08-14T06:30:48.176Z] Node Version:  v8.11.3
-[debug] [2018-08-14T06:30:48.176Z] Time:          Tue Aug 14 2018 16:30:48 GMT+1000 (AEST)
-[debug] [2018-08-14T06:30:48.176Z] ----------------------------------------------------------------------
+[debug] [2018-08-15T03:09:10.096Z] ----------------------------------------------------------------------
+[debug] [2018-08-15T03:09:10.098Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only hosting
+[debug] [2018-08-15T03:09:10.098Z] CLI Version:   4.0.1
+[debug] [2018-08-15T03:09:10.098Z] Platform:      darwin
+[debug] [2018-08-15T03:09:10.098Z] Node Version:  v8.11.3
+[debug] [2018-08-15T03:09:10.098Z] Time:          Wed Aug 15 2018 13:09:10 GMT+1000 (AEST)
+[debug] [2018-08-15T03:09:10.098Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2018-08-14T06:30:48.188Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2018-08-14T06:30:48.188Z] > authorizing via signed-in user
-[debug] [2018-08-14T06:30:48.189Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
-[debug] [2018-08-14T06:30:48.190Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+[debug] [2018-08-15T03:09:10.109Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-08-15T03:09:10.109Z] > authorizing via signed-in user
+[debug] [2018-08-15T03:09:10.111Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-08-15T03:09:10.111Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
  { refresh_token: '1/sBib_MuYIQCzN99qmotYHxeIOlvDZB0kymJmbwLhPyVr6jno21Z9AMvrLmM6t-mm',
   client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
   client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
   grant_type: 'refresh_token',
   scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
- Tue Aug 14 2018 16:30:48 GMT+1000 (AEST)
-[debug] [2018-08-14T06:30:48.814Z] <<< HTTP RESPONSE 200
-[debug] [2018-08-14T06:30:48.828Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/unimeet-92f9f  
+ Wed Aug 15 2018 13:09:10 GMT+1000 (AEST)
+[debug] [2018-08-15T03:09:11.014Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-15T03:09:11.030Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/unimeet-92f9f  
   
- Tue Aug 14 2018 16:30:48 GMT+1000 (AEST)
-[debug] [2018-08-14T06:30:50.140Z] <<< HTTP RESPONSE 200
-[debug] [2018-08-14T06:30:50.140Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/unimeet-92f9f/tokens  
+ Wed Aug 15 2018 13:09:11 GMT+1000 (AEST)
+[debug] [2018-08-15T03:09:13.367Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-15T03:09:13.368Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/unimeet-92f9f/tokens  
   
- Tue Aug 14 2018 16:30:50 GMT+1000 (AEST)
-[debug] [2018-08-14T06:30:51.241Z] <<< HTTP RESPONSE 200
-[debug] [2018-08-14T06:30:51.242Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/unimeet-92f9f  
+ Wed Aug 15 2018 13:09:13 GMT+1000 (AEST)
+[debug] [2018-08-15T03:09:14.397Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-15T03:09:14.398Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/unimeet-92f9f  
   
- Tue Aug 14 2018 16:30:51 GMT+1000 (AEST)
-[debug] [2018-08-14T06:30:53.092Z] <<< HTTP RESPONSE 200
+ Wed Aug 15 2018 13:09:14 GMT+1000 (AEST)
+[debug] [2018-08-15T03:09:16.528Z] <<< HTTP RESPONSE 200
 [info] 
 [info] === Serving from '/Users/markdidio/Documents/GitHub/CloudyDev/UniMeet'...
 [info] 
-[debug] [2018-08-14T06:30:53.094Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/776036726314/clients/_:getWebAppConfig  
+[debug] [2018-08-15T03:09:16.529Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/776036726314/clients/_:getWebAppConfig  
   
- Tue Aug 14 2018 16:30:53 GMT+1000 (AEST)
-[debug] [2018-08-14T06:30:54.331Z] <<< HTTP RESPONSE 200
+ Wed Aug 15 2018 13:09:16 GMT+1000 (AEST)
+[debug] [2018-08-15T03:09:18.642Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: public
+[info] ✔  hosting: Local server: http://localhost:5000
+
+[debug] [2018-08-15T05:04:31.248Z] ----------------------------------------------------------------------
+[debug] [2018-08-15T05:04:31.253Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only hosting
+[debug] [2018-08-15T05:04:31.254Z] CLI Version:   4.0.1
+[debug] [2018-08-15T05:04:31.254Z] Platform:      darwin
+[debug] [2018-08-15T05:04:31.254Z] Node Version:  v8.11.3
+[debug] [2018-08-15T05:04:31.254Z] Time:          Wed Aug 15 2018 15:04:31 GMT+1000 (AEST)
+[debug] [2018-08-15T05:04:31.254Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-08-15T05:04:31.275Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-08-15T05:04:31.275Z] > authorizing via signed-in user
+[debug] [2018-08-15T05:04:31.278Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-08-15T05:04:31.279Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/sBib_MuYIQCzN99qmotYHxeIOlvDZB0kymJmbwLhPyVr6jno21Z9AMvrLmM6t-mm',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Wed Aug 15 2018 15:04:31 GMT+1000 (AEST)
+[debug] [2018-08-15T05:04:31.708Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-15T05:04:31.748Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/unimeet-92f9f  
+  
+ Wed Aug 15 2018 15:04:31 GMT+1000 (AEST)
+[debug] [2018-08-15T05:04:33.328Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-15T05:04:33.329Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/unimeet-92f9f/tokens  
+  
+ Wed Aug 15 2018 15:04:33 GMT+1000 (AEST)
+[debug] [2018-08-15T05:04:34.219Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-15T05:04:34.220Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/unimeet-92f9f  
+  
+ Wed Aug 15 2018 15:04:34 GMT+1000 (AEST)
+[debug] [2018-08-15T05:04:35.670Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/markdidio/Documents/GitHub/CloudyDev/UniMeet'...
+[info] 
+[debug] [2018-08-15T05:04:35.673Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/776036726314/clients/_:getWebAppConfig  
+  
+ Wed Aug 15 2018 15:04:35 GMT+1000 (AEST)
+[debug] [2018-08-15T05:04:36.708Z] <<< HTTP RESPONSE 200
 [info] i  hosting: Serving hosting files from: public
 [info] ✔  hosting: Local server: http://localhost:5000
 
