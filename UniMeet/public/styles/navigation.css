@@ -1,30 +1,10 @@
 @charset "UTF-8";
 /* CSS Document */
 
-
-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    width: 200px;
-    background-color: #f1f1f1;
+.nav_profile:hover {
+   cursor: pointer;
 }
 
-li a {
-    display: block;
-    color: #000;
-    padding: 8px 16px;
-    text-decoration: none;
-}
-
-/* Change the link color on hover */
-li a:hover {
-    background-color: #555;
-    color: white;
-}
-
-
-/*
 .nav_profile_image {
 	display:  block;
 	margin-left: auto;
@@ -33,6 +13,53 @@ li a:hover {
 	width: 50%;
 	border-radius: 50%;
 }
+
+.nav_profile_title {
+	margin: 32px 0px;
+	color: white;
+	text-align: center;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: normal;
+	font-size: 20px;
+}
+
+.nav_separator_Line {
+	height: 2px;
+	width: 80%;
+	background-color: white;
+		
+	margin-left: auto;
+	margin-right: auto;
+}
+
+ul {
+    list-style-type: none;
+    margin-top: 16px;
+    padding: 0;
+    width: 100%;
+    text-decoration: none;
+    font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: normal;
+	font-size: 16px;
+}
+
+li a {
+    display: block;
+    color: white;
+    padding: 8px 10%;
+    text-decoration: none;
+    
+}
+
+/* Change the link color on hover */
+li a:hover {
+    color: rgb(200,200,200);
+    text-decoration: none;
+}
+
+
+/*
+
 
 
 ul {

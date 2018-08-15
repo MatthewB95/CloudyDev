@@ -80,3 +80,47 @@
 [info] i  hosting: Serving hosting files from: public
 [info] ✔  hosting: Local server: http://localhost:5000
 
+[debug] [2018-08-15T05:20:19.828Z] ----------------------------------------------------------------------
+[debug] [2018-08-15T05:20:19.831Z] Command:       /usr/local/Cellar/node/10.5.0_1/bin/node /usr/local/bin/firebase serve --only hosting
+[debug] [2018-08-15T05:20:19.831Z] CLI Version:   4.0.2
+[debug] [2018-08-15T05:20:19.831Z] Platform:      darwin
+[debug] [2018-08-15T05:20:19.831Z] Node Version:  v10.5.0
+[debug] [2018-08-15T05:20:19.844Z] Time:          Wed Aug 15 2018 15:20:19 GMT+1000 (Australian Eastern Standard Time)
+[debug] [2018-08-15T05:20:19.844Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-08-15T05:20:19.858Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-08-15T05:20:19.858Z] > authorizing via signed-in user
+[debug] [2018-08-15T05:20:19.859Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-08-15T05:20:19.859Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token:
+   '1/TrHXvyZhQWQbvZOVk1f90ZOu2aH3jwJHcwMF_XXT4c6LM4QyLneWXDbqPeG2309_',
+  client_id:
+   '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope:
+   'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Wed Aug 15 2018 15:20:19 GMT+1000 (Australian Eastern Standard Time)
+[debug] [2018-08-15T05:20:20.490Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-15T05:20:20.505Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/unimeet-92f9f  
+  
+ Wed Aug 15 2018 15:20:20 GMT+1000 (Australian Eastern Standard Time)
+[debug] [2018-08-15T05:20:21.843Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-15T05:20:21.844Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/unimeet-92f9f/tokens  
+  
+ Wed Aug 15 2018 15:20:21 GMT+1000 (Australian Eastern Standard Time)
+[debug] [2018-08-15T05:20:22.748Z] <<< HTTP RESPONSE 200
+[debug] [2018-08-15T05:20:22.750Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/unimeet-92f9f  
+  
+ Wed Aug 15 2018 15:20:22 GMT+1000 (Australian Eastern Standard Time)
+[debug] [2018-08-15T05:20:24.440Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/rosstsingos/Documents/GitHub/CloudyDev/UniMeet'...
+[info] 
+[debug] [2018-08-15T05:20:24.442Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/776036726314/clients/_:getWebAppConfig  
+  
+ Wed Aug 15 2018 15:20:24 GMT+1000 (Australian Eastern Standard Time)
+[debug] [2018-08-15T05:20:25.461Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: public
+[info] ✔  hosting: Local server: http://localhost:5000
+
