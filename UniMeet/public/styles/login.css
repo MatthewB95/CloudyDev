@@ -6,7 +6,7 @@ body {
 }
 
 .view_panel {
-	width: 60vw;
+	width: 60%;
 	height: 100vh;
 	background-color: rgba(123,109,238,1);
 	float: left;
@@ -14,10 +14,10 @@ body {
 
 .login_panel {
 	position: relative;
-	width: 40vw;
+	width: 40%;
 	height: 100vh;
 	background-color: white;
-	float: left;
+	float: right;
 }
 
 
