@@ -27,7 +27,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 			loadMatches(user.uid);
 		}
 	} else {
-		window.open("/index.html","_self");
+		window.open("/index.html", "_self");
 	}
 });
 
@@ -93,6 +93,9 @@ function populateCollectionView(matchedData) {
 
 					card = document.createElement('div');
 					card.setAttribute('class', 'matched_profile_card');
+					card.addEventListener('click', function () {
+						selectMatchedProfile(myData.uid);
+					});
 					containingCard.appendChild(card);
 
 					profileImage = document.createElement('img');
@@ -144,4 +147,10 @@ function populateCollectionView(matchedData) {
 
 		}
 	}
+}
+
+
+function selectMatchedProfile(uid) {
+	window.localStorage.setItem("selectedProfileID", uid);
+	window.open("/user_profile.html","_self");
 }

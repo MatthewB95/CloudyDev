@@ -48,6 +48,7 @@ li a {
     color: white;
     padding: 8px 10%;
     text-decoration: none;
+	transition: 0.5s;
     
 }
 

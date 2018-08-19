@@ -16,38 +16,20 @@ const settings = { /* your settings... */
 };
 firestore.settings(settings);
 
-firebase.auth().onAuthStateChanged(function (user) {
-	if (user) {
-		// User is signed in.
-		var user = firebase.auth().currentUser;
-		if (user != null) {
-
-			document.getElementById('profilePicture').src = user.photoURL;
-
-			const docRef = firestore.doc("student/" + user.uid);
-
-			docRef.get().then(function (doc) {
-				if (doc && doc.exists) {
-					const myData = doc.data();
-					document.getElementById('profileNameLabel').innerHTML = myData.name;
-					populateCollectionView();
-				}
-			});
-
-		} else {
-			// No user is signed in.
-			// Redirect them to home page
-			document.location.href = "/";
-		}
-	} else {
-		alert('You must sign in');
-	}
-});
+var uid = window.localStorage.getItem("selectedProfileID");
 
 
+function loadProfile() {
+	const docRef = firestore.doc("student/" + uid);
 
-
-
+		docRef.get().then(function (doc) {
+			if (doc && doc.exists) {
+				const myData = doc.data();
+				document.getElementById('profileNameLabel').innerHTML = myData.name;
+				populateCollectionView();
+			}
+		});
+}
 
 
 function populateCollectionView() {
@@ -61,7 +43,7 @@ function populateCollectionView() {
 	for (i = 0; i < 4; i++) {
 
 		containingCard = document.createElement('div');
-					containingCard.setAttribute('class', 'col-lg-3 col-md-4 col-sm-6 text-center');
+		containingCard.setAttribute('class', 'col-lg-3 col-md-4 col-sm-6 text-center');
 
 		card = document.createElement('div');
 		card.setAttribute('class', 'course_card');
@@ -71,7 +53,7 @@ function populateCollectionView() {
 		uniLabel.setAttribute('class', 'course_uni_title');
 		uniLabel.innerHTML = 'RMIT University';
 		card.appendChild(uniLabel);
-		
+
 		courseLabel = document.createElement('h1');
 		courseLabel.setAttribute('class', 'course_title');
 		courseLabel.innerHTML = 'iPhone Software Engineering (044450)';
@@ -81,4 +63,8 @@ function populateCollectionView() {
 
 	}
 
+}
+
+window.onload = function () {
+	loadProfile();	
 }
