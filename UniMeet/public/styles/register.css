@@ -5,10 +5,11 @@ body {
 	margin: 0px;
 }
 
-.view_panel {
+.signup_panel {
+	position: relative;
 	width: 60%;
 	height: 100vh;
-	background-color: rgba(123,109,238,1);
+	background-color: white;
 	float: left;
 }
 
@@ -22,11 +23,10 @@ body {
     background-position: 50% 50%;
 }
 
-.login_panel {
-	position: relative;
+.view_panel {
 	width: 40%;
 	height: 100vh;
-	background-color: white;
+	background-color: rgba(123,109,238,1);
 	float: right;
 }
 
@@ -38,7 +38,7 @@ body {
   transform: translateY(-50%);
 }
 
-.uniMeet_title {
+.sml_title {
 	width: 70%;
     margin: 0px 15% 8px 15%;
 	text-align: left;
@@ -47,7 +47,7 @@ body {
 	font-size: 16px;
 }
 
-.login_title {
+.large_title {
 	width: 70%;
     margin: 0px 15% 16px 15%;
 	text-align: left;
@@ -98,22 +98,17 @@ body {
 	font-size: 16px;
 }
 
+.name_fields {
+	display: inline-block;
+	width: 70%;
+	margin: 0px 15% 16px 15%;
+}
 
-
-.form_signup_btn {
-	
-	position: absolute;
-	bottom: 8px;
-	left: 50%;
-  transform: translateX(-50%);
-	
-	height: 42px;
-	background-color: transparent;
-	border: 0px solid transparent;
-	color: rgba(0,0,0,0.5);
-	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: normal;
-	font-size: 12px;
+.side_by_side {
+	margin: 0px 0px 0px 0px;
+	display: block;
+	width: 50%;
+	float: left;
 }
 
 

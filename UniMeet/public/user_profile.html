@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Untitled Document</title>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/5.3.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.3.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.3.0/firebase-auth.js"></script>
+<script src="scripts/user_profile.js"></script>
+<link href="css/bootstrap-4.0.0.css" rel="stylesheet">
+<link rel="stylesheet" href="styles/main.css">
+<link rel="stylesheet" href="styles/user_profile.css">
+</head>
+
+<body>
+<div class="user_profile_main">
+<div class="profile_view">
+  <div class="avatar"> <img id="profilePicture" class="avatar-bg center"> </div>
+  <h1 id="profileNameLabel" class="profile_largeTitle"></h1>
+  <h2 id="universityOutput" class="profile_smallTitle">Bachelor of Information Technology</h2>
+  
+  <div class="shortcut_container"> 
+	  <button class="button whiteBackground">Message</button>
+	  <button class="button whiteBackground">Favourite</button>
+	  <button class="button whiteBackground">More</button>
+	</div>
+</div>
+	</div>
+<div class="user_profile_detail">
+  <div class="main_view">
+    <h2 class="subHeader">About</h2>
+	  <h3 class="bodyText lightTextColour">Age: 21 years old</h3>
+	  <h3 class="bodyText lightTextColour">University: RMIT University</h3>
+	  <h3 class="bodyText lightTextColour">Year: 3</h3>
+    <h5 class="bodyText">Lorem ipsum dolor sit amet, quidam efficiendi cu qui, ius id justo vulputate. An iisque ponderum dissentiet vis. Pri ne summo mentitum evertitur. Duo elit debet ex. Essent diceret aliquando ne duo, eu sea quis decore essent, feugiat dignissim repudiandae nam no.<br>
+      <br>
+      Autem eirmod accommodare ius ad, scripta salutandi urbanitas eum ad. Sumo illum per ei, pri id mutat clita, mel oblique ornatus ea. Ullum liber honestatis in quo, te movet invenire usu. Ea pro animal option imperdiet. Quo iuvaret dolorem ea, sit copiosae accommodare in, altera essent expetendis his an. Te pro etiam nihil intellegat.</h5>
+    <h2 class="subHeader">Enrolled Courses</h2>
+    <div id="enrolledCoursesCollectionView" class="row"></div>
+    <h2 class="subHeader">Contact</h2>
+	  <h3 class="table_title primaryColour">Student Email</h3>
+	  <h3 class="bodyText">s3603887@student.rmit.edu.au</h3>
+	  <br>
+	  <h3 class="table_title primaryColour">Personal Email</h3>
+	  <h3 class="bodyText">personalemail@gmail.com</h3>
+	  <br>
+	  <h3 class="table_title primaryColour">Mobile</h3>
+	  <h3 class="bodyText">0412 345 678</h3>
+	  
+	  <h2 class="subHeader">Links</h2>
+  </div>
+</div>
+</body>
+</html>
