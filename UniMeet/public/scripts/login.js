@@ -1,22 +1,7 @@
-// Initialize Firebase
-var config = {
-	apiKey: "AIzaSyAGev97x416_eJKbO4NmbKesjtZyl8OSfs",
-	authDomain: "unimeet-92f9f.firebaseapp.com",
-	databaseURL: "https://unimeet-92f9f.firebaseio.com",
-	projectId: "unimeet-92f9f",
-	storageBucket: "unimeet-92f9f.appspot.com",
-	messagingSenderId: "776036726314"
-};
-firebase.initializeApp(config);
-
-
-
 
 function signUp() {
 	window.open("/register.html", "_self");
 }
-
-
 
 /**
  * Function called when clicking the Login/Logout button.

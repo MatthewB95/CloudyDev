@@ -16,7 +16,7 @@ body {
 	width: 100%;
     height: 100%;
 	opacity: 0.2;
-    background-image: url('http://barbihoneycutt.com/wp-content/uploads/2013/01/iStock_000037691018Small.jpg');
+    background-image: url('../images/background.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: 50% 50%;
