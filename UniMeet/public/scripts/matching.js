@@ -16,7 +16,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 			loadMatches(user.uid);
 		}
 	} else {
-		window.open("/index.html", "_self");
+		window.location.replace("/");
 	}
 });
 

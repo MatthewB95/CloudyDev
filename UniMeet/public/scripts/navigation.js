@@ -70,7 +70,7 @@ function toggleSignIn() {
 //	} else {
 		// [START signout]
 		firebase.auth().signOut();
-		window.open("/index.html","_self");
+		window.location.replace("/");
 		// [END signout]
 //	}
 	// [START_EXCLUDE]
