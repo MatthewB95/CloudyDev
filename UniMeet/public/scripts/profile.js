@@ -60,9 +60,9 @@
         	
         	// Updates the user's profile information when they hit save
             document.getElementById("profileForm").addEventListener("submit", function() {
-                const nameToSave = nameTextField.value;
-                const universityToSave = universityTextField.value;
-                const degreeToSave = degreeTextField.value;
+                const nameToSave = nameTextField.value.trim();
+                const universityToSave = universityTextField.value.trim();
+                const degreeToSave = degreeTextField.value.trim();
                 console.log("Saving Name: " + nameToSave + ", University: " + universityToSave + ", Degree: " + degreeToSave + " to Firestore");
                 docRef.update({
                     name: nameToSave,
