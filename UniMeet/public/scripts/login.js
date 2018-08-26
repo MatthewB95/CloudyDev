@@ -78,15 +78,17 @@ window.onload = function () {
 
 // Updates the user's profile information when they hit save
 document.getElementById("loginForm").addEventListener("submit", function() {
+
     var email = document.getElementById('email').value.trim();
     var password = document.getElementById('password').value;
 
     firebase.auth().signInWithEmailAndPassword(email, password)
-   		.then(function(firebaseUser) {
+   		.then(function(user) {
+   			$("#warning").text("");
        		// Success
-       		alert("Logged in!");
    		})
   		.catch(function(error) {
+  			$("#warning").text("● Oops, that's not a match.");
        		// Error Handling
   	});
 

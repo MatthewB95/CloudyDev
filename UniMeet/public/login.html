@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>uniMeet Login</title>
+  <title>uniMeet - Sign in</title>
 
     <!-- FIREBASE -->
     <script src="/__/firebase/5.4.0/firebase-app.js"></script>
@@ -22,6 +22,7 @@
       <h1 class="login_title">Find like-minded people.</h1>
 
     <form id="loginForm" onsubmit="return false;" method="post">
+      <div class="warning" id="warning"></div>
       <input type="email" class="form_field" id="email" name="email" placeholder="Email" required>
       <input type="password" class="form_field" id="password" name="password" placeholder="Password" required>
       <button id="loginButton" class="form_login_btn" type="submit" >Sign in</button>
@@ -33,7 +34,7 @@
 </div>
 
       
-
+  <script src="scripts/jquery.min.js"></script>
   <script src="scripts/login.js?2"></script>
 </body>
 </html>

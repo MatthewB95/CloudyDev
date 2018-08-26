@@ -1,9 +1,17 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="styles/register.css">
-<title>Sign Up</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles/register.css">
+  <title>Sign Up</title>
+
+  <!-- FIREBASE -->
+  <script src="/__/firebase/5.4.0/firebase-app.js"></script>
+  <script src="/__/firebase/5.4.0/firebase-auth.js"></script>
+  <script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
+  <script src="/__/firebase/init.js"></script>
+  <!-- FIREBASE -->
+
 </head>
 
 <body>
@@ -11,39 +19,22 @@
   <div class="login_form">
     <h3 class="sml_title">uniMeet.</h3>
     <h1 class="large_title">Sign Up</h1>
-    <input type="email" class="form_field" id="email" name="email" placeholder="Email">
-    <input type="password" class="form_field" id="password" name="password" placeholder="Password">
-    <input type="password" class="form_field" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
-    <h3 class="sml_title">Let's start with the basics.</h3>
-    <div class="name_fields">
-      <input type="text" class="form_field side_by_side" id="firstName" name="firstName" placeholder="First Name">
-      <input type="text" class="form_field side_by_side" id="lastName" name="lastName" placeholder="Last Name">
-    </div>
-	  
-	  <input type="date" class="form_field" name="bday" placeholder="Birth Date">
-	  
-	  <h3 class="sml_title">What degree are you currently studying?</h3>
-	  
-    <select name="university" class="form_field">
-		<option value="A">Select a University</option>
-      <option value="A">RMIT University</option>
-      <option value="B">Melbourne University</option>
-      <option value="C">Monsash University</option>
-    </select>
-	  
-	  <select name="degree" class="form_field">
-		<option value="A">Select a Degree</option>
-      <option value="A">RMIT University</option>
-      <option value="B">Melbourne University</option>
-      <option value="C">Monsash University</option>
-    </select>
-    
-    <button type="submit" id="loginBtn" class="form_login_btn">Sign up</button>
+    <form id="signUpForm" onsubmit="return false;" method="post">
+      <input type="email" class="form_field" id="email" name="email" placeholder="Email" required>
+      <input type="password" class="form_field" id="password" name="password" placeholder="Password" required>
+      <input type="password" class="form_field" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+      <div class="warning" id="warning"></div>
+      <button id="signUpButton" class="form_login_btn" type="submit">Sign up</button>
+    </form>
+
     <button class="form_login_google_btn" id="quickstart-sign-in">Sign up with Google</button>
   </div>
 </div>
 <div class="view_panel">
 	<div class="header_image"></div>
 	</div>
+
+  <script src="scripts/jquery.min.js"></script>
+  <script src="scripts/register.js?9"></script>
 </body>
 </html>

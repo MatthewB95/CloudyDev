@@ -98,6 +98,16 @@ body {
 	font-size: 16px;
 }
 
+.warning {
+	width: 70%;
+    margin: 0px 15% 16px 15%;
+    text-align: left;
+    color: red;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: normal;
+	font-size: 16px;
+}
+
 .name_fields {
 	display: inline-block;
 	width: 70%;
