@@ -82,6 +82,9 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
   //get uid and google display name of new user
   var uid = user.uid;
   var displayName = user.displayName;
+  var defaultVerNum = 0;
+
+  createMatchList(uid, defaultVerNum);
 
   //user profile fields
   var data = {
@@ -98,27 +101,43 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
     interest_2: "Please choose your second favourite interest/hobby",
     interest_3: "Please choose your third favourite interest/hobby",
   };
-  //match list fields
-  var mData = {
-    version: 0,
-  }
-
+ 
   //add new student profile document into student collection
   var setDoc = db.collection('student').doc(uid).set(data);
-  //add new student match list document into match collection
-  var setMatchDoc = db.collection('match').doc(uid).set(mData);
+
   //return and log documents
-  return (setDoc, setMatchDoc).then(res => {
+  return (setDoc).then(res => {
     console.log('set: ', res);
   }); 
   
 });
 
+function createMatchList(uid, verNum){
+  
+  //match list fields
+  var mData = {
+    version: verNum,
+  }
+  //Database Path to current user's Match List
+  var userMatchDoc = db.collection('match').doc(uid);
+  
+  //Delete current users match document
+  //userMatchDoc.delete();
+
+  //add student match list document into match collection
+  var setMatchDoc = userMatchDoc.set(mData);
+
+  //return and log document
+  return (setMatchDoc).then(res => {
+    console.log('set: ', res);
+  });
+}
+
 //when profile is updated in firestore database checks if profile 
 //has been filled out correctly before passing to matching function
 exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpdate((Change, Context) => {
 
-      //Gets object representing updated document
+    //Gets object representing updated document
     const newValue = Change.after.data();
 
     //gets object representing document before update
@@ -154,36 +173,81 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     //creates a reference to the firestore 'student' collection
     var studRef = db.collection('student');
 
-    //this retrieves all students who go to the same Uni and are in the same degree as the student who updated their profile
-    var query = studRef.where('university', '==', university).where('current_degree', '==', current_degree).get().then(snapshot => {
-      snapshot.forEach(doc => {
-          console.log(doc.id, '=>', doc.data());
-          //console.log(doc.id, '=>', doc.data().name);
+    //creates a reference to the users match list
+    var matchRef = db.collection('match').doc(uid);
+
+    //check if sufficient data has been provided by user before matching algorithm is run
+    if ((current_degree != 'Please select your degree') && (university != 'Please select your University')){
         
-          var tarStudUid = doc.id;
-          if (tarStudUid != uid){
-                //data being saved to users match list
-                var matchData = {
-                  [tarStudUid]: 0,
-                  version: 1,
-                }
-                //data being saved to other students match lists
-                var matchtData = {
-                  [uid]: 0,
-                  version: 1,
-                }
-                //Update match list of user whose profile updated
-                var setMatchDoc = db.collection('match').doc(uid).update(matchData);
-                //Update match list of students the user matched with
-                var setTMatchDoc = db.collection('match').doc(tarStudUid).update(matchtData);
-                //return and log both writes to Firestore Database
-                return (setMatchDoc, setTMatchDoc).then(res => {
-                    console.log('set: ', res);
-                });
-          }
-      });
-    })
-    .catch(err => {
-      console.log('Error getting documents', err);
-    });
+      //get the users old list of matches in an object
+      var oldMList = (getMatchList(matchRef));
+      console.log('oldMList: ', oldMList);
+      // var verNum = oldMList.version;
+      // console.log('The VERSION Num: ', verNum);
+      var verNum = 0;
+
+      //clear users old match list
+      createMatchList(uid, verNum);
+
+      //this retrieves all students who go to the same Uni and are in the same degree as the student who updated their profile
+        var query = studRef.where('university', '==', university).where('current_degree', '==', current_degree).get().then(snapshot => {
+          snapshot.forEach(doc => {
+              console.log(doc.id, '=>', doc.data());
+              //console.log(doc.id, '=>', doc.data().name);
+              var tarStudUid = doc.id;
+
+            //match based on:
+            //courses
+            //interests
+            //gender
+
+
+              if (tarStudUid != uid){
+                    //data being saved to users match list
+                    var matchData = {
+                      [tarStudUid]: 0,
+                      version: 1,
+                    }
+                    //data being saved to other students match lists
+                    var matchtData = {
+                      [uid]: 0,
+                      version: 1,
+                    }
+                    //Update match list of user whose profile updated
+                    var setMatchDoc = db.collection('match').doc(uid).update(matchData);
+                    //Update match list of students the user matched with
+                    var setTMatchDoc = db.collection('match').doc(tarStudUid).update(matchtData);
+                    //return and log both writes to Firestore Database
+                    return (setMatchDoc, setTMatchDoc).then(res => {
+                        console.log('set: ', res);
+                    });
+              }
+          });
+        })
+        .catch(err => {
+          console.log('Error getting documents', err);
+        });
+    }
+    else{
+      console.log('User has not correctly filled in UserProfile');
+    }
 });
+
+//save users Database matchlist to an arraylist
+function getMatchList(matchRef){
+  var userMatchList = matchRef.get().then(function (doc) {
+      if (doc && doc.exists){                     //(NEED TO LOOP THROUGH FIELDS)
+        var myData = doc.data();
+        console.log("Object: ", myData);
+        // for(var key in myData){
+        //   if (myData.hasOwnProperty(key)){
+        //     console.log(key + " -> " + myData[key]);
+
+        //   }
+        // }
+        return (myData);
+      }
+  }).catch(function (error) {
+    console.log("Failed to retrieve error: ", error)
+  });
+}
