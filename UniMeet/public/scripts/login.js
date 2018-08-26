@@ -75,3 +75,20 @@ function initApp() {
 window.onload = function () {
 	initApp();
 };
+
+// Updates the user's profile information when they hit save
+document.getElementById("loginForm").addEventListener("submit", function() {
+    var email = document.getElementById('email').value.trim();
+    var password = document.getElementById('password').value;
+
+    firebase.auth().signInWithEmailAndPassword(email, password)
+   		.then(function(firebaseUser) {
+       		// Success
+       		alert("Logged in!");
+   		})
+  		.catch(function(error) {
+       		// Error Handling
+  	});
+
+})
+

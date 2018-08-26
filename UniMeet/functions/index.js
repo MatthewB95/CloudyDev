@@ -180,7 +180,7 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     if ((current_degree != 'Please select your degree') && (university != 'Please select your University')){
         
       //get the users old list of matches in an object
-      var oldMList = (getMatchList(matchRef));
+      var oldMList = getMatchList(matchRef);
       console.log('oldMList: ', oldMList);
       // var verNum = oldMList.version;
       // console.log('The VERSION Num: ', verNum);
