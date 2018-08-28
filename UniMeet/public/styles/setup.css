@@ -1,107 +1,88 @@
 @charset "UTF-8";
 /* CSS Document */
 
+* {
+	box-sizing: border-box;
+}
+
 body {
-	margin: 0px;
+	background-color: #f1f1f1;
 }
 
-.setup_area {
+#regForm {
+	background-color: #ffffff;
+	margin: 100px auto;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	padding: 40px;
 	width: 70%;
-    margin: 0px 15% 8px 15%;
-	text-align: left;
-	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: bold;
-	font-size: 16px;
+	min-width: 300px;
 }
 
-.login_title {
-	width: 70%;
-    margin: 0px 15% 16px 15%;
-	text-align: left;
-	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: bold;
-	font-size: 36px;
+h1 {
+	text-align: center;  
 }
 
-
-.form_field {
-	width: 70%;
-	height: 42px;
-    padding: 12px 16px;
-    margin: 0px 15% 16px 15%;
-    box-sizing: border-box;
-	border-radius: 21px;
-	border: 2px solid rgba(200,200,200,1.00);
-	
+input {
+	padding: 10px;
+	width: 100%;
+	font-size: 17px;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: normal;
-	font-size: 16px;
-	
+	border: 1px solid #aaaaaa;
 }
 
-
-.form_login_btn {
-	width: 70%;
-	height: 42px;
-	margin: 0px 15% 16px 15%;
-	border-radius: 21px;
-	background-color: rgba(123,109,238,1);
-	border: 0px solid transparent;
-	color: white;
-	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: normal;
-	font-size: 16px;
+/* Mark input boxes that gets an error on validation: */
+input.invalid {
+	background-color: #ffdddd;
 }
 
-.form_login_google_btn {
-	width: 60%;
-	height: 42px;
-	margin: 0px 20%;
-	background-color: transparent;
-	border: 0px solid transparent;
-	color: rgba(123,109,238,1);
+select {
+	padding: 10px;
+	width: 100%;
+	font-size: 17px;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: normal;
-	font-size: 16px;
+	border: 1px solid #aaaaaa;
 }
 
-.warning {
-	width: 70%;
-    margin: 0px 15% 16px 15%;
-    text-align: left;
-    color: red;
-	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: normal;
-	font-size: 16px;
+/* Hide all steps by default: */
+.tab {
+	display: none;
 }
 
-.form_signup_btn {
-	
-	position: absolute;
-	bottom: 8px;
-	left: 50%;
-  transform: translateX(-50%);
-	
-	height: 42px;
-	background-color: transparent;
-	border: 0px solid transparent;
-	color: rgba(0,0,0,0.5);
+button {
+	background-color: #4CAF50;
+	color: #ffffff;
+	border: none;
+	padding: 10px 20px;
+	font-size: 17px;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: normal;
-	font-size: 12px;
+	cursor: pointer;
 }
 
+button:hover {
+	opacity: 0.8;
+}
 
+#prevBtn {
+	background-color: #bbbbbb;
+}
 
+/* Make circles that indicate the steps of the form: */
+.step {
+	height: 15px;
+	width: 15px;
+	margin: 0 2px;
+	background-color: #bbbbbb;
+	border: none;  
+	border-radius: 50%;
+	display: inline-block;
+	opacity: 0.5;
+}
 
+.step.active {
+	opacity: 1;
+}
 
-
-
-
-
-
-
-
-
-
-
+/* Mark the steps that are finished and valid: */
+.step.finish {
+	background-color: #4CAF50;
+}

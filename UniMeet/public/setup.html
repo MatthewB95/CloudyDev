@@ -1,9 +1,10 @@
 <!doctype html>
 <html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="styles/setup.css">
-  <title>Account Setup</title>
+  <title>Setup</title>
 
   <!-- FIREBASE -->
   <script src="/__/firebase/5.4.0/firebase-app.js"></script>
@@ -15,15 +16,59 @@
 </head>
 
 <body>
-
-<div class="setup_area">
-<h3 class="sml_title">Let's start with the basics.</h3>
-    <div class="name_fields">
-      <input type="text" class="form_field side_by_side" id="firstName" name="firstName" placeholder="First Name">
-      <input type="text" class="form_field side_by_side" id="lastName" name="lastName" placeholder="Last Name">
+  <form id="regForm" action="/action_page.php">
+    <h1>Let's set up your profile.</h1>
+    <!-- One "tab" for each step in the form: -->
+    <div class="tab">Let's start with the basics.
+      <p><input placeholder="First name" oninput="this.className = ''" name="fname"></p>
+      <p><input placeholder="Last name" oninput="this.className = ''" name="lname"></p>
+      <p><input type="date" placeholder="Date of birth" oninput="this.className = ''" name="birthday"></p>
     </div>
-</div>
-
+    <div class="tab">What degree are you currently studying?
+      <p><select name="university" oninput="this.className = ''" name="university">
+        <option value="" hidden>University</option>
+        <option value="RMIT University">RMIT University</option>
+        <option value="Melbourne University">Melbourne University</option>
+        <option value="Monsash University">Monsash University</option>
+      </select></p>
+      <p><select name="degree" oninput="this.className = ''" name="degree">
+        <option value="" hidden>Degree</option>
+        <option value="Bachelor of Information Technology">Bachelor of Information Technology</option>
+        <option value="Bachelor of Business">Bachelor of Business</option>
+        <option value="Bachelor of Engineering">Bachelor of Engineering</option>
+      </select></p>
+    </div>
+    <div class="tab">What subjects are you currently taking?
+      <p><input placeholder="dd" oninput="this.className = ''" name="dd"></p>
+      <p><input placeholder="mm" oninput="this.className = ''" name="nn"></p>
+      <p><input placeholder="yyyy" oninput="this.className = ''" name="yyyy"></p>
+    </div>
+    <div class="tab">What are your interests?
+          <p><select id="interest1" oninput="this.className = ''" name="interest1">
+        <option value="" hidden>Interest 1</option>
+      </select></p>
+            <p><select id="interest2" oninput="this.className = ''" name="interest2">
+        <option value="" hidden>Interest 2</option>
+      </select></p>
+            <p><select id="interest3" oninput="this.className = ''" name="interest3">
+        <option value="" hidden>Interest 3</option>
+      </select></p>
+    </div>
+    <div style="overflow:auto;">
+      <div style="float:right;">
+        <button type="button" id="prevBtn" onclick="nextPrev(-1)">Back</button>
+        <button type="button" id="nextBtn" onclick="nextPrev(1)">Next</button>
+      </div>
+    </div>
+    <!-- Circles which indicates the steps of the form: -->
+    <div style="text-align:center;margin-top:40px;">
+      <span class="step"></span>
+      <span class="step"></span>
+      <span class="step"></span>
+      <span class="step"></span>
+    </div>
+  </form>
+  
   <script src="scripts/jquery.min.js"></script>
   <script src="scripts/setup.js?1"></script>
 </body>

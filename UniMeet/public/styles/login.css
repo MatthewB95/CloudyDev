@@ -14,12 +14,12 @@ body {
 
 .header_image {
 	width: 100%;
-    height: 100%;
+	height: 100%;
 	opacity: 0.2;
-    background-image: url('../images/background.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
+	background-image: url('../images/background.jpg');
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
 }
 
 .login_panel {
@@ -34,13 +34,13 @@ body {
 .login_form {
 	width: 100%;
 	position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
+	top: 50%;
+	transform: translateY(-50%);
 }
 
 .uniMeet_title {
 	width: 70%;
-    margin: 0px 15% 8px 15%;
+	margin: 0px 15% 8px 15%;
 	text-align: left;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: bold;
@@ -49,7 +49,7 @@ body {
 
 .login_title {
 	width: 70%;
-    margin: 0px 15% 16px 15%;
+	margin: 0px 15% 16px 15%;
 	text-align: left;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: bold;
@@ -60,9 +60,9 @@ body {
 .form_field {
 	width: 70%;
 	height: 42px;
-    padding: 12px 16px;
-    margin: 0px 15% 16px 15%;
-    box-sizing: border-box;
+	padding: 12px 16px;
+	margin: 0px 15% 16px 15%;
+	box-sizing: border-box;
 	border-radius: 21px;
 	border: 2px solid rgba(200,200,200,1.00);
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -89,9 +89,9 @@ body {
 }
 
 .form_login_btn:active {
-  	background:#eb3b60;
-  	transform:translateY(1px);
-  	background-color: rgb(112, 95, 236, 1);
+	background:#eb3b60;
+	transform:translateY(1px);
+	background-color: rgb(112, 95, 236, 1);
 }
 
 .form_login_google_btn {
@@ -108,9 +108,9 @@ body {
 
 .warning {
 	width: 70%;
-    margin: 0px 15% 16px 15%;
-    text-align: left;
-    color: red;
+	margin: 0px 15% 16px 15%;
+	text-align: left;
+	color: red;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 16px;
@@ -121,7 +121,7 @@ body {
 	position: absolute;
 	bottom: 8px;
 	left: 50%;
-  transform: translateX(-50%);
+	transform: translateX(-50%);
 	
 	height: 42px;
 	background-color: transparent;
