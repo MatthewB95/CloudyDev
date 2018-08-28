@@ -5,40 +5,7 @@ body {
 	margin: 0px;
 }
 
-.view_panel {
-	width: 60%;
-	height: 100vh;
-	background-color: rgba(123,109,238,1);
-	float: left;
-}
-
-.header_image {
-	width: 100%;
-    height: 100%;
-	opacity: 0.2;
-    background-image: url('../images/background.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-}
-
-.login_panel {
-	position: relative;
-	width: 40%;
-	height: 100vh;
-	background-color: white;
-	float: right;
-}
-
-
-.login_form {
-	width: 100%;
-	position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.uniMeet_title {
+.setup_area {
 	width: 70%;
     margin: 0px 15% 8px 15%;
 	text-align: left;
@@ -65,11 +32,13 @@ body {
     box-sizing: border-box;
 	border-radius: 21px;
 	border: 2px solid rgba(200,200,200,1.00);
+	
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 16px;
 	
 }
+
 
 .form_login_btn {
 	width: 70%;
@@ -82,16 +51,6 @@ body {
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 16px;
-}
-
-.form_login_btn:hover {
-	background-color: rgb(118, 102, 237, 1);
-}
-
-.form_login_btn:active {
-  	background:#eb3b60;
-  	transform:translateY(1px);
-  	background-color: rgb(112, 95, 236, 1);
 }
 
 .form_login_google_btn {

@@ -52,7 +52,7 @@ body {
     margin: 0px 15% 16px 15%;
 	text-align: left;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: bold;
+	font-weight: normal;
 	font-size: 36px;
 }
 
@@ -78,13 +78,24 @@ body {
 	height: 42px;
 	margin: 0px 15% 16px 15%;
 	border-radius: 21px;
-	background-color: rgba(123,109,238,1);
+	background-color: rgba(123, 109, 238, 1);
 	border: 0px solid transparent;
 	color: white;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 16px;
 }
+
+.form_login_btn:hover {
+	background-color: rgb(118, 102, 237, 1);
+}
+
+.form_login_btn:active {
+  	background:#eb3b60;
+  	transform:translateY(1px);
+  	background-color: rgb(112, 95, 236, 1);
+}
+
 
 .form_login_google_btn {
 	width: 60%;
@@ -120,6 +131,7 @@ body {
 	width: 50%;
 	float: left;
 }
+
 
 
 
