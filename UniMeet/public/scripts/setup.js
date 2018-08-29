@@ -78,13 +78,56 @@ const settings = { /* your settings... */
 };
 firestore.settings(settings);
 
+
+function loadUniversities() {
+  firestore.collection("degree").get().then(function(querySnapshot) {
+    querySnapshot.forEach(function(doc) {
+      const degrees = doc.data();
+      // Add university to list of options
+      $('#university').append( new Option(doc.id,doc.id) );
+
+      console.log(doc.id, " => ", doc.data());
+    });
+  });
+}
+
+// Loads list of universities from database and add them to the drop down-list
+function loadDegrees() {
+  // Make the degree question visible
+  $("#degreeQuestion").fadeIn();
+
+  // Remove all existing options from drop-down list
+  document.getElementById('degree').options.length = 0;
+  // Add the placeholder option
+  $('#degree').append( new Option(" -Please select your degree-",""));
+
+  // Retrieve list of degrees from Firestore
+  const degreesRef = firestore.doc("degree/" + $('#university').val());
+  degreesRef.get().then(function (doc) {
+    if (doc && doc.exists) {
+      const degrees = doc.data();
+      console.log("Retrieved degrees: ", Object.values(degrees));
+
+      // Fill in the degree drop-down list with the new values
+      $.each(degrees, function(val, text) {
+        $('#degree').append( new Option(text,val) );
+      });
+      // Display the degree drop-down box
+      $("#degree").fadeIn();
+    }
+  }).catch(function (error) {
+    console.log("Failed to retrieve error: ", error)
+  });
+}
+
+
+
 // Loads list of interests from database and add them to the drop down-lists
 function loadInterests() {
   const interestsRef = firestore.doc("interests/interests");
   interestsRef.get().then(function (doc) {
     if (doc && doc.exists) {
       const interests = doc.data();
-      console.log("Object: ", interests);
       console.log("Values: ", Object.values(interests));
       console.log("Count: ", Object.values(interests).length);
 
@@ -101,5 +144,8 @@ function loadInterests() {
   });
 }
 
-loadInterests();
+//loadUniversitiesTest();
 
+loadUniversities();
+
+loadInterests();

@@ -16,6 +16,7 @@
 </head>
 
 <body>
+
   <form id="regForm" action="/action_page.php">
     <h1>Let's set up your profile.</h1>
     <!-- One "tab" for each step in the form: -->
@@ -24,33 +25,37 @@
       <p><input placeholder="Last name" oninput="this.className = ''" name="lname"></p>
       <p><input type="date" placeholder="Date of birth" oninput="this.className = ''" name="birthday"></p>
     </div>
-    <div class="tab">What degree are you currently studying?
-      <p><select name="university" oninput="this.className = ''" name="university">
-        <option value="" hidden>University</option>
-        <option value="RMIT University">RMIT University</option>
-        <option value="Melbourne University">Melbourne University</option>
-        <option value="Monsash University">Monsash University</option>
+    <div class="tab">Where are you currently studying?
+      <p><select id="university" oninput="this.className = ''" name="university" onchange="loadDegrees()">
+      <option value="" hidden>-Please select your university-</option>
       </select></p>
-      <p><select name="degree" oninput="this.className = ''" name="degree">
-        <option value="" hidden>Degree</option>
-        <option value="Bachelor of Information Technology">Bachelor of Information Technology</option>
-        <option value="Bachelor of Business">Bachelor of Business</option>
-        <option value="Bachelor of Engineering">Bachelor of Engineering</option>
+      <span id="degreeQuestion" style="display: none">What degree are you currently studying?</span>
+      <p><select id="degree" oninput="this.className = ''" name="degree" style="display: none">
+        <option value="" hidden>-Please select your degree-</option>
       </select></p>
     </div>
     <div class="tab">What subjects are you currently taking?
-      <p><input placeholder="dd" oninput="this.className = ''" name="dd"></p>
-      <p><input placeholder="mm" oninput="this.className = ''" name="nn"></p>
-      <p><input placeholder="yyyy" oninput="this.className = ''" name="yyyy"></p>
+      <p><select id="subject1" oninput="this.className = ''" name="subject1">
+        <option value="" hidden>Subject 1</option>
+      </select></p>
+      <p><select id="subject2" oninput="this.className = ''" name="subject2">
+        <option value="" hidden>Subject 2</option>
+      </select></p>
+      <p><select id="subject3" oninput="this.className = ''" name="subject3">
+        <option value="" hidden>Subject 3</option>
+      </select></p>
+      <p><select id="subject3" oninput="this.className = ''" name="subject4">
+        <option value="" hidden>Subject 4</option>
+      </select></p>
     </div>
     <div class="tab">What are your interests?
-          <p><select id="interest1" oninput="this.className = ''" name="interest1">
+      <p><select id="interest1" oninput="this.className = ''" name="interest1">
         <option value="" hidden>Interest 1</option>
       </select></p>
-            <p><select id="interest2" oninput="this.className = ''" name="interest2">
+      <p><select id="interest2" oninput="this.className = ''" name="interest2">
         <option value="" hidden>Interest 2</option>
       </select></p>
-            <p><select id="interest3" oninput="this.className = ''" name="interest3">
+      <p><select id="interest3" oninput="this.className = ''" name="interest3">
         <option value="" hidden>Interest 3</option>
       </select></p>
     </div>
