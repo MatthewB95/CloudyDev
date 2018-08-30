@@ -113,15 +113,46 @@ function loadDegrees() {
       });
       // Display the degree drop-down box
       $("#degree").fadeIn();
+      // Load the list of subjects for the next page
+      loadSubjects($('#university').val());
     }
   }).catch(function (error) {
     console.log("Failed to retrieve error: ", error)
   });
 }
 
-function loadSubjects() {
-  
+// Loads list of subjects from database and add them to the drop down-lists
+function loadSubjects(university) {
+  // Remove all existing options from drop-down list
+  document.getElementById('subject1').options.length = 0;
+  document.getElementById('subject2').options.length = 0;
+  document.getElementById('subject3').options.length = 0;
+  document.getElementById('subject4').options.length = 0;
 
+  // Add the placeholder option
+  $('#subject1').append( new Option(" -Please select your subject-",""));
+  $('#subject2').append( new Option(" -Please select your subject-",""));
+  $('#subject3').append( new Option(" -Please select your subject-",""));
+  $('#subject4').append( new Option(" -Please select your subject-",""));
+
+  const subjectsRef = firestore.doc("course/" + university);
+  subjectsRef.get().then(function (doc) {
+    if (doc && doc.exists) {
+      const subjects = doc.data();
+      console.log("Values: ", Object.values(subjects));
+      console.log("Count: ", Object.values(subjects).length);
+
+      // Add each subject to the drop down list
+      $.each(subjects, function(val, text) {
+        $('#subject1').append( new Option(text,val) );
+        $('#subject2').append( new Option(text,val) );
+        $('#subject3').append( new Option(text,val) );
+        $('#subject4').append( new Option(text,val) );
+      });
+    }
+  }).catch(function (error) {
+    console.log("Failed to retrieve error: ", error)
+  });
 }
 
 // Loads list of interests from database and add them to the drop down-lists
