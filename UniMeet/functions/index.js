@@ -1,10 +1,9 @@
-
-
 // Import the Firebase SDK for Google Cloud Functions.
 const functions = require('firebase-functions');
 // Import and initialize the Firebase Admin SDK.
 const admin = require('firebase-admin');
 admin.initializeApp();
+
 
 /* // Adds a message that welcomes new users into the chat.
 exports.addWelcomeMessages = functions.auth.user().onCreate(async (user) => {
@@ -20,8 +19,6 @@ exports.addWelcomeMessages = functions.auth.user().onCreate(async (user) => {
     });
     console.log('Welcome message written to database.');
   }); */
-
-
 
 
 // Sends a notifications to all users when a new message is posted.
@@ -75,7 +72,7 @@ var db = admin.firestore();
 /**
  * creates document with UID as it's id in the 'student' collection
  * that has all of the profile information fields.
- * also creates each users match list document in the database.
+ * also triggers the creation of each users match list document in the database.
  */
 exports.createStudentProfile = functions.auth.user().onCreate((user) => {
 
@@ -91,15 +88,21 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
     uid: uid,
     name: displayName,
     gender: "M/F",
-    university: "Please select your University",
-    current_degree: "Please select your degree",
-    course_1: "Please pick your first course",
-    course_2: "Please pick your second course",
-    course_3: "Please pick your third course",
-    course_4: "Please pick your fourth course",
-    interest_1: "Please choose your favourite interest/hobby",
-    interest_2: "Please choose your second favourite interest/hobby",
-    interest_3: "Please choose your third favourite interest/hobby",
+    university: null,
+    current_degree: null,
+    course_1: null,
+    course_2: null,
+    course_3: null,
+    course_4: null,
+    course_5: null,
+    course_6: null,
+    interest_1: null,
+    interest_2: null,
+    interest_3: null,
+    interest_4: null,
+    team_rating: 0, //or were we storing how many votes and total stars and then calculating client side?
+    gender_interest: "M/F",
+    profile_image: "link",
   };
  
   //add new student profile document into student collection
@@ -120,9 +123,6 @@ function createMatchList(uid, verNum){
   }
   //Database Path to current user's Match List
   var userMatchDoc = db.collection('match').doc(uid);
-  
-  //Delete current users match document
-  //userMatchDoc.delete();
 
   //add student match list document into match collection
   var setMatchDoc = userMatchDoc.set(mData);
@@ -135,7 +135,7 @@ function createMatchList(uid, verNum){
 
 //when profile is updated in firestore database checks if profile 
 //has been filled out correctly before passing to matching function
-exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpdate((Change, Context) => {
+exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpdate(async (Change, Context) => {
 
     //Gets object representing updated document
     const newValue = Change.after.data();
@@ -170,6 +170,38 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const oldInterest_2 = oldValue.interest_2;
     const oldInterest_3 = oldValue.interest_3;
 
+    const getCourseCount = 'course_';
+    const coursePercent = 60;
+    const getInterestCount = 'interest_';
+    const interestPercent = 40;
+
+    var userCoursePercent = await getPercent(newValue, getCourseCount, coursePercent);
+    var userIntPercent = await getPercent(newValue, getInterestCount, interestPercent);
+
+    function getPercent(profile, getCount, percentage){
+      return new Promise(function(resolve, reject) {
+        try{
+            var counter = 0;
+            for(var key in profile){
+                if(profile.hasOwnProperty(key)){
+                  if((key.startsWith(getCount)) && (profile[key] != null)){
+                    counter ++;
+                  }
+                }
+            }
+          if(counter != 0){
+            var percentVal = (percentage / counter);
+            resolve(percentVal);
+          }
+        }catch (e){ //not rejecting when either (course OR interest list is empty)
+            reject(e);
+          }
+      });
+    }
+
+    console.log('$Number of User Courses: ', userCoursePercent);
+    console.log('!Number of User Interests: ', userIntPercent);
+
     //creates a reference to the firestore 'student' collection
     var studRef = db.collection('student');
 
@@ -177,77 +209,129 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     var matchRef = db.collection('match').doc(uid);
 
     //check if sufficient data has been provided by user before matching algorithm is run
-    if ((current_degree != 'Please select your degree') && (university != 'Please select your University')){
+    if ((current_degree != null) && (university != null)){
         
       //get the users old list of matches in an object
-      var oldMList = getMatchList(matchRef);
-      console.log('oldMList: ', oldMList);
-      // var verNum = oldMList.version;
-      // console.log('The VERSION Num: ', verNum);
-      var verNum = 0;
+      const getML = await matchRef.get();
+      if (getML.exists) {
+        const oldMList = Object.assign(getML.data());    
+        console.log("User's old match list: ", oldMList);
 
-      //clear users old match list
-      createMatchList(uid, verNum);
+        //iterate users match list version number
+        var verNum = (oldMList.version + 1); //change iteration to happen only if a change is made to match list
 
-      //this retrieves all students who go to the same Uni and are in the same degree as the student who updated their profile
-        var query = studRef.where('university', '==', university).where('current_degree', '==', current_degree).get().then(snapshot => {
-          snapshot.forEach(doc => {
-              console.log(doc.id, '=>', doc.data());
-              //console.log(doc.id, '=>', doc.data().name);
-              var tarStudUid = doc.id;
+        //clear users old match list
+        createMatchList(uid, verNum);
 
-            //match based on:
-            //courses
-            //interests
-            //gender
+        //clear current user from other students match lists
+        //PUT FUNCTION HERE!!!!!!!!!!!!!!!!!!!
 
+        //this retrieves all students who go to the same Uni and are in the same degree as the student who updated their profile
+          var query = studRef.where('university', '==', university).where('current_degree', '==', current_degree).get().then(snapshot => {
+            snapshot.forEach(async doc => {
+                console.log(doc.id, '=>', doc.data());
 
-              if (tarStudUid != uid){
-                    //data being saved to users match list
-                    var matchData = {
-                      [tarStudUid]: 0,
-                      version: 1,
+                //target users profile object
+                var tarUserProfile = doc.data();
+
+                //target users uid
+                var tarStudUid = doc.id;
+
+                //creates a reference to target users match list
+                var tarMatchRef = db.collection('match').doc(tarStudUid);
+
+                if (tarStudUid != uid){
+                  
+                  //User match score (how well user matches with target user)
+                  var score = 0;
+                  //target user match score (how well target user matches with user)
+                  var tscore = 0;
+
+                  var tarCoursePercent = await getPercent(tarUserProfile, getCourseCount, coursePercent);
+                  console.log('&!Number of TARGET user Courses: -> ',tarStudUid, ' -> ', tarCoursePercent);
+                  var tarIntPercent = await getPercent(tarUserProfile, getInterestCount, interestPercent);
+                  console.log('&!Number of TARGET user Interests: -> ', tarStudUid, ' -> ',tarIntPercent);
+
+                  /*
+                  Below code finalises and saves match to db match lists
+                  */
+                   //get target users old match list
+                   var getTML = await tarMatchRef.get();
+                   if (getTML.exists){
+                     var oldTMList = Object.assign(getTML.data());
+                     console.log("Target user's old match list: ", oldTMList);
+
+                      //iterate target users match list version number
+                      var tarVerNum = (oldTMList.version + 1);
+
+                      //data being saved to users match list
+                      var matchData = {
+                        [tarStudUid]: score,
+                        version: verNum,
+                      }
+
+                      //data being saved to other students match lists
+                      var matchtData = {
+                        [uid]: tscore,
+                        version: tarVerNum, 
+                      }
+                      //Update match list of user whose profile updated
+                      var setMatchDoc = db.collection('match').doc(uid).update(matchData);
+                      //Update match list of students the user matched with
+                      var setTMatchDoc = db.collection('match').doc(tarStudUid).update(matchtData);
+                      //return and log both writes to Firestore Database
+                      return (setMatchDoc, setTMatchDoc).then(res => {
+                          console.log('set: ', res);
+                      });
                     }
-                    //data being saved to other students match lists
-                    var matchtData = {
-                      [uid]: 0,
-                      version: 1,
+                    else {
+                      console.log('Failed to retrieve target user match list [error]');
                     }
-                    //Update match list of user whose profile updated
-                    var setMatchDoc = db.collection('match').doc(uid).update(matchData);
-                    //Update match list of students the user matched with
-                    var setTMatchDoc = db.collection('match').doc(tarStudUid).update(matchtData);
-                    //return and log both writes to Firestore Database
-                    return (setMatchDoc, setTMatchDoc).then(res => {
-                        console.log('set: ', res);
-                    });
-              }
+                }
+            });
+          })
+          .catch(err => {
+            console.log('Error getting documents', err);
           });
-        })
-        .catch(err => {
-          console.log('Error getting documents', err);
-        });
+      }
+      else{
+        console.log("Failed to retrieve match list [error]")
+      }
     }
     else{
       console.log('User has not correctly filled in UserProfile');
     }
 });
 
-//save users Database matchlist to an arraylist
-function getMatchList(matchRef){
-  var userMatchList = matchRef.get().then(function (doc) {
-      if (doc && doc.exists){                     //(NEED TO LOOP THROUGH FIELDS)
-        var myData = doc.data();
-        console.log("Object: ", myData);
-        // for(var key in myData){
-        //   if (myData.hasOwnProperty(key)){
-        //     console.log(key + " -> " + myData[key]);
 
-        //   }
-        // }
-        return (myData);
+///TAKE WHAT I NEED FROM HERE AND DELETE REST OF FUNCTION
+///save users Database matchlist to an arraylist
+function getMatchList(matchRef){
+  return new Promise(function (resolve, reject) { 
+    try {
+          var  userMatchList = matchRef.get().then(function (doc) {
+              if (doc && doc.exists){                   
+                var myData = doc.data();
+                resolve(myData);
+                //console.log("Object: ", myData);
+
+                for(var key in myData){
+                  if (myData.hasOwnProperty(key)){
+                    ///console.log(key + " -> " + myData[key]);
+                    var item = myData[key];
+                    //console.log('item: ', item);
+                    //console.log('key: ', key);
+                  }
+                }
+              }
+              else{
+                resolve(null);
+              }
+          }).catch(function (error) {
+            console.log("Failed to retrieve error: ", error)
+          });
+      } catch (e) {
+        reject(e)
       }
-  }).catch(function (error) {
-    console.log("Failed to retrieve error: ", error)
   });
 }
