@@ -87,6 +87,7 @@ body {
 }
 
 .form_login_btn:hover {
+	cursor: pointer;
 	background-color: rgb(118, 102, 237, 1);
 }
 
@@ -107,6 +108,10 @@ body {
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 16px;
+}
+
+.form_login_google_btn:active {
+	cursor: pointer;
 }
 
 .warning {
