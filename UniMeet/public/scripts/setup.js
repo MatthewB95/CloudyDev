@@ -78,20 +78,19 @@ const settings = { /* your settings... */
 };
 firestore.settings(settings);
 
-
+// Loads list of universities from database and adds them to the drop down-list
 function loadUniversities() {
   firestore.collection("degree").get().then(function(querySnapshot) {
     querySnapshot.forEach(function(doc) {
       const degrees = doc.data();
-      // Add university to list of options
+      // Add the name of each university to list of options
       $('#university').append( new Option(doc.id,doc.id) );
-
       console.log(doc.id, " => ", doc.data());
     });
   });
 }
 
-// Loads list of universities from database and add them to the drop down-list
+// Loads list of degrees from database and adds them to the drop down-list
 function loadDegrees() {
   // Make the degree question visible
   $("#degreeQuestion").fadeIn();
@@ -120,7 +119,10 @@ function loadDegrees() {
   });
 }
 
+function loadSubjects() {
+  
 
+}
 
 // Loads list of interests from database and add them to the drop down-lists
 function loadInterests() {
@@ -143,8 +145,6 @@ function loadInterests() {
     console.log("Failed to retrieve error: ", error)
   });
 }
-
-//loadUniversitiesTest();
 
 loadUniversities();
 
