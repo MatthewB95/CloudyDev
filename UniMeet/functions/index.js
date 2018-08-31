@@ -214,8 +214,8 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
       });
     }
 
-    console.log('Percentage value of MAIN user (Courses): -> ', userCoursePercent);
-    console.log('Percentage value of MAIN user (Interests): -> ', userIntPercent);
+    console.log('Percentage value Per (COURSE) for MAIN user: -> ', userCoursePercent);
+    console.log('Percentage value Per (INTEREST) for MAIN user: -> ', userIntPercent);
 
     //creates a reference to the firestore 'student' collection
     var studRef = db.collection('student');
@@ -273,20 +273,27 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
 
                       //Compare both users courses and calculate match score
                       if((tarCoursePercent != 0) && (userCoursePercent != 0)){
-                        console.log('Percentage value of TARGET user (Courses): -> ',tarStudUid, ' -> ', tarCoursePercent);
+                        console.log('Percentage value Per (COURSE) for TARGET user: -> ',tarStudUid, ' -> ', tarCoursePercent);
                         //Find how many courses both users have in common
                         var courseMatchCount = await numOfMatches(newValue ,tarUserProfile, getCourseCount);
                         if(courseMatchCount != 0){
-                           uScore = courseMatchCount * userCoursePercent;
-                           tScore = courseMatchCount * tarCoursePercent;
-                           console.log('USER SCORE after count * percent --> ', uScore);
-                           console.log('TARGET SCORE after count * percent --> ', tScore);
+                           uScore = uScore + (courseMatchCount * userCoursePercent);
+                           tScore = tScore + (courseMatchCount * tarCoursePercent);
+                           console.log('USER SCORE after count * percent in (COURSE) --> ', uScore);
+                           console.log('TARGET SCORE after count * percent in (COURSE) --> ', tScore);
                         }
                       }
                       //Compare both users interests and calculate match score
                       if((tarIntPercent != 0) && (userIntPercent != 0)){
-                        console.log('Percentage value of TARGET user (Interests): -> ', tarStudUid, ' -> ',tarIntPercent);
-                        //DO MATCHING OF INTERESTS HERE
+                        console.log('Percentage value Per (INTEREST) for TARGET user: -> ', tarStudUid, ' -> ',tarIntPercent);
+                        //Find how many Interests both users have in common
+                        var interestMatchCount = await numOfMatches(newValue ,tarUserProfile, getInterestCount);
+                        if(interestMatchCount != 0){
+                           uScore = uScore + (interestMatchCount * userIntPercent);
+                           tScore = tScore + (interestMatchCount * tarIntPercent);
+                           console.log('USER SCORE after count * percent in (INTEREST) --> ', uScore);
+                           console.log('TARGET SCORE after count * percent in (INTEREST) --> ', tScore);
+                        }
                       }
                       //do user rating part here (likely another if statement)
                   }
@@ -356,7 +363,7 @@ function numOfMatches(userProfile, tarProfile, getCount){
                     if((tkey.startsWith(getCount)) && (tarProfile[tkey] != null)){
                       if(userProfile[ukey] == tarProfile[tkey]){
                         counter ++;
-                        console.log("NUM OF COURSE MATCHES --> ", counter);
+                        console.log("NUM OF ",getCount ," MATCHES --> ", counter);
                       }
                     }
                   }
