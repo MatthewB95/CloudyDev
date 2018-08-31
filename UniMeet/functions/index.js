@@ -87,7 +87,7 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
   var data = {
     uid: uid,
     name: displayName,
-    gender: "M/F",
+    gender: null,
     university: null,
     current_degree: null,
     course_1: null,
@@ -102,7 +102,8 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
     interest_4: null,
     team_rating: 0, //store how many votes and total stars and then calculate client side
     gender_interest: "M/F",
-    profile_image: "link",
+    profile_image: null,
+    uniYear: null,
   };
  
   //add new student profile document into student collection
