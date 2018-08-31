@@ -183,7 +183,8 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const getCourseCount = 'course_';
     const coursePercent = 60;
     const getInterestCount = 'interest_';
-    const interestPercent = 40;
+    const interestPercent = 30;
+    const uniDegreePercent = 10;
 
     var userCoursePercent = await getPercent(newValue, getCourseCount, coursePercent);
     var userIntPercent = await getPercent(newValue, getInterestCount, interestPercent);
@@ -213,8 +214,8 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
       });
     }
 
-    console.log('$Number of User Courses: ', userCoursePercent);
-    console.log('!Number of User Interests: ', userIntPercent);
+    console.log('Percentage value of MAIN user (Courses): -> ', userCoursePercent);
+    console.log('Percentage value of MAIN user (Interests): -> ', userIntPercent);
 
     //creates a reference to the firestore 'student' collection
     var studRef = db.collection('student');
@@ -229,7 +230,7 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
       const getML = await matchRef.get();
       if (getML.exists) {
         const oldMList = Object.assign(getML.data());    
-        console.log("User's old match list: ", oldMList);
+        //console.log("User's old match list: ", oldMList);
 
         //iterate users match list version number
         var verNum = (oldMList.version + 1); //change iteration to happen only if a change is made to match list
@@ -243,7 +244,7 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
         //this retrieves all students who go to the same Uni and are in the same degree as the student who updated their profile
           var query = studRef.where('university', '==', university).where('current_degree', '==', current_degree).get().then(snapshot => {
             snapshot.forEach(async doc => {
-                console.log(doc.id, '=>', doc.data());
+                ///console.log(doc.id, '=>', doc.data());
 
                 //target users profile object
                 var tarUserProfile = doc.data();
@@ -257,24 +258,37 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                 if (tarStudUid != uid){
                   
                   //User match score (how well user matches with target user)
-                  var score = 0;
+                  var uScore = 0;
                   //target user match score (how well target user matches with user)
-                  var tscore = 0;
-
-                  var tarCoursePercent = await getPercent(tarUserProfile, getCourseCount, coursePercent);
-                  var tarIntPercent = await getPercent(tarUserProfile, getInterestCount, interestPercent);
+                  var tScore = 0;
+                  //final averaged match score for both users (defualt adds 10% for matching based on uni & degree)
+                  var matchTotal = uniDegreePercent;
 
                   //Filter based on gender preferences
                   if((gender_interest == tarUserProfile.gender || gender_interest == 'M/F') && 
-                     (tarUserProfile.gender_interest == gender || tarUserProfile.gender_interest == 'M/F')){
-                      if(tarCoursePercent != 0){
+                     (tarUserProfile.gender_interest == gender || tarUserProfile.gender_interest == 'M/F'))
+                  {
+                      var tarCoursePercent = await getPercent(tarUserProfile, getCourseCount, coursePercent);
+                      var tarIntPercent = await getPercent(tarUserProfile, getInterestCount, interestPercent);
+
+                      //Compare both users courses and calculate match score
+                      if((tarCoursePercent != 0) && (userCoursePercent != 0)){
                         console.log('Percentage value of TARGET user (Courses): -> ',tarStudUid, ' -> ', tarCoursePercent);
-                        //DO MATCHING OF COURSES HERE
+                        //Find how many courses both users have in common
+                        var courseMatchCount = await numOfMatches(newValue ,tarUserProfile, getCourseCount);
+                        if(courseMatchCount != 0){
+                           uScore = courseMatchCount * userCoursePercent;
+                           tScore = courseMatchCount * tarCoursePercent;
+                           console.log('USER SCORE after count * percent --> ', uScore);
+                           console.log('TARGET SCORE after count * percent --> ', tScore);
+                        }
                       }
-                      if(tarIntPercent != 0){
+                      //Compare both users interests and calculate match score
+                      if((tarIntPercent != 0) && (userIntPercent != 0)){
                         console.log('Percentage value of TARGET user (Interests): -> ', tarStudUid, ' -> ',tarIntPercent);
                         //DO MATCHING OF INTERESTS HERE
                       }
+                      //do user rating part here (likely another if statement)
                   }
                   else{
                     console.log('User: ', uid, ' does not have matching gender preferences with target user -> ',tarStudUid);
@@ -286,20 +300,20 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                    var getTML = await tarMatchRef.get();
                    if (getTML.exists){
                      var oldTMList = Object.assign(getTML.data());
-                     console.log("Target user's old match list: ", oldTMList);
+                     //console.log("Target user's old match list: ", oldTMList);
 
                       //iterate target users match list version number
                       var tarVerNum = (oldTMList.version + 1);
 
                       //data being saved to users match list
                       var matchData = {
-                        [tarStudUid]: score,
+                        [tarStudUid]: matchTotal,
                         version: verNum,
                       }
 
                       //data being saved to other students match lists
                       var matchtData = {
-                        [uid]: tscore,
+                        [uid]: matchTotal,
                         version: tarVerNum, 
                       }
                       //Update match list of user whose profile updated
@@ -330,7 +344,37 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     }
 });
 
-
+function numOfMatches(userProfile, tarProfile, getCount){
+  return new Promise(function(resolve, reject) {
+    try{
+        var counter = 0;
+        for(var ukey in userProfile){
+            if(userProfile.hasOwnProperty(ukey)){
+              if((ukey.startsWith(getCount)) && (userProfile[ukey] != null)){
+                for(var tkey in tarProfile){
+                  if(tarProfile.hasOwnProperty(tkey)){
+                    if((tkey.startsWith(getCount)) && (tarProfile[tkey] != null)){
+                      if(userProfile[ukey] == tarProfile[tkey]){
+                        counter ++;
+                        console.log("NUM OF COURSE MATCHES --> ", counter);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+        }
+      if(counter != 0){
+        resolve(counter);
+      }
+      else{
+        resolve(percentVal);
+      }
+    }catch (e){ 
+        reject(e);
+      }
+  });
+}
 ///TAKE WHAT I NEED FROM HERE AND DELETE REST OF FUNCTION
 ///save users Database matchlist to an arraylist
 function getMatchList(matchRef){
