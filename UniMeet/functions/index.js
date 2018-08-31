@@ -79,6 +79,7 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
   //get uid and google display name of new user
   var uid = user.uid;
   var displayName = user.displayName;
+  var proImg = user.photoURL;
   var defaultVerNum = 0;
 
   createMatchList(uid, defaultVerNum);
@@ -87,7 +88,7 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
   var data = {
     uid: uid,
     name: displayName,
-    gender: null,
+    gender: "M/F",
     university: null,
     current_degree: null,
     course_1: null,
@@ -102,7 +103,7 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
     interest_4: null,
     team_rating: 0, //store how many votes and total stars and then calculate client side
     gender_interest: "M/F",
-    profile_image: null,
+    profile_image: proImg,
     uniYear: null,
   };
  
@@ -266,8 +267,6 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                   var uScore = 0;
                   //target user match score (how well target user matches with user)
                   var tScore = 0;
-                  //final averaged match score for both users (defualt adds 10% for matching based on uni & degree)
-                  var matchTotal = uniDegreePercent;
 
                   //Filter based on gender preferences
                   if((gender_interest == tarUserProfile.gender || gender_interest == 'M/F') && 
@@ -310,7 +309,8 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                         uScore = uScore + tRatingScore;
                         tScore = tScore + uRatingScore;
                       }
-                      matchTotal = await calcMatchTotal(uScore, tScore);
+                      //final averaged match score for both users (defualt adds 10% for matching based on uni & degree)
+                      var matchTotal = await calcMatchTotal(uScore, tScore, uniDegreePercent);
                       console.log('MATCH TOTAL = ', matchTotal); 
                   }
                   else{
@@ -399,13 +399,13 @@ function numOfMatches(userProfile, tarProfile, getCount){
   });
 }
 
-function calcMatchTotal(usScore, taScore){
+function calcMatchTotal(usScore, taScore, uniDegPer){
   return new Promise(function(resolve, reject){
     try{
-      var answer = ((usScore + taScore) / 2);
+      var answer = ((usScore + taScore + uniDegPer + uniDegPer) / 2);
       resolve(answer);
     }catch (e){ 
         reject(e);
-      }
+    }
   });
 }
