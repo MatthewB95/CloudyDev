@@ -100,7 +100,7 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
     interest_2: null,
     interest_3: null,
     interest_4: null,
-    team_rating: 0, //or were we storing how many votes and total stars and then calculating client side?
+    team_rating: 0, //store how many votes and total stars and then calculate client side
     gender_interest: "M/F",
     profile_image: "link",
   };
@@ -180,11 +180,15 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const oldTeam_rating = oldValue.team_rating;
     const oldGender_interest = oldValue.gender_interest;
 
-    const getCourseCount = 'course_';
-    const coursePercent = 60;
     const getInterestCount = 'interest_';
-    const interestPercent = 30;
+    const getCourseCount = 'course_';
+
     const uniDegreePercent = 10;
+    const coursePercent = 60;
+    const interestPercent = 10;
+    const team_ratingPercent = 20;
+    //How many stars are used in rating system:
+    const numStars = 5;
 
     var userCoursePercent = await getPercent(newValue, getCourseCount, coursePercent);
     var userIntPercent = await getPercent(newValue, getInterestCount, interestPercent);
@@ -296,6 +300,17 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                         }
                       }
                       //do user rating part here (likely another if statement)
+                      if(team_rating != 0 || tarUserProfile.team_rating != 0)
+                      {
+                        var ratingPoints = (team_ratingPercent / numStars);
+                        var uRatingScore = (team_rating * ratingPoints);
+                        var tRatingScore = (tarUserProfile.team_rating * ratingPoints);
+
+                        uScore = uScore + tRatingScore;
+                        tScore = tScore + uRatingScore;
+                      }
+                      matchTotal = await calcMatchTotal(uScore, tScore);
+                      console.log('MATCH TOTAL = ', matchTotal); 
                   }
                   else{
                     console.log('User: ', uid, ' does not have matching gender preferences with target user -> ',tarStudUid);
@@ -382,34 +397,14 @@ function numOfMatches(userProfile, tarProfile, getCount){
       }
   });
 }
-///TAKE WHAT I NEED FROM HERE AND DELETE REST OF FUNCTION
-///save users Database matchlist to an arraylist
-function getMatchList(matchRef){
-  return new Promise(function (resolve, reject) { 
-    try {
-          var  userMatchList = matchRef.get().then(function (doc) {
-              if (doc && doc.exists){                   
-                var myData = doc.data();
-                resolve(myData);
-                //console.log("Object: ", myData);
 
-                for(var key in myData){
-                  if (myData.hasOwnProperty(key)){
-                    ///console.log(key + " -> " + myData[key]);
-                    var item = myData[key];
-                    //console.log('item: ', item);
-                    //console.log('key: ', key);
-                  }
-                }
-              }
-              else{
-                resolve(null);
-              }
-          }).catch(function (error) {
-            console.log("Failed to retrieve error: ", error)
-          });
-      } catch (e) {
-        reject(e)
+function calcMatchTotal(usScore, taScore){
+  return new Promise(function(resolve, reject){
+    try{
+      var answer = ((usScore + taScore) / 2);
+      resolve(answer);
+    }catch (e){ 
+        reject(e);
       }
   });
 }
