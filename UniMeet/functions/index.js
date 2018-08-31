@@ -153,14 +153,9 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const course_2 = newValue.course_2;
     const course_3 = newValue.course_3;
     const course_4 = newValue.course_4;
-    const course_5 = newValue.course_5;
-    const course_6 = newValue.course_6;
     const interest_1 = newValue.interest_1;
     const interest_2 = newValue.interest_2;
     const interest_3 = newValue.interest_3;
-    const interest_4 = newValue.interest_4;
-    const team_rating = newValue.team_rating;
-    const gender_interest = newValue.gender_interest;
 
     //access particular fields from old object (oldValue)
     const oldName = oldValue.name;
@@ -171,14 +166,9 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const oldCourse_2 = oldValue.course_2;
     const oldCourse_3 = oldValue.course_3;
     const oldCourse_4 = oldValue.course_4;
-    const oldCourse_5 = oldValue.course_5;
-    const oldCourse_6 = oldValue.course_6;
     const oldInterest_1 = oldValue.interest_1;
     const oldInterest_2 = oldValue.interest_2;
     const oldInterest_3 = oldValue.interest_3;
-    const oldInterest_4 = oldValue.interest_4;
-    const oldTeam_rating = oldValue.team_rating;
-    const oldGender_interest = oldValue.gender_interest;
 
     const getCourseCount = 'course_';
     const coursePercent = 60;
@@ -264,21 +254,16 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                   var tarCoursePercent = await getPercent(tarUserProfile, getCourseCount, coursePercent);
                   var tarIntPercent = await getPercent(tarUserProfile, getInterestCount, interestPercent);
 
-                  //Filter based on gender preferences
-                  if((gender_interest == tarUserProfile.gender || gender_interest == 'M/F') && 
-                     (tarUserProfile.gender_interest == gender || tarUserProfile.gender_interest == 'M/F')){
-                      if(tarCoursePercent != 0){
-                        console.log('Percentage value of TARGET user (Courses): -> ',tarStudUid, ' -> ', tarCoursePercent);
-                        //DO MATCHING OF COURSES HERE
-                      }
-                      if(tarIntPercent != 0){
-                        console.log('Percentage value of TARGET user (Interests): -> ', tarStudUid, ' -> ',tarIntPercent);
-                        //DO MATCHING OF INTERESTS HERE
-                      }
+                  //DO IF STATEMENT AROUND COURSE AND INTEREST IF'S TO FILTER BASED ON GENDER
+                  if(tarCoursePercent != 0){
+                    console.log('Percentage value of TARGET user (Courses): -> ',tarStudUid, ' -> ', tarCoursePercent);
+                    //DO MATCHING OF COURSES HERE
                   }
-                  else{
-                    console.log('User: ', uid, ' does not have matching gender preferences with target user -> ',tarStudUid);
+                  if(tarIntPercent != 0){
+                    console.log('Percentage value of TARGET user (Interests): -> ', tarStudUid, ' -> ',tarIntPercent);
+                    //DO MATCHING OF INTERESTS HERE
                   }
+                      
                   /*
                   Below code finalises and saves match to db match lists
                   */
