@@ -182,6 +182,7 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
       return new Promise(function(resolve, reject) {
         try{
             var counter = 0;
+            var percentVal = 0;
             for(var key in profile){
                 if(profile.hasOwnProperty(key)){
                   if((key.startsWith(getCount)) && (profile[key] != null)){
@@ -190,10 +191,13 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                 }
             }
           if(counter != 0){
-            var percentVal = (percentage / counter);
+            percentVal = (percentage / counter);
             resolve(percentVal);
           }
-        }catch (e){ //not rejecting when either (course OR interest list is empty)
+          else{
+            resolve(percentVal);
+          }
+        }catch (e){ 
             reject(e);
           }
       });
@@ -248,10 +252,18 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                   var tscore = 0;
 
                   var tarCoursePercent = await getPercent(tarUserProfile, getCourseCount, coursePercent);
-                  console.log('&!Number of TARGET user Courses: -> ',tarStudUid, ' -> ', tarCoursePercent);
                   var tarIntPercent = await getPercent(tarUserProfile, getInterestCount, interestPercent);
-                  console.log('&!Number of TARGET user Interests: -> ', tarStudUid, ' -> ',tarIntPercent);
 
+                  //DO IF STATEMENT AROUND COURSE AND INTEREST IF'S TO FILTER BASED ON GENDER
+                  if(tarCoursePercent != 0){
+                    console.log('Percentage value of TARGET user (Courses): -> ',tarStudUid, ' -> ', tarCoursePercent);
+                    //DO MATCHING OF COURSES HERE
+                  }
+                  if(tarIntPercent != 0){
+                    console.log('Percentage value of TARGET user (Interests): -> ', tarStudUid, ' -> ',tarIntPercent);
+                    //DO MATCHING OF INTERESTS HERE
+                  }
+                      
                   /*
                   Below code finalises and saves match to db match lists
                   */
