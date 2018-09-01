@@ -10,31 +10,37 @@ firebase.auth().onAuthStateChanged(function (user) {
 	if (user) {
 		// User is signed in.
 		var user = firebase.auth().currentUser;
-		var uid = user.uid;
-		var version = 0;
+		var uid
 
-		// Check for Firestore changes and update match list
-		var getRealTimeMatches = function() {
-			console.log("Retrieving matches");
-			const docRef = firestore.doc("match/" + uid);
-			docRef.onSnapshot(function(doc) {
-				if (doc && doc.exists) {
-					const myData = doc.data();
-					if (myData.version > version) {
-						version = myData.version;
-						populateCollectionView(myData);
-						console.log("Updated Matches: ", myData);
-					}
-				}
-			});
+		if (user != null) {
+			loadMatches(user.uid);
 		}
-
-		getRealTimeMatches();
-
 	} else {
 		window.location.replace("/");
 	}
 });
+
+
+
+
+
+
+
+function loadMatches(uid) {
+	const docRef = firestore.doc("match/" + uid);
+	docRef.get().then(function (doc) {
+		if (doc && doc.exists) {
+			const myData = doc.data();
+			console.log("Object: ", myData);
+			console.log("Values: ", Object.values(myData));
+			console.log("Count: ", Object.values(myData).length);
+			populateCollectionView(myData);
+		}
+	}).catch(function (error) {
+		console.log("Failed to retrieve error: ", error)
+	});
+}
+
 
 function populateCollectionView(matchedData) {
 
