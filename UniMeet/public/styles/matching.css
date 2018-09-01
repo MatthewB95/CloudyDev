@@ -66,6 +66,42 @@
 	padding: 0px 16px;
 }
 
+.refresh_button {
+	margin: 0px 15% 16px 15%;
+	padding: 10px 20px;
+	border-radius: 21px;
+	background-color: rgba(123,109,238,1);
+	border: 0px solid transparent;
+	color: white;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: normal;
+	font-size: 16px;
+	float: right;
+	-webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+}
+
+.refresh_button:hover {
+	cursor: pointer;
+	background-color: rgb(118, 102, 237, 1);
+}
+
+.refresh_button:active {
+	background:#eb3b60;
+	transform:translateY(1px);
+	background-color: rgb(112, 95, 236, 1);
+}
+
+.refresh_button:hover {
+	cursor: pointer;
+}
+
+.refresh_button:disabled {
+	background: #dddddd;
+	cursor: default;
+	-webkit-transition-duration: 0.2s; /* Safari */
+    transition-duration: 0.2s;
+}
 
 
 

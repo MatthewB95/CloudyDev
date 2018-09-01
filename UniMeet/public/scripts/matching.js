@@ -10,37 +10,63 @@ firebase.auth().onAuthStateChanged(function (user) {
 	if (user) {
 		// User is signed in.
 		var user = firebase.auth().currentUser;
-		var uid
+		var uid = user.uid;
+		var version = 0;
 
-		if (user != null) {
-			loadMatches(user.uid);
+		// Check for Firestore changes and update match list
+		var getRealTimeMatches = function() {
+			console.log("Retrieving matches");
+			const docRef = firestore.doc("match/" + uid);
+			docRef.onSnapshot(function(doc) {
+				if (doc && doc.exists) {
+					const matchData = doc.data();
+					// Retrieve matches if it's the first time loading the page
+					if (version == 0) {
+						version = matchData.version;
+						populateCollectionView(matchData);
+						console.log("Retrieved Matches: ", matchData);
+					}
+					// Otherwise, listen for any changes in match version number
+					else if (matchData.version != version) {
+						// Wait 2 seconds for matching to complete before enabling refresh button.
+						setTimeout(function() {
+							document.getElementById("refreshButton").disabled = false;
+						}, 2000);
+						return;
+					}
+				}
+			});
 		}
+
+		// Retrieves the latest matches from Firestore 
+		function refreshMatches() {
+			console.log("Updating matches");
+			const docRef = firestore.doc("match/" + uid);
+			docRef.get().then(function (doc) {
+				if (doc && doc.exists) {
+					const matchData = doc.data();
+					// Disable the refresh button because we have the latest matches
+					document.getElementById("refreshButton").disabled = true;
+					// Update to latest version number
+					version = matchData.version;
+					// Fade current matches out and replace with new list
+					$("#matchedCollectionView").fadeOut(500, function(){
+						populateCollectionView(matchData);
+					});
+        			console.log("Updated Matches: ", matchData);
+        			return;
+        		}
+        	});
+		}
+
+		getRealTimeMatches();
+
+		document.getElementById("refreshButton").addEventListener("click", refreshMatches);
+
 	} else {
 		window.location.replace("/");
 	}
 });
-
-
-
-
-
-
-
-function loadMatches(uid) {
-	const docRef = firestore.doc("match/" + uid);
-	docRef.get().then(function (doc) {
-		if (doc && doc.exists) {
-			const myData = doc.data();
-			console.log("Object: ", myData);
-			console.log("Values: ", Object.values(myData));
-			console.log("Count: ", Object.values(myData).length);
-			populateCollectionView(myData);
-		}
-	}).catch(function (error) {
-		console.log("Failed to retrieve error: ", error)
-	});
-}
-
 
 function populateCollectionView(matchedData) {
 
@@ -56,20 +82,14 @@ function populateCollectionView(matchedData) {
 	var favouriteShortcut;
 	var moreShortcut;
 
-	//var matchedValues = Object.values(matchedData);
+	// Remove any existing matches from the page
+	document.getElementById("matchedCollectionView").innerHTML = "";
 
-	//matchedData.values.count
-
-	//for (var key in matchedData) {
-
-	//	}
-
-	//for (i = 0; i < matchedValues.length; i++) {
 	for (var key in Object(matchedData)) {
 
 		if (key != "version") {
 
-			console.log("Loading Profile");
+			console.log("Loading Profile " + key);
 			const docRef = firestore.doc("student/" + key);
 
 			docRef.get().then(function (doc) {
@@ -136,6 +156,8 @@ function populateCollectionView(matchedData) {
 
 		}
 	}
+	// Fade all collections onto page
+	$("#matchedCollectionView").fadeIn(1250);
 }
 
 
