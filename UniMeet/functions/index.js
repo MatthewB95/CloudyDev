@@ -114,7 +114,6 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
   return (setDoc).then(res => {
     console.log('set: ', res);
   }); 
-  
 });
 
 function createMatchList(uid, verNum){
@@ -133,6 +132,23 @@ function createMatchList(uid, verNum){
   return (setMatchDoc).then(res => {
     console.log('set: ', res);
   });
+}
+
+function removeUserMatches(uid){
+  //query for students that have User in their match list
+  db.collection('match').where(uid, '>=', 0).get().then(snapshot => {
+    snapshot.forEach(async doc => {
+      //user's match list object
+      var userMatch = doc.data();
+      var itemz = userMatch.uid;
+      console.log('USERS TO BE REMOVED: -> ', itemz);
+    });
+  }).catch(err => {
+    console.log('Error getting documents', err);
+  });
+  //TO DO:
+  //loop through each of the resulting students and delete field that matches to User
+  //get that students match list version number and update it
 }
 
 //when profile is updated in firestore database checks if profile 
@@ -185,6 +201,7 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const getInterestCount = 'interest_';
     const getCourseCount = 'course_';
 
+    //Match Percentage distribution:
     const uniDegreePercent = 10;
     const coursePercent = 60;
     const interestPercent = 10;
@@ -242,10 +259,10 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
         var verNum = (oldMList.version + 1); //change iteration to happen only if a change is made to match list
 
         //clear users old match list
-        createMatchList(uid, verNum);
+        await createMatchList(uid, verNum);
 
         //clear current user from other students match lists
-        //PUT FUNCTION HERE!!!!!!!!!!!!!!!!!!!
+//FIX        //await removeUserMatches(uid);
 
         //this retrieves all students who go to the same Uni and are in the same degree as the student who updated their profile
           var query = studRef.where('university', '==', university).where('current_degree', '==', current_degree).get().then(snapshot => {
@@ -322,8 +339,8 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                    //get target users old match list
                    var getTML = await tarMatchRef.get();
                    if (getTML.exists){
-                     var oldTMList = Object.assign(getTML.data());
-                     //console.log("Target user's old match list: ", oldTMList);
+                      var oldTMList = Object.assign(getTML.data());
+                      //console.log("Target user's old match list: ", oldTMList);
 
                       //iterate target users match list version number
                       var tarVerNum = (oldTMList.version + 1);
@@ -391,7 +408,7 @@ function numOfMatches(userProfile, tarProfile, getCount){
         resolve(counter);
       }
       else{
-        resolve(percentVal);
+        resolve(counter);
       }
     }catch (e){ 
         reject(e);
