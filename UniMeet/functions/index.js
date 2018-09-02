@@ -2,6 +2,7 @@
 const functions = require('firebase-functions');
 // Import and initialize the Firebase Admin SDK.
 const admin = require('firebase-admin');
+const FieldValue = require('firebase-admin').firestore.FieldValue;
 admin.initializeApp();
 
 
@@ -136,19 +137,27 @@ function createMatchList(uid, verNum){
 
 function removeUserMatches(uid){
   //query for students that have User in their match list
-  db.collection('match').where(uid, '>=', 0).get().then(snapshot => {
+  db.collection('match').get().then(snapshot => {
     snapshot.forEach(async doc => {
       //user's match list object
       var userMatch = doc.data();
-      var itemz = userMatch.uid;
-      console.log('USERS TO BE REMOVED: -> ', itemz);
+
+      for(var rkey in userMatch){
+        if(userMatch.hasOwnProperty(rkey)){
+          if(rkey.localeCompare(uid) == 0){
+            console.log('The user: ', rkey ,' is being removed from ->', doc.id);
+            var trVerNum = (userMatch.version + 1);
+            db.collection('match').doc(doc.id).update({
+              [rkey]: FieldValue.delete(),
+              version: trVerNum,
+            });
+          }
+        }
+      }
     });
   }).catch(err => {
     console.log('Error getting documents', err);
   });
-  //TO DO:
-  //loop through each of the resulting students and delete field that matches to User
-  //get that students match list version number and update it
 }
 
 //when profile is updated in firestore database checks if profile 
@@ -260,9 +269,9 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
 
         //clear users old match list
         await createMatchList(uid, verNum);
-
+        //MAKE BOTH AWAITS RUN AT SAME TIME WITH PROMISE ALL
         //clear current user from other students match lists
-//FIX        //await removeUserMatches(uid);
+        await removeUserMatches(uid);
 
         //this retrieves all students who go to the same Uni and are in the same degree as the student who updated their profile
           var query = studRef.where('university', '==', university).where('current_degree', '==', current_degree).get().then(snapshot => {
@@ -333,9 +342,8 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                   else{
                     console.log('User: ', uid, ' does not have matching gender preferences with target user -> ',tarStudUid);
                   }
-                  /*
-                  Below code finalises and saves match to db match lists
-                  */
+                  
+                   //Below code finalises and saves match to db match lists
                    //get target users old match list
                    var getTML = await tarMatchRef.get();
                    if (getTML.exists){
