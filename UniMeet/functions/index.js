@@ -262,22 +262,22 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
       const getML = await matchRef.get();
       if (getML.exists) {
         const oldMList = Object.assign(getML.data());    
-        //console.log("User's old match list: ", oldMList);
+
+        //oldVerNum
+        var preVerNum = oldMList.version;
 
         //iterate users match list version number
-        var verNum = (oldMList.version + 1); //change iteration to happen only if a change is made to match list
+        var verNum = (oldMList.version + 1);
 
         //clear users old match list
-        await createMatchList(uid, verNum);
-        //MAKE BOTH AWAITS RUN AT SAME TIME WITH PROMISE ALL
+        await createMatchList(uid, preVerNum);
+        //MAKE BOTH AWAITS RUN AT SAME TIME WITH PROMISE ALL   <----------------------
         //clear current user from other students match lists
         await removeUserMatches(uid);
 
         //this retrieves all students who go to the same Uni and are in the same degree as the student who updated their profile
           var query = studRef.where('university', '==', university).where('current_degree', '==', current_degree).get().then(snapshot => {
-            snapshot.forEach(async doc => {
-                ///console.log(doc.id, '=>', doc.data());
-
+            snapshot.forEach(async doc => {                
                 //target users profile object
                 var tarUserProfile = doc.data();
 
@@ -288,7 +288,6 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                 var tarMatchRef = db.collection('match').doc(tarStudUid);
 
                 if (tarStudUid != uid){
-                  
                   //User match score (how well user matches with target user)
                   var uScore = 0;
                   //target user match score (how well target user matches with user)
@@ -348,7 +347,6 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                    var getTML = await tarMatchRef.get();
                    if (getTML.exists){
                       var oldTMList = Object.assign(getTML.data());
-                      //console.log("Target user's old match list: ", oldTMList);
 
                       //iterate target users match list version number
                       var tarVerNum = (oldTMList.version + 1);
@@ -376,6 +374,17 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                     else {
                       console.log('Failed to retrieve target user match list [error]');
                     }
+                }
+                else{
+                  if(snapshot.size == 1){
+                    var upData = {
+                      version: verNum,
+                    }
+                    var setUpData = db.collection('match').doc(uid).update(upData);
+                    return(setUpData).then(res => {
+                      console.log('EMPTY MATCH LIST set: ', res);
+                    });
+                  }
                 }
             });
           })
