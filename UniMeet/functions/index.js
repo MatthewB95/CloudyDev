@@ -5,6 +5,8 @@ const admin = require('firebase-admin');
 const FieldValue = require('firebase-admin').firestore.FieldValue;
 admin.initializeApp();
 
+////////////////////////////////////////////////////////////////////////////////////////////
+//BELOW IS CHAT CODE
 
 /* // Adds a message that welcomes new users into the chat.
 exports.addWelcomeMessages = functions.auth.user().onCreate(async (user) => {
@@ -67,7 +69,8 @@ exports.sendNotifications = functions.database.ref('/messages/{messageId}').onCr
      return admin.database().ref().update(tokensToRemove);
     }
 
-// Below is test code area
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+// BELOW IS MATCH MAKING CODE
 var db = admin.firestore();
 
 /**
