@@ -29,14 +29,22 @@ function loadProfile() {
 	const docRef = firestore.doc("student/" + uid);
 	getStudent(docRef);
 
+	document.getElementById('favouriteBtn').disabled = false;
+
+
 	checkFavourite();
 }
 
 
 
 function checkFavourite() {
+	
 	var currentUser = firebase.auth().currentUser;
 	if (currentUser != null) {
+
+		document.getElementById('favouriteBtn').innerHTML = "Favourite";
+		document.getElementById('favouriteBtn').addEventListener('click', favouriteProflile, false);
+
 		firestore.doc("favourites/" + currentUser.uid).get().then(function (doc) {
 			var favourites = doc.data();
 			for (var favId in favourites) {
@@ -44,13 +52,10 @@ function checkFavourite() {
 					document.getElementById('favouriteBtn').innerHTML = "Unfavourite";
 					document.getElementById('favouriteBtn').addEventListener('click', unfavouriteProflile, false);
 					break;
-				} else {
-					document.getElementById('favouriteBtn').innerHTML = "Favourite";
-					document.getElementById('favouriteBtn').addEventListener('click', favouriteProflile, false);
 				}
 			}
 		})
-	} 
+	}
 }
 
 
@@ -98,20 +103,20 @@ function getStudent(docRef) {
 			document.getElementById('ageLabel').innerHTML = "Age: " + student.age + " years old";
 			document.getElementById('uniLabel').innerHTML = "University: " + student.university;
 			document.getElementById('yearLabel').innerHTML = "Year: " + student.uniYear;
-			
-			
-			
-			
+
+
+
+
 			document.getElementById('studentEmail').innerHTML = student.studentEmail;
-			document.getElementById('studentEmail').addEventListener('click', function() {
-						redirectEmail(student.studentEmail);
-					});
-			
+			document.getElementById('studentEmail').addEventListener('click', function () {
+				redirectEmail(student.studentEmail);
+			});
+
 			document.getElementById('personalEmail').innerHTML = student.personalEmail;
-			document.getElementById('personalEmail').addEventListener('click', function() {
-						redirectEmail(student.personalEmail);
-					});
-			
+			document.getElementById('personalEmail').addEventListener('click', function () {
+				redirectEmail(student.personalEmail);
+			});
+
 			document.getElementById('mobile').innerHTML = student.mobile;
 
 		}
@@ -126,9 +131,10 @@ function favouriteProflile() {
 	
 	var currentUser = firebase.auth().currentUser;
 	if (currentUser != null) {
-		firestore.doc("favourites/" + currentUser.uid).update({
-			[uid]: "0"
-		}).then(function () {
+		firestore.doc("favourites/" + currentUser.uid).set(
+			{[uid]: "0"},
+			{merge: true}
+		).then(function () {
 			console.log("Document successfully written!");
 			checkFavourite();
 			document.getElementById('favouriteBtn').disabled = false;
@@ -143,7 +149,7 @@ function favouriteProflile() {
 function unfavouriteProflile() {
 	
 	document.getElementById('favouriteBtn').disabled = true;
-	
+
 	var currentUser = firebase.auth().currentUser;
 	if (currentUser != null) {
 		firestore.doc("favourites/" + currentUser.uid).update({
@@ -161,14 +167,6 @@ function unfavouriteProflile() {
 
 
 
-function redirectEmail(email)
-{
-    window.location.href = "mailto:" + email + "?Subject=Hello from uniMeet!";
+function redirectEmail(email) {
+	window.location.href = "mailto:" + email + "?Subject=Hello from uniMeet!";
 }
-
-
-
-
-
-
-
