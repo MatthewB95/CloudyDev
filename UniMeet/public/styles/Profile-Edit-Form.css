@@ -69,7 +69,7 @@ img.avart-img {
 }
 
 div.avatar-bg {
-  background:url(https://www.gravatar.com/avatar/1234566?size=200&d=mm);
+  background:url(../images/profile_placeholder.png);
   background-position:50% 50%;
   height:200px;
   width:200px;

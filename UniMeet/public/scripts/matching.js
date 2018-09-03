@@ -109,7 +109,12 @@ function populateCollectionView(matchedData) {
 
 					profileImage = document.createElement('img');
 					profileImage.setAttribute('class', 'profile_image');
-					profileImage.src = myData.profile_image;
+					if (myData.profile_image == null) {
+						profileImage.src = '../images/profile_placeholder.png';
+					}
+					else {
+						profileImage.src = myData.profile_image;
+					}
 					card.appendChild(profileImage);
 
 					nameLabel = document.createElement('h1');

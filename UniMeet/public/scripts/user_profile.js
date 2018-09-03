@@ -97,7 +97,15 @@ function getStudent(docRef) {
 			}
 
 			document.getElementById('profileNameLabel').innerHTML = student.name;
-			document.getElementById('profilePicture').src = student.profile_image;
+			
+			if (student.profile_image == null) {
+				document.getElementById('profilePicture').src = '/../images/white_profile_placeholder.png';
+			}
+			else {
+				document.getElementById('profilePicture').src = student.profile_image;
+			}
+
+			
 			document.getElementById('bioLabel').innerHTML = student.bio;
 
 			document.getElementById('ageLabel').innerHTML = "Age: " + student.age + " years old";

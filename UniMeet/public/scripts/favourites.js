@@ -11,57 +11,25 @@ firebase.auth().onAuthStateChanged(function (user) {
 		// User is signed in.
 		var user = firebase.auth().currentUser;
 		var uid = user.uid;
-		var version = 0;
-
-		// Check for Firestore changes and update match list
-		var getRealTimeMatches = function () {
-			console.log("Retrieving favourites");
-			const docRef = firestore.doc("favourites/" + uid);
-			docRef.onSnapshot(function (doc) {
-				if (doc && doc.exists) {
-					const matchData = doc.data();
-					// Retrieve matches if it's the first time loading the page
-					if (version == 0) {
-						version = matchData.version;
-						populateCollectionView(matchData);
-						console.log("Retrieved favourites: ", matchData);
-					}
-					// Otherwise, listen for any changes in match version number
-					else if (matchData.version != version) {
-						// Wait 2 seconds for matching to complete before enabling refresh button.
-						setTimeout(function () {
-							document.getElementById("refreshButton").disabled = false;
-						}, 2000);
-						return;
-					}
-				}
-			});
-		}
 
 		// Retrieves the latest matches from Firestore 
 		function refreshMatches() {
-			console.log("Updating favourites");
+			console.log("Retrieving favourites");
 			const docRef = firestore.doc("favourites/" + uid);
 			docRef.get().then(function (doc) {
 				if (doc && doc.exists) {
 					const matchData = doc.data();
-					// Disable the refresh button because we have the latest matches
-					document.getElementById("refreshButton").disabled = true;
-					// Update to latest version number
-					version = matchData.version;
 					// Fade current matches out and replace with new list
 					$("#matchedCollectionView").fadeOut(500, function () {
 						populateCollectionView(matchData);
 					});
-					console.log("Updated favourites: ", matchData);
+					console.log("Retrieved favourites: ", matchData);
 					return;
 				}
 			});
 		}
 
-		getRealTimeMatches();
-
-		document.getElementById("refreshButton").addEventListener("click", refreshMatches);
+		refreshMatches();
 
 	} else {
 		window.location.replace("/");
