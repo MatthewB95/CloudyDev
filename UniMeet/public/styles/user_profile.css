@@ -40,6 +40,7 @@
 	font-weight: bold;
 	font-size: 24px;
 	text-align: center;
+	padding: 16px 0px 4px 0px;
 }	
 
 .profile_mediumTitle {
@@ -60,7 +61,7 @@
 
 .shortcut_container {
 	margin: 0px auto;
-	padding: 0px 16px;
+	padding: 16px 16px;
 }
 
 
@@ -89,6 +90,7 @@
 	padding: 22px;
 	margin: 0px 0px 16px 0px;
 	float: left;
+	height: 100%;
 }
 
 .course_uni_title {

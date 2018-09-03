@@ -1,0 +1,219 @@
+[debug] [2018-09-02T07:20:58.260Z] ----------------------------------------------------------------------
+[debug] [2018-09-02T07:20:58.262Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only hosting
+[debug] [2018-09-02T07:20:58.262Z] CLI Version:   4.0.1
+[debug] [2018-09-02T07:20:58.262Z] Platform:      darwin
+[debug] [2018-09-02T07:20:58.262Z] Node Version:  v8.11.3
+[debug] [2018-09-02T07:20:58.263Z] Time:          Sun Sep 02 2018 17:20:58 GMT+1000 (AEST)
+[debug] [2018-09-02T07:20:58.263Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-02T07:20:58.277Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-09-02T07:20:58.277Z] > authorizing via signed-in user
+[debug] [2018-09-02T07:20:58.279Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-09-02T07:20:58.279Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/sBib_MuYIQCzN99qmotYHxeIOlvDZB0kymJmbwLhPyVr6jno21Z9AMvrLmM6t-mm',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Sun Sep 02 2018 17:20:58 GMT+1000 (AEST)
+[debug] [2018-09-02T07:20:58.824Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-02T07:20:58.840Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/unimeet-92f9f  
+  
+ Sun Sep 02 2018 17:20:58 GMT+1000 (AEST)
+[debug] [2018-09-02T07:21:00.324Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-02T07:21:00.325Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/unimeet-92f9f/tokens  
+  
+ Sun Sep 02 2018 17:21:00 GMT+1000 (AEST)
+[debug] [2018-09-02T07:21:01.336Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-02T07:21:01.338Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/unimeet-92f9f  
+  
+ Sun Sep 02 2018 17:21:01 GMT+1000 (AEST)
+[debug] [2018-09-02T07:21:02.991Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/markdidio/Documents/GitHub/CloudyDev/UniMeet'...
+[info] 
+[debug] [2018-09-02T07:21:02.992Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/776036726314/clients/_:getWebAppConfig  
+  
+ Sun Sep 02 2018 17:21:02 GMT+1000 (AEST)
+[debug] [2018-09-02T07:21:04.125Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: public
+[info] ✔  hosting: Local server: http://localhost:5000
+
+[debug] [2018-09-02T11:17:15.517Z] ----------------------------------------------------------------------
+[debug] [2018-09-02T11:17:15.518Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only hosting
+[debug] [2018-09-02T11:17:15.519Z] CLI Version:   4.0.1
+[debug] [2018-09-02T11:17:15.519Z] Platform:      darwin
+[debug] [2018-09-02T11:17:15.519Z] Node Version:  v8.11.3
+[debug] [2018-09-02T11:17:15.519Z] Time:          Sun Sep 02 2018 21:17:15 GMT+1000 (AEST)
+[debug] [2018-09-02T11:17:15.519Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-02T11:17:15.534Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-09-02T11:17:15.534Z] > authorizing via signed-in user
+[debug] [2018-09-02T11:17:15.536Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-09-02T11:17:15.536Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/sBib_MuYIQCzN99qmotYHxeIOlvDZB0kymJmbwLhPyVr6jno21Z9AMvrLmM6t-mm',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Sun Sep 02 2018 21:17:15 GMT+1000 (AEST)
+[debug] [2018-09-02T11:17:16.102Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-02T11:17:16.119Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/unimeet-92f9f  
+  
+ Sun Sep 02 2018 21:17:16 GMT+1000 (AEST)
+[debug] [2018-09-02T11:17:17.660Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-02T11:17:17.661Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/unimeet-92f9f/tokens  
+  
+ Sun Sep 02 2018 21:17:17 GMT+1000 (AEST)
+[debug] [2018-09-02T11:17:18.576Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-02T11:17:18.577Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/unimeet-92f9f  
+  
+ Sun Sep 02 2018 21:17:18 GMT+1000 (AEST)
+[debug] [2018-09-02T11:17:20.363Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/markdidio/Documents/GitHub/CloudyDev/UniMeet'...
+[info] 
+[debug] [2018-09-02T11:17:20.365Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/776036726314/clients/_:getWebAppConfig  
+  
+ Sun Sep 02 2018 21:17:20 GMT+1000 (AEST)
+[debug] [2018-09-02T11:17:21.592Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: public
+[info] ✔  hosting: Local server: http://localhost:5000
+
+[debug] [2018-09-03T00:10:09.050Z] ----------------------------------------------------------------------
+[debug] [2018-09-03T00:10:09.053Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only hosting
+[debug] [2018-09-03T00:10:09.053Z] CLI Version:   4.0.1
+[debug] [2018-09-03T00:10:09.053Z] Platform:      darwin
+[debug] [2018-09-03T00:10:09.053Z] Node Version:  v8.11.3
+[debug] [2018-09-03T00:10:09.054Z] Time:          Mon Sep 03 2018 10:10:09 GMT+1000 (AEST)
+[debug] [2018-09-03T00:10:09.054Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-03T00:10:09.075Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-09-03T00:10:09.075Z] > authorizing via signed-in user
+[debug] [2018-09-03T00:10:09.079Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-09-03T00:10:09.079Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/sBib_MuYIQCzN99qmotYHxeIOlvDZB0kymJmbwLhPyVr6jno21Z9AMvrLmM6t-mm',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Mon Sep 03 2018 10:10:09 GMT+1000 (AEST)
+[debug] [2018-09-03T00:10:09.572Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-03T00:10:09.595Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/unimeet-92f9f  
+  
+ Mon Sep 03 2018 10:10:09 GMT+1000 (AEST)
+[debug] [2018-09-03T00:10:10.930Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-03T00:10:10.931Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/unimeet-92f9f/tokens  
+  
+ Mon Sep 03 2018 10:10:10 GMT+1000 (AEST)
+[debug] [2018-09-03T00:10:11.991Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-03T00:10:11.992Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/unimeet-92f9f  
+  
+ Mon Sep 03 2018 10:10:11 GMT+1000 (AEST)
+[debug] [2018-09-03T00:10:13.427Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/markdidio/Documents/GitHub/CloudyDev/UniMeet'...
+[info] 
+[debug] [2018-09-03T00:10:13.429Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/776036726314/clients/_:getWebAppConfig  
+  
+ Mon Sep 03 2018 10:10:13 GMT+1000 (AEST)
+[debug] [2018-09-03T00:10:14.795Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: public
+[info] ✔  hosting: Local server: http://localhost:5000
+
+[debug] [2018-09-03T02:44:47.361Z] ----------------------------------------------------------------------
+[debug] [2018-09-03T02:44:47.363Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only hosting
+[debug] [2018-09-03T02:44:47.363Z] CLI Version:   4.0.1
+[debug] [2018-09-03T02:44:47.363Z] Platform:      darwin
+[debug] [2018-09-03T02:44:47.364Z] Node Version:  v8.11.3
+[debug] [2018-09-03T02:44:47.364Z] Time:          Mon Sep 03 2018 12:44:47 GMT+1000 (AEST)
+[debug] [2018-09-03T02:44:47.364Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-03T02:44:47.372Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-09-03T02:44:47.373Z] > authorizing via signed-in user
+[debug] [2018-09-03T02:44:47.374Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-09-03T02:44:47.375Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/sBib_MuYIQCzN99qmotYHxeIOlvDZB0kymJmbwLhPyVr6jno21Z9AMvrLmM6t-mm',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Mon Sep 03 2018 12:44:47 GMT+1000 (AEST)
+[debug] [2018-09-03T02:44:47.782Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-03T02:44:47.798Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/unimeet-92f9f  
+  
+ Mon Sep 03 2018 12:44:47 GMT+1000 (AEST)
+[debug] [2018-09-03T02:44:48.746Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-03T02:44:48.747Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/unimeet-92f9f/tokens  
+  
+ Mon Sep 03 2018 12:44:48 GMT+1000 (AEST)
+[debug] [2018-09-03T02:44:49.567Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-03T02:44:49.568Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/unimeet-92f9f  
+  
+ Mon Sep 03 2018 12:44:49 GMT+1000 (AEST)
+[debug] [2018-09-03T02:44:51.077Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/markdidio/Documents/GitHub/CloudyDev/UniMeet'...
+[info] 
+[debug] [2018-09-03T02:44:51.079Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/776036726314/clients/_:getWebAppConfig  
+  
+ Mon Sep 03 2018 12:44:51 GMT+1000 (AEST)
+[debug] [2018-09-03T02:44:51.998Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: public
+[info] ✔  hosting: Local server: http://localhost:5000
+
+[debug] [2018-09-03T11:06:10.489Z] Error: getaddrinfo ENOTFOUND www.gstatic.com www.gstatic.com:443
+    at errnoException (dns.js:50:10)
+    at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:92:26)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2018-09-03T11:06:10.511Z] Error: socket hang up
+    at createHangUpError (_http_client.js:331:15)
+    at TLSSocket.socketCloseListener (_http_client.js:363:23)
+    at emitOne (events.js:121:20)
+    at TLSSocket.emit (events.js:211:7)
+    at _handle.close (net.js:557:12)
+    at TCP.done [as _onclose] (_tls_wrap.js:356:7)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2018-09-03T11:06:44.557Z] ----------------------------------------------------------------------
+[debug] [2018-09-03T11:06:44.559Z] Command:       /usr/local/bin/node /usr/local/bin/firebase serve --only hosting
+[debug] [2018-09-03T11:06:44.560Z] CLI Version:   4.0.1
+[debug] [2018-09-03T11:06:44.560Z] Platform:      darwin
+[debug] [2018-09-03T11:06:44.560Z] Node Version:  v8.11.3
+[debug] [2018-09-03T11:06:44.560Z] Time:          Mon Sep 03 2018 21:06:44 GMT+1000 (AEST)
+[debug] [2018-09-03T11:06:44.560Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-09-03T11:06:44.576Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-09-03T11:06:44.576Z] > authorizing via signed-in user
+[debug] [2018-09-03T11:06:44.578Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-09-03T11:06:44.579Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/sBib_MuYIQCzN99qmotYHxeIOlvDZB0kymJmbwLhPyVr6jno21Z9AMvrLmM6t-mm',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Mon Sep 03 2018 21:06:44 GMT+1000 (AEST)
+[debug] [2018-09-03T11:06:45.081Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-03T11:06:45.097Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/unimeet-92f9f  
+  
+ Mon Sep 03 2018 21:06:45 GMT+1000 (AEST)
+[debug] [2018-09-03T11:06:46.425Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-03T11:06:46.426Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/unimeet-92f9f/tokens  
+  
+ Mon Sep 03 2018 21:06:46 GMT+1000 (AEST)
+[debug] [2018-09-03T11:06:47.329Z] <<< HTTP RESPONSE 200
+[debug] [2018-09-03T11:06:47.331Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/unimeet-92f9f  
+  
+ Mon Sep 03 2018 21:06:47 GMT+1000 (AEST)
+[debug] [2018-09-03T11:06:48.981Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from '/Users/markdidio/Documents/GitHub/CloudyDev/UniMeet'...
+[info] 
+[debug] [2018-09-03T11:06:48.984Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/776036726314/clients/_:getWebAppConfig  
+  
+ Mon Sep 03 2018 21:06:48 GMT+1000 (AEST)
+[debug] [2018-09-03T11:06:50.161Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: public
+[info] ✔  hosting: Local server: http://localhost:5000
+

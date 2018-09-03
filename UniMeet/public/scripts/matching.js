@@ -14,10 +14,10 @@ firebase.auth().onAuthStateChanged(function (user) {
 		var version = 0;
 
 		// Check for Firestore changes and update match list
-		var getRealTimeMatches = function() {
+		var getRealTimeMatches = function () {
 			console.log("Retrieving matches");
 			const docRef = firestore.doc("match/" + uid);
-			docRef.onSnapshot(function(doc) {
+			docRef.onSnapshot(function (doc) {
 				if (doc && doc.exists) {
 					const matchData = doc.data();
 					// Retrieve matches if it's the first time loading the page
@@ -29,7 +29,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 					// Otherwise, listen for any changes in match version number
 					else if (matchData.version != version) {
 						// Wait 2 seconds for matching to complete before enabling refresh button.
-						setTimeout(function() {
+						setTimeout(function () {
 							document.getElementById("refreshButton").disabled = false;
 						}, 2000);
 						return;
@@ -50,13 +50,13 @@ firebase.auth().onAuthStateChanged(function (user) {
 					// Update to latest version number
 					version = matchData.version;
 					// Fade current matches out and replace with new list
-					$("#matchedCollectionView").fadeOut(500, function(){
+					$("#matchedCollectionView").fadeOut(500, function () {
 						populateCollectionView(matchData);
 					});
-        			console.log("Updated Matches: ", matchData);
-        			return;
-        		}
-        	});
+					console.log("Updated Matches: ", matchData);
+					return;
+				}
+			});
 		}
 
 		getRealTimeMatches();
@@ -109,7 +109,7 @@ function populateCollectionView(matchedData) {
 
 					profileImage = document.createElement('img');
 					profileImage.setAttribute('class', 'profile_image');
-					profileImage.src = "images/purple_profile_placeholder.png";
+					profileImage.src = myData.profile_image;
 					card.appendChild(profileImage);
 
 					nameLabel = document.createElement('h1');
@@ -132,17 +132,31 @@ function populateCollectionView(matchedData) {
 					card.appendChild(shortcutsContainer);
 
 					messageShortcut = document.createElement('img');
-					messageShortcut.src = "images/firebase-logo.png";
+					messageShortcut.src = "images/favourite.png";
 					messageShortcut.setAttribute('class', 'shortcut_item');
 					shortcutsContainer.appendChild(messageShortcut);
+					
+					var currentUser = firebase.auth().currentUser;
+					if (currentUser != null) {
+						firestore.doc("favourites/" + currentUser.uid).get().then(function (doc) {
+							var favourites = doc.data();
+							for (var favId in favourites) {
+								if (favId == myData.uid) {
+									messageShortcut.src = "images/activeFavourite.png";
+									break;
+								}
+							}
+						})
+					}
+
 
 					favouriteShortcut = document.createElement('img');
-					favouriteShortcut.src = "images/firebase-logo.png";
+					favouriteShortcut.src = "images/message.png";
 					favouriteShortcut.setAttribute('class', 'shortcut_item');
 					shortcutsContainer.appendChild(favouriteShortcut);
 
 					moreShortcut = document.createElement('img');
-					moreShortcut.src = "images/firebase-logo.png";
+					moreShortcut.src = "images/more.png";
 					moreShortcut.setAttribute('class', 'shortcut_item');
 					shortcutsContainer.appendChild(moreShortcut);
 
@@ -163,5 +177,5 @@ function populateCollectionView(matchedData) {
 
 function selectMatchedProfile(uid) {
 	window.localStorage.setItem("selectedProfileID", uid);
-	window.open("/user_profile.html","_self");
+	window.open("/user_profile.html", "_self");
 }

@@ -38,6 +38,7 @@
 
 .profile_image {
 	width: 50%;
+	border-radius: 50%;
 }
 
 .profile_name_title {
@@ -63,7 +64,13 @@
 }
 
 .shortcut_container {
-	padding: 0px 16px;
+	padding: 16px 16px;
+}
+
+.shortcut_item {
+	height: auto;
+	width: 26%;
+	padding: 0px 4%;
 }
 
 .refresh_button {

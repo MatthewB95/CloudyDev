@@ -7,7 +7,7 @@ body {
 
 .subHeader {
 	font-weight: bold;
-	font-size: 24px;
+	font-size: 28px;
 	margin: 64px 0px 16px 0px;
 }
 
@@ -18,7 +18,11 @@ body {
 
 .bodyText {
 	font-weight: normal;
-	font-size: 16px;
+	font-size: 18px;
+}
+
+.boldText {
+	font-weight: bold;
 }
 
 .primaryColour {
@@ -31,13 +35,18 @@ body {
 
 .button {
 	height: 42px;
-	margin: 0px 8px;
+	margin: 8px;
 	padding: 0px 16px;
 	border-radius: 21px;
 	border: 0px solid transparent;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 16px;
+	text-align: center;
+}
+
+.equalWidths {
+	width: 148px;
 }
 
 .purpleBackground {
