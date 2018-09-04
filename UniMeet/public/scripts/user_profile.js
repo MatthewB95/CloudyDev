@@ -96,6 +96,8 @@ function getStudent(docRef) {
 				}
 			}
 
+			document.title = student.name;
+
 			document.getElementById('profileNameLabel').innerHTML = student.name;
 			
 			if (student.profile_image == null) {
