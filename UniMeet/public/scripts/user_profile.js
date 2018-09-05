@@ -29,10 +29,10 @@ function loadProfile() {
 	const docRef = firestore.doc("student/" + uid);
 	getStudent(docRef);
 
-	document.getElementById('favouriteBtn').disabled = false;
-
-
 	checkFavourite();
+	document.getElementById('messageBtn').addEventListener('click', function() {
+		messageProfile(uid);
+	});
 }
 
 
@@ -43,14 +43,14 @@ function checkFavourite() {
 	if (currentUser != null) {
 
 		document.getElementById('favouriteBtn').innerHTML = "Favourite";
-		document.getElementById('favouriteBtn').addEventListener('click', favouriteProflile, false);
+		document.getElementById('favouriteBtn').addEventListener('click', favouriteProfile, false);
 
 		firestore.doc("favourites/" + currentUser.uid).get().then(function (doc) {
 			var favourites = doc.data();
 			for (var favId in favourites) {
 				if (favId == uid) {
 					document.getElementById('favouriteBtn').innerHTML = "Unfavourite";
-					document.getElementById('favouriteBtn').addEventListener('click', unfavouriteProflile, false);
+					document.getElementById('favouriteBtn').addEventListener('click', unfavouriteProfile, false);
 					break;
 				}
 			}
@@ -135,7 +135,33 @@ function getStudent(docRef) {
 
 
 
-function favouriteProflile() {
+
+
+
+
+
+
+
+
+function messageProfile(uid) {
+	window.localStorage.setItem("selectedProfileID", uid);
+	window.open("/user_messaging.html", "_self");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function favouriteProfile() {
 	
 	document.getElementById('favouriteBtn').disabled = true;
 	
@@ -156,7 +182,7 @@ function favouriteProflile() {
 }
 
 
-function unfavouriteProflile() {
+function unfavouriteProfile() {
 	
 	document.getElementById('favouriteBtn').disabled = true;
 

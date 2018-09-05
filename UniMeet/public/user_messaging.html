@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FIREBASE -->
+  <script src="/__/firebase/5.4.0/firebase-app.js"></script>
+  <script src="/__/firebase/5.4.0/firebase-auth.js"></script>
+  <script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
+	<script src="/__/firebase/5.4.0/firebase-database.js"></script>
+  <script src="/__/firebase/init.js"></script>
+  <!-- FIREBASE -->
+
+  <title>uniMeet</title>
+	
+<script src="scripts/user_messaging.js"></script>
+<link rel="stylesheet" href="styles/main.css">
+<link href="styles/navigation.css" rel="stylesheet">
+<link rel="stylesheet" href="styles/user_messaging.css">
+</head>
+
+<body>
+<nav class="navBar">
+  <div id="navProfileBtn" class="nav_profile"> <img id="nav_profile_image" class="nav_profile_image" src="images/white_profile_placeholder.png" alt="Profile Image"/>
+    <h3 id="nav_profile_title" class="nav_profile_title">Profile</h3>
+  </div>
+  <div class="nav_separator_Line"></div>
+  <ul>
+    <li><a href="/matching.html">My Matches</a></li>
+    <li><a href="/favourites.html">Favourites</a></li>
+    <li><a href="/messaging.html">Messages</a></li>
+    <li><a href="" id="logoutBtn">Logout</a></li>
+  </ul>
+</nav>
+<section class="mainView">
+	<section>
+  <!-- Messages container -->
+  <div id="messagesView" class="messagesView">
+    <div id="messages">
+      <form id="messageForm" class="messageForm" action="#">
+        <input type="text" id="message" placeholder="Type Here...">
+        <button id="submitBtn" type="submit"> Send </button>
+      </form>
+    </div>
+  </div>
+		</section>
+</section>
+</body>
+</html>
