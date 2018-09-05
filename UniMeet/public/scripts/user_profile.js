@@ -12,17 +12,19 @@ var uid = window.localStorage.getItem("selectedProfileID");
 firebase.auth().onAuthStateChanged(function (user) {
 	if (user) {
 		loadProfile();
+
+		$('input:radio[name="rating"]').change(function() {
+			var getRating = $(this).val();
+			var rating = parseInt(getRating, 10);
+			if (rating >= 1 && rating <= 5) {
+				updateRating(rating, user.uid);
+			}
+		});
+
 	} else {
 		window.location.replace("/");
 	}
 });
-
-
-
-
-
-
-
 
 
 function loadProfile() {
@@ -136,25 +138,10 @@ function getStudent(docRef) {
 
 
 
-
-
-
-
-
-
-
 function messageProfile(uid) {
 	window.localStorage.setItem("selectedProfileID", uid);
 	window.open("/user_messaging.html", "_self");
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -170,39 +157,71 @@ function favouriteProfile() {
 		firestore.doc("favourites/" + currentUser.uid).set(
 			{[uid]: "0"},
 			{merge: true}
-		).then(function () {
-			console.log("Document successfully written!");
-			checkFavourite();
-			document.getElementById('favouriteBtn').disabled = false;
+			).then(function () {
+				console.log("Document successfully written!");
+				checkFavourite();
+				document.getElementById('favouriteBtn').disabled = false;
+			}).catch(function (error) {
+				console.error("Error writing document: ", error);
+				document.getElementById('favouriteBtn').disabled = false;
+			});
+		}
+	}
+
+
+	function unfavouriteProfile() {
+
+		document.getElementById('favouriteBtn').disabled = true;
+
+		var currentUser = firebase.auth().currentUser;
+		if (currentUser != null) {
+			firestore.doc("favourites/" + currentUser.uid).update({
+				[uid]: firebase.firestore.FieldValue.delete()
+			}).then(function () {
+				console.log("Value Removed");
+				checkFavourite();
+				document.getElementById('favouriteBtn').disabled = false;
+			}).catch(function (error) {
+				console.error("Error writing document: ", error);
+				document.getElementById('favouriteBtn').disabled = false;
+			});
+		}
+	}
+
+
+
+	function redirectEmail(email) {
+		window.location.href = "mailto:" + email + "?Subject=Hello from uniMeet!";
+	}
+
+	// INCOMPLETE
+	// Get and calculate the average rating for a user
+	function getRating() {
+		const docRef = firestore.doc("ratings/" + uid);
+        docRef.get().then(function (doc) {
+            if (doc && doc.exists) {
+                const myData = doc.data();
+            }
+        }).catch(function (error) {
+            console.log("Failed to retrieve ratings: ", error)
+        });
+	}
+
+	// Updates rating for a user in database
+	function updateRating(rating, currentUserID) {
+
+		if (rating > 5 && rating < 1) {
+			console.log("Invalid rating.");
+			return;
+		}
+
+		console.log("Rating " + document.title + ": " + rating);
+		const docRef = firestore.doc("ratings/" + uid);
+		docRef.update({
+			[currentUserID]: rating,
+		}).then(function() {
+			console.log("Successfully Updated Rating.");
 		}).catch(function (error) {
-			console.error("Error writing document: ", error);
-			document.getElementById('favouriteBtn').disabled = false;
+			console.log("Rating Update Error: ", error);
 		});
 	}
-}
-
-
-function unfavouriteProfile() {
-	
-	document.getElementById('favouriteBtn').disabled = true;
-
-	var currentUser = firebase.auth().currentUser;
-	if (currentUser != null) {
-		firestore.doc("favourites/" + currentUser.uid).update({
-			[uid]: firebase.firestore.FieldValue.delete()
-		}).then(function () {
-			console.log("Value Removed");
-			checkFavourite();
-			document.getElementById('favouriteBtn').disabled = false;
-		}).catch(function (error) {
-			console.error("Error writing document: ", error);
-			document.getElementById('favouriteBtn').disabled = false;
-		});
-	}
-}
-
-
-
-function redirectEmail(email) {
-	window.location.href = "mailto:" + email + "?Subject=Hello from uniMeet!";
-}
