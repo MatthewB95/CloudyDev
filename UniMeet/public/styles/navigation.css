@@ -1,6 +1,7 @@
 @charset "UTF-8";
 /* CSS Document */
 
+<<<<<<< HEAD
 .navigationBar {
     position: fixed;
     width: 100vw;
@@ -12,6 +13,8 @@
    cursor: pointer;
 }
 
+=======
+>>>>>>> 8dc05cc827d563b97c41c6edd85ba12aeba65a1f
 .nav_profile_image {
 	display:  block;
 	margin-left: auto;
@@ -19,15 +22,18 @@
 	margin-top: 58px;
 	width: 50%;
 	border-radius: 50%;
+	cursor: pointer;
 }
 
 .nav_profile_title {
-	margin: 32px 0px;
+	padding-top: 26px;
+    margin-bottom: 26px;
 	color: white;
 	text-align: center;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 20px;
+	cursor: pointer;
 }
 
 .nav_separator_Line {
@@ -53,8 +59,14 @@
 /*    display: inline;*/
 }
 
+<<<<<<< HEAD
 a {
      display: inline;
+=======
+li a {
+	margin-left: 2%;
+    display: block;
+>>>>>>> 8dc05cc827d563b97c41c6edd85ba12aeba65a1f
     color: white;
     height: 100%;
     padding: 0px 16px;

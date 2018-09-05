@@ -12,24 +12,26 @@ var uid = window.localStorage.getItem("selectedProfileID");
 firebase.auth().onAuthStateChanged(function (user) {
 	if (user) {
 		loadProfile();
+
+		$('input:radio[name="rating"]').change(function() {
+			var getRating = $(this).val();
+			var rating = parseInt(getRating, 10);
+			if (rating >= 1 && rating <= 5) {
+				sendRating(rating, user.uid);
+			}
+		});
+
 	} else {
 		window.location.replace("/");
 	}
 });
 
 
-
-
-
-
-
-
-
 function loadProfile() {
 	const docRef = firestore.doc("student/" + uid);
 	getStudent(docRef);
 
-	checkFavourite();
+	checkFriend();
 	document.getElementById('messageBtn').addEventListener('click', function() {
 		messageProfile(uid);
 	});
@@ -37,20 +39,20 @@ function loadProfile() {
 
 
 
-function checkFavourite() {
+function checkFriend() {
 	
 	var currentUser = firebase.auth().currentUser;
 	if (currentUser != null) {
 
-		document.getElementById('favouriteBtn').innerHTML = "Favourite";
-		document.getElementById('favouriteBtn').addEventListener('click', favouriteProfile, false);
+		document.getElementById('friendBtn').innerHTML = "Add Friend";
+		document.getElementById('friendBtn').addEventListener('click', friendProfile, false);
 
-		firestore.doc("favourites/" + currentUser.uid).get().then(function (doc) {
-			var favourites = doc.data();
-			for (var favId in favourites) {
-				if (favId == uid) {
-					document.getElementById('favouriteBtn').innerHTML = "Unfavourite";
-					document.getElementById('favouriteBtn').addEventListener('click', unfavouriteProfile, false);
+		firestore.doc("friends/" + currentUser.uid).get().then(function (doc) {
+			var friends = doc.data();
+			for (var friendID in friends) {
+				if (friendID == uid) {
+					document.getElementById('friendBtn').innerHTML = "Unfriend";
+					document.getElementById('friendBtn').addEventListener('click', unfriendProfile, false);
 					break;
 				}
 			}
@@ -114,9 +116,6 @@ function getStudent(docRef) {
 			document.getElementById('uniLabel').innerHTML = "University: " + student.university;
 			document.getElementById('yearLabel').innerHTML = "Year: " + student.uniYear;
 
-
-
-
 			document.getElementById('studentEmail').innerHTML = student.studentEmail;
 			document.getElementById('studentEmail').addEventListener('click', function () {
 				redirectEmail(student.studentEmail);
@@ -129,16 +128,15 @@ function getStudent(docRef) {
 
 			document.getElementById('mobile').innerHTML = student.mobile;
 
+			if (student.averageRating == 0 || student.averageRating == null) {
+				document.getElementById("averageRating").innerHTML = "No ratings yet";
+			}
+			else {
+				document.getElementById("averageRating").innerHTML = student.averageRating;
+			}
 		}
 	});
 }
-
-
-
-
-
-
-
 
 
 
@@ -153,56 +151,116 @@ function messageProfile(uid) {
 
 
 
-
-
-
-
-
-
-
-
-function favouriteProfile() {
+function friendProfile() {
 	
-	document.getElementById('favouriteBtn').disabled = true;
+	document.getElementById('friendBtn').disabled = true;
 	
 	var currentUser = firebase.auth().currentUser;
 	if (currentUser != null) {
-		firestore.doc("favourites/" + currentUser.uid).set(
+		firestore.doc("friends/" + currentUser.uid).set(
 			{[uid]: "0"},
 			{merge: true}
-		).then(function () {
-			console.log("Document successfully written!");
-			checkFavourite();
-			document.getElementById('favouriteBtn').disabled = false;
+			).then(function () {
+				console.log("Document successfully written!");
+				checkFriend();
+				document.getElementById('friendBtn').disabled = false;
+			}).catch(function (error) {
+				console.error("Error writing document: ", error);
+				document.getElementById('friendBtn').disabled = false;
+			});
+		}
+	}
+
+
+	function unfriendProfile() {
+
+		document.getElementById('friendBtn').disabled = true;
+
+		var currentUser = firebase.auth().currentUser;
+		if (currentUser != null) {
+			firestore.doc("friends/" + currentUser.uid).update({
+				[uid]: firebase.firestore.FieldValue.delete()
+			}).then(function () {
+				console.log("Value Removed");
+				checkFriend();
+				document.getElementById('friendBtn').disabled = false;
+			}).catch(function (error) {
+				console.error("Error writing document: ", error);
+				document.getElementById('friendBtn').disabled = false;
+			});
+		}
+	}
+
+
+
+	function redirectEmail(email) {
+		window.location.href = "mailto:" + email + "?Subject=Hello from uniMeet!";
+	}
+
+
+	// Get and calculate the average rating for a user
+	function calculateAverageRating() {
+		var averageRating = 0;
+		var roundedRating = 0;
+
+        firestore.doc("ratings/" + uid).get().then(function (doc) {
+            if (doc && doc.exists) {
+                const ratings = doc.data();
+
+                // Calculate average
+                var sum = 0;
+                var count = 0;
+                for (var key in ratings) {
+                	sum+= ratings[key];
+                	count++;
+                }
+                // Average decimal rating
+                averageRating = (sum / count).toFixed(1);
+
+                // Rounded to nearest whole number
+                roundedRating = Math.round(averageRating);
+
+                if (averageRating == 0 || averageRating == null) {
+					document.getElementById("averageRating").innerHTML = "No ratings yet";
+				}
+				else {
+					document.getElementById("averageRating").innerHTML = averageRating;
+				}
+
+                updateStudentAverageRating(averageRating);
+            }
+        }).catch(function (error) {
+            console.log("Failed to retrieve ratings: ", error)
+        });
+	}
+
+	// Updates rating for a user in database
+	function sendRating(rating, currentUserID) {
+
+		if (rating > 5 && rating < 1) {
+			console.log("Invalid rating.");
+			return;
+		}
+
+		console.log("Rating " + document.title + ": " + rating);
+		firestore.doc("ratings/" + uid).set({
+			[currentUserID]: rating,
+		},{merge: true}
+		).then(function() {
+			calculateAverageRating();
 		}).catch(function (error) {
-			console.error("Error writing document: ", error);
-			document.getElementById('favouriteBtn').disabled = false;
+			console.log("Rating Update Error: ", error);
 		});
 	}
-}
 
-
-function unfavouriteProfile() {
-	
-	document.getElementById('favouriteBtn').disabled = true;
-
-	var currentUser = firebase.auth().currentUser;
-	if (currentUser != null) {
-		firestore.doc("favourites/" + currentUser.uid).update({
-			[uid]: firebase.firestore.FieldValue.delete()
-		}).then(function () {
-			console.log("Value Removed");
-			checkFavourite();
-			document.getElementById('favouriteBtn').disabled = false;
+	// Update the student's average rating
+	function updateStudentAverageRating(averageRating) {
+		firestore.doc("student/" + uid).set({
+			averageRating: averageRating,
+		},{merge: true}
+		).then(function() {
+			console.log("Successfully Updated Rating.");
 		}).catch(function (error) {
-			console.error("Error writing document: ", error);
-			document.getElementById('favouriteBtn').disabled = false;
+			console.log("Rating Update Error: ", error);
 		});
 	}
-}
-
-
-
-function redirectEmail(email) {
-	window.location.href = "mailto:" + email + "?Subject=Hello from uniMeet!";
-}

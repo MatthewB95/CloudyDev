@@ -14,8 +14,8 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 		// Retrieves the latest matches from Firestore 
 		function refreshMatches() {
-			console.log("Retrieving favourites");
-			const docRef = firestore.doc("favourites/" + uid);
+			console.log("Retrieving friends");
+			const docRef = firestore.doc("friends/" + uid);
 			docRef.get().then(function (doc) {
 				if (doc && doc.exists) {
 					const matchData = doc.data();
@@ -23,7 +23,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 					$("#matchedCollectionView").fadeOut(500, function () {
 						populateCollectionView(matchData);
 					});
-					console.log("Retrieved favourites: ", matchData);
+					console.log("Retrieved friends: ", matchData);
 					return;
 				}
 			});
@@ -47,7 +47,7 @@ function populateCollectionView(matchedData) {
 	var infoLabel;
 	var shortcutsContainer;
 	var messageShortcut;
-	var favouriteShortcut;
+	var friendShortcut;
 	var moreShortcut;
 
 	// Remove any existing matches from the page
@@ -75,7 +75,12 @@ function populateCollectionView(matchedData) {
 
 				profileImage = document.createElement('img');
 				profileImage.setAttribute('class', 'profile_image');
-				profileImage.src = myData.profile_image;
+				if (myData.profile_image == null) {
+					profileImage.src = '../images/profile_placeholder.png';
+				}
+				else {
+					profileImage.src = myData.profile_image;
+				}
 				card.appendChild(profileImage);
 
 				nameLabel = document.createElement('h1');
@@ -98,14 +103,14 @@ function populateCollectionView(matchedData) {
 				card.appendChild(shortcutsContainer);
 
 				messageShortcut = document.createElement('img');
-				messageShortcut.src = "images/activeFavourite.png";
+				messageShortcut.src = "images/activeFriend.png";
 				messageShortcut.setAttribute('class', 'shortcut_item');
 				shortcutsContainer.appendChild(messageShortcut);
 
-				favouriteShortcut = document.createElement('img');
-				favouriteShortcut.src = "images/message.png";
-				favouriteShortcut.setAttribute('class', 'shortcut_item');
-				shortcutsContainer.appendChild(favouriteShortcut);
+				friendShortcut = document.createElement('img');
+				friendShortcut.src = "images/message.png";
+				friendShortcut.setAttribute('class', 'shortcut_item');
+				shortcutsContainer.appendChild(friendShortcut);
 
 				moreShortcut = document.createElement('img');
 				moreShortcut.src = "images/more.png";
