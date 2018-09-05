@@ -128,8 +128,12 @@ function getStudent(docRef) {
 
 			document.getElementById('mobile').innerHTML = student.mobile;
 
-			document.getElementById("averageRating").innerHTML = student.averageRating;
-
+			if (student.averageRating == 0 || student.averageRating == null) {
+				document.getElementById("averageRating").innerHTML = "No ratings yet";
+			}
+			else {
+				document.getElementById("averageRating").innerHTML = student.averageRating;
+			}
 		}
 	});
 }
@@ -216,7 +220,13 @@ function friendProfile() {
                 // Rounded to nearest whole number
                 roundedRating = Math.round(averageRating);
 
-                document.getElementById("averageRating").innerHTML = averageRating;
+                if (averageRating == 0 || averageRating == null) {
+					document.getElementById("averageRating").innerHTML = "No ratings yet";
+				}
+				else {
+					document.getElementById("averageRating").innerHTML = averageRating;
+				}
+
                 updateStudentAverageRating(averageRating);
             }
         }).catch(function (error) {
