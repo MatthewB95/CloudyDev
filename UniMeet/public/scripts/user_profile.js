@@ -17,7 +17,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 			var getRating = $(this).val();
 			var rating = parseInt(getRating, 10);
 			if (rating >= 1 && rating <= 5) {
-				updateRating(rating, user.uid);
+				sendRating(rating, user.uid);
 			}
 		});
 
@@ -116,9 +116,6 @@ function getStudent(docRef) {
 			document.getElementById('uniLabel').innerHTML = "University: " + student.university;
 			document.getElementById('yearLabel').innerHTML = "Year: " + student.uniYear;
 
-
-
-
 			document.getElementById('studentEmail').innerHTML = student.studentEmail;
 			document.getElementById('studentEmail').addEventListener('click', function () {
 				redirectEmail(student.studentEmail);
@@ -130,6 +127,8 @@ function getStudent(docRef) {
 			});
 
 			document.getElementById('mobile').innerHTML = student.mobile;
+
+			document.getElementById("averageRating").innerHTML = student.averageRating;
 
 		}
 	});
@@ -194,13 +193,31 @@ function favouriteProfile() {
 		window.location.href = "mailto:" + email + "?Subject=Hello from uniMeet!";
 	}
 
-	// INCOMPLETE
+
 	// Get and calculate the average rating for a user
-	function getRating() {
-		const docRef = firestore.doc("ratings/" + uid);
-        docRef.get().then(function (doc) {
+	function calculateAverageRating() {
+		var averageRating = 0;
+		var roundedRating = 0;
+
+        firestore.doc("ratings/" + uid).get().then(function (doc) {
             if (doc && doc.exists) {
-                const myData = doc.data();
+                const ratings = doc.data();
+
+                // Calculate average
+                var sum = 0;
+                var count = 0;
+                for (var key in ratings) {
+                	sum+= ratings[key];
+                	count++;
+                }
+                // Average decimal rating
+                averageRating = (sum / count).toFixed(1);
+
+                // Rounded to nearest whole number
+                roundedRating = Math.round(averageRating);
+
+                document.getElementById("averageRating").innerHTML = averageRating;
+                updateStudentAverageRating(averageRating);
             }
         }).catch(function (error) {
             console.log("Failed to retrieve ratings: ", error)
@@ -208,7 +225,7 @@ function favouriteProfile() {
 	}
 
 	// Updates rating for a user in database
-	function updateRating(rating, currentUserID) {
+	function sendRating(rating, currentUserID) {
 
 		if (rating > 5 && rating < 1) {
 			console.log("Invalid rating.");
@@ -216,9 +233,19 @@ function favouriteProfile() {
 		}
 
 		console.log("Rating " + document.title + ": " + rating);
-		const docRef = firestore.doc("ratings/" + uid);
-		docRef.update({
+		firestore.doc("ratings/" + uid).update({
 			[currentUserID]: rating,
+		}).then(function() {
+			calculateAverageRating();
+		}).catch(function (error) {
+			console.log("Rating Update Error: ", error);
+		});
+	}
+
+	// Update the student's average rating
+	function updateStudentAverageRating(averageRating) {
+		firestore.doc("student/" + uid).update({
+			averageRating: averageRating,
 		}).then(function() {
 			console.log("Successfully Updated Rating.");
 		}).catch(function (error) {
