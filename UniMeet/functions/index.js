@@ -105,7 +105,7 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
     interest_2: null,
     interest_3: null,
     interest_4: null,
-    team_rating: 0, //store how many votes and total stars and then calculate client side
+    averageRating: "No ratings yet", //store how many votes and total stars and then calculate client side
     gender_interest: "M/F",
     profile_image: proImg,
     uniYear: null,
