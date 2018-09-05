@@ -1,6 +1,13 @@
 @charset "UTF-8";
 /* CSS Document */
 
+.navigationBar {
+    position: fixed;
+    width: 100vw;
+    height: 64px;
+    background-color: rgba(123, 109, 238, 1);
+}
+
 .nav_profile:hover {
    cursor: pointer;
 }
@@ -32,28 +39,34 @@
 	margin-right: auto;
 }
 
-ul {
+.menuItems {
+    background-color: red;
     list-style-type: none;
-    margin-top: 16px;
-    padding: 0;
-    width: 100%;
+    margin: 0px 16px;
+/*    padding: 16px;*/
     text-decoration: none;
     font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 16px;
+    float: right;
+    height: 100%;
+/*    display: inline;*/
 }
 
-li a {
-    display: block;
+a {
+     display: inline;
     color: white;
-    padding: 8px 10%;
+    height: 100%;
+    padding: 0px 16px;
+    vertical-align: middle;
+    background-color: blue;
     text-decoration: none;
 	transition: 0.5s;
     
 }
 
 /* Change the link color on hover */
-li a:hover {
+a:hover {
     color: rgb(200,200,200);
     text-decoration: none;
 }
