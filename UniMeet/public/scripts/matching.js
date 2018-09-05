@@ -79,7 +79,7 @@ function populateCollectionView(matchedData) {
 	var infoLabel;
 	var shortcutsContainer;
 	var messageShortcut;
-	var favouriteShortcut;
+	var friendShortcut;
 	var moreShortcut;
 
 	// Remove any existing matches from the page
@@ -137,17 +137,17 @@ function populateCollectionView(matchedData) {
 					card.appendChild(shortcutsContainer);
 
 					messageShortcut = document.createElement('img');
-					messageShortcut.src = "images/favourite.png";
+					messageShortcut.src = "images/friend.png";
 					messageShortcut.setAttribute('class', 'shortcut_item');
 					shortcutsContainer.appendChild(messageShortcut);
 					
 					var currentUser = firebase.auth().currentUser;
 					if (currentUser != null) {
-						firestore.doc("favourites/" + currentUser.uid).get().then(function (doc) {
-							var favourites = doc.data();
-							for (var favId in favourites) {
-								if (favId == myData.uid) {
-									messageShortcut.src = "images/activeFavourite.png";
+						firestore.doc("friends/" + currentUser.uid).get().then(function (doc) {
+							var friends = doc.data();
+							for (var friendID in friendShortcut) {
+								if (friendID == myData.uid) {
+									messageShortcut.src = "images/activeFriend.png";
 									break;
 								}
 							}
@@ -155,10 +155,10 @@ function populateCollectionView(matchedData) {
 					}
 
 
-					favouriteShortcut = document.createElement('img');
-					favouriteShortcut.src = "images/message.png";
-					favouriteShortcut.setAttribute('class', 'shortcut_item');
-					shortcutsContainer.appendChild(favouriteShortcut);
+					friendShortcut = document.createElement('img');
+					friendShortcut.src = "images/message.png";
+					friendShortcut.setAttribute('class', 'shortcut_item');
+					shortcutsContainer.appendChild(friendShortcut);
 
 					moreShortcut = document.createElement('img');
 					moreShortcut.src = "images/more.png";

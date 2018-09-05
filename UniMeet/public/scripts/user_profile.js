@@ -31,7 +31,7 @@ function loadProfile() {
 	const docRef = firestore.doc("student/" + uid);
 	getStudent(docRef);
 
-	checkFavourite();
+	checkFriend();
 	document.getElementById('messageBtn').addEventListener('click', function() {
 		messageProfile(uid);
 	});
@@ -39,20 +39,20 @@ function loadProfile() {
 
 
 
-function checkFavourite() {
+function checkFriend() {
 	
 	var currentUser = firebase.auth().currentUser;
 	if (currentUser != null) {
 
-		document.getElementById('favouriteBtn').innerHTML = "Favourite";
-		document.getElementById('favouriteBtn').addEventListener('click', favouriteProfile, false);
+		document.getElementById('friendBtn').innerHTML = "Add Friend";
+		document.getElementById('friendBtn').addEventListener('click', friendProfile, false);
 
-		firestore.doc("favourites/" + currentUser.uid).get().then(function (doc) {
-			var favourites = doc.data();
-			for (var favId in favourites) {
-				if (favId == uid) {
-					document.getElementById('favouriteBtn').innerHTML = "Unfavourite";
-					document.getElementById('favouriteBtn').addEventListener('click', unfavouriteProfile, false);
+		firestore.doc("friends/" + currentUser.uid).get().then(function (doc) {
+			var friends = doc.data();
+			for (var friendID in friends) {
+				if (friendID == uid) {
+					document.getElementById('friendBtn').innerHTML = "Unfriend";
+					document.getElementById('friendBtn').addEventListener('click', unfriendProfile, false);
 					break;
 				}
 			}
@@ -147,42 +147,42 @@ function messageProfile(uid) {
 
 
 
-function favouriteProfile() {
+function friendProfile() {
 	
-	document.getElementById('favouriteBtn').disabled = true;
+	document.getElementById('friendBtn').disabled = true;
 	
 	var currentUser = firebase.auth().currentUser;
 	if (currentUser != null) {
-		firestore.doc("favourites/" + currentUser.uid).set(
+		firestore.doc("friends/" + currentUser.uid).set(
 			{[uid]: "0"},
 			{merge: true}
 			).then(function () {
 				console.log("Document successfully written!");
-				checkFavourite();
-				document.getElementById('favouriteBtn').disabled = false;
+				checkFriend();
+				document.getElementById('friendBtn').disabled = false;
 			}).catch(function (error) {
 				console.error("Error writing document: ", error);
-				document.getElementById('favouriteBtn').disabled = false;
+				document.getElementById('friendBtn').disabled = false;
 			});
 		}
 	}
 
 
-	function unfavouriteProfile() {
+	function unfriendProfile() {
 
-		document.getElementById('favouriteBtn').disabled = true;
+		document.getElementById('friendBtn').disabled = true;
 
 		var currentUser = firebase.auth().currentUser;
 		if (currentUser != null) {
-			firestore.doc("favourites/" + currentUser.uid).update({
+			firestore.doc("friends/" + currentUser.uid).update({
 				[uid]: firebase.firestore.FieldValue.delete()
 			}).then(function () {
 				console.log("Value Removed");
-				checkFavourite();
-				document.getElementById('favouriteBtn').disabled = false;
+				checkFriend();
+				document.getElementById('friendBtn').disabled = false;
 			}).catch(function (error) {
 				console.error("Error writing document: ", error);
-				document.getElementById('favouriteBtn').disabled = false;
+				document.getElementById('friendBtn').disabled = false;
 			});
 		}
 	}
@@ -233,9 +233,10 @@ function favouriteProfile() {
 		}
 
 		console.log("Rating " + document.title + ": " + rating);
-		firestore.doc("ratings/" + uid).update({
+		firestore.doc("ratings/" + uid).set({
 			[currentUserID]: rating,
-		}).then(function() {
+		},{merge: true}
+		).then(function() {
 			calculateAverageRating();
 		}).catch(function (error) {
 			console.log("Rating Update Error: ", error);
@@ -244,9 +245,10 @@ function favouriteProfile() {
 
 	// Update the student's average rating
 	function updateStudentAverageRating(averageRating) {
-		firestore.doc("student/" + uid).update({
+		firestore.doc("student/" + uid).set({
 			averageRating: averageRating,
-		}).then(function() {
+		},{merge: true}
+		).then(function() {
 			console.log("Successfully Updated Rating.");
 		}).catch(function (error) {
 			console.log("Rating Update Error: ", error);

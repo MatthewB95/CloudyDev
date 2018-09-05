@@ -25,11 +25,9 @@ firebase.auth().onAuthStateChanged(function (user) {
 	}
 });
 
-
-
-
 document.getElementById('logoutBtn').addEventListener('click', toggleSignIn, false);
-document.getElementById('navProfileBtn').addEventListener('click', loadProfile, false);
+document.getElementById('nav_profile_image').addEventListener('click', loadProfile, false);
+document.getElementById('nav_profile_title').addEventListener('click', loadProfile, false);
 
 
 // [START buttoncallback]

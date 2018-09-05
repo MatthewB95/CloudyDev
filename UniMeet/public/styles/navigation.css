@@ -1,10 +1,6 @@
 @charset "UTF-8";
 /* CSS Document */
 
-.nav_profile:hover {
-   cursor: pointer;
-}
-
 .nav_profile_image {
 	display:  block;
 	margin-left: auto;
@@ -12,15 +8,18 @@
 	margin-top: 58px;
 	width: 50%;
 	border-radius: 50%;
+	cursor: pointer;
 }
 
 .nav_profile_title {
-	margin: 32px 0px;
+	padding-top: 26px;
+    margin-bottom: 26px;
 	color: white;
 	text-align: center;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 20px;
+	cursor: pointer;
 }
 
 .nav_separator_Line {
@@ -44,6 +43,7 @@ ul {
 }
 
 li a {
+	margin-left: 2%;
     display: block;
     color: white;
     padding: 8px 10%;
