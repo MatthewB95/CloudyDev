@@ -1,20 +1,21 @@
 @charset "UTF-8";
 /* CSS Document */
 
-<<<<<<< HEAD
 .navigationBar {
     position: fixed;
     width: 100vw;
-    height: 64px;
+    height: 70px;
     background-color: rgba(123, 109, 238, 1);
+    min-width: 0px;
+    margin-top: 0px;
+    -webkit-box-shadow: 0px 1px 1px rgba(164,164,164,1.00);
+    box-shadow: 0px 1px 1px rgba(164,164,164,1.00);
 }
 
 .nav_profile:hover {
    cursor: pointer;
 }
 
-=======
->>>>>>> 8dc05cc827d563b97c41c6edd85ba12aeba65a1f
 .nav_profile_image {
 	display:  block;
 	margin-left: auto;
@@ -40,41 +41,38 @@
 	height: 2px;
 	width: 80%;
 	background-color: white;
-		
 	margin-left: auto;
 	margin-right: auto;
 }
 
 .menuItems {
-    background-color: red;
-    list-style-type: none;
-    margin: 0px 16px;
-/*    padding: 16px;*/
-    text-decoration: none;
+    margin-top: 27px;
+    margin-right: 27px;
+    margin-left: 27px;
+    margin-bottom: 27px;
     font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: normal;
-	font-size: 16px;
+    font-weight: normal;
+    font-size: 13px;
     float: right;
-    height: 100%;
-/*    display: inline;*/
+    color: rgba(255,255,255,1.00);
+    text-decoration: none;
 }
 
-<<<<<<< HEAD
 a {
-     display: inline;
-=======
-li a {
-	margin-left: 2%;
-    display: block;
->>>>>>> 8dc05cc827d563b97c41c6edd85ba12aeba65a1f
-    color: white;
-    height: 100%;
-    padding: 0px 16px;
-    vertical-align: middle;
-    background-color: blue;
+    display: inline;
+    color: rgba(255,255,255,1.00);
     text-decoration: none;
-	transition: 0.5s;
+    margin-left: 12px;
+    margin-top: 12px;
+    margin-right: 12px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
     
+li a {
+    vertical-align: middle;
+    text-decoration: none;
+    transition: 0.5s;
 }
 
 /* Change the link color on hover */
