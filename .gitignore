@@ -1,8 +1,5 @@
 
-<<<<<<< HEAD
-.DS_Store
-=======
 UniMeet/functions/package-lock.json
 UniMeet/functions/package.json
 UniMeet/.firebaserc
->>>>>>> 5f8d4453f3f58abf4be40c63e1f8eeaf48e4b7dc
+UniMeet/firebase-debug
