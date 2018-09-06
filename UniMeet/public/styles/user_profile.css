@@ -171,7 +171,23 @@
     color: #f2b600;
 }
 
+.star-average {
+    direction: rtl;
+    display: inline-block;
+    padding: 0px;
+}
 
+.star-average input[type=radio] {
+    display: none;
+}
 
+.star-average label {
+    color: #bbb;
+    font-size: 18px;
+    padding: 0px;
+}
 
+.star-average input[type=radio]:checked ~ label {
+    color: #f2b600;
+}
 
