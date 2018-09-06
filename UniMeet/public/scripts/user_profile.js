@@ -131,7 +131,8 @@ function getStudent(docRef) {
 				document.getElementById("averageRating").innerHTML = "No ratings yet";
 			}
 			else {
-				document.getElementById("averageRating").innerHTML = "Rating: " + student.averageRating;
+				displayAverageStars(student.averageRating);
+				document.getElementById("averageRating").innerHTML = student.averageRating + " Stars";
 			}
 		}
 	});
@@ -219,7 +220,8 @@ function friendProfile() {
                 	document.getElementById("averageRating").innerHTML = "No ratings yet";
                 }
                 else {
-                	document.getElementById("averageRating").innerHTML = "Rating: " + averageRating;
+                	document.getElementById("averageRating").innerHTML = averageRating + " Stars | " + count + " Ratings";
+                	displayAverageStars(averageRating);
                 }
 
                 updateStudentAverageRating(averageRating);
@@ -260,6 +262,12 @@ function friendProfile() {
 		});
 	}
 
+	// Displays the user's average rating in stars
+  	function displayAverageStars(averageRating) {
+  		var roundedRating = Math.round(averageRating);
+  		document.getElementById(roundedRating).checked = true;
+  	}
+
 	// Uses Firebase functions to submit ratings -- THIS ONE MATT
 	function rateStudent(rating, currentUserID) {
 		var rateStudent = firebase.functions().httpsCallable('rateStudent');
@@ -268,6 +276,6 @@ function friendProfile() {
   			console.log("Firebase Call success");
   		}).catch(function(error) {
   			// Getting the Error details.
-  			console.log("Failed so submit rating.");
+  			console.log("Failed to submit rating.");
   		});
   	}
