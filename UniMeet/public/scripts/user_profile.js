@@ -15,7 +15,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 			var getRating = $(this).val();
 			var rating = parseInt(getRating, 10);
 			if (rating >= 1 && rating <= 5) {
-				rateStudentFirebase(uid, user.uid, rating);	// Back-end Function
+				rateStudentFirebase(user.uid, uid, rating);	// Back-end Function
 				//sendRating(rating, user.uid);	// Front-end Function
 			}
 		});
