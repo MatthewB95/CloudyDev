@@ -8,7 +8,7 @@ body {
 .view_panel {
 	width: 60%;
 	height: 100vh;
-	background-color: rgba(123,109,238,1);
+	background-color: #ff0084;
 	float: left;
 }
 
@@ -80,7 +80,7 @@ body {
 	height: 42px;
 	margin: 0px 15% 16px 15%;
 	border-radius: 21px;
-	background-color: rgba(123,109,238,1);
+	background-color: #ff0084;
 	border: 0px solid transparent;
 	color: white;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -113,7 +113,7 @@ body {
 	margin: 0px 20%;
 	background-color: transparent;
 	border: 0px solid transparent;
-	color: rgba(123,109,238,1);
+	color: #ff0084;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 16px;

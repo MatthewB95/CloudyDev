@@ -22,18 +22,27 @@
 <!-- Icon Library for Stars -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+    
+<header>
+<nav class="navigationBar">
+<img href="/matching.html" alt="logo" class="logoPos" src="images/logo1.png">
+<div class="menuItems"> 
+    <a href="/matching.html">Matches</a> 
+    <a href="/favourites.html">Favourites</a> 
+    <a href="/messaging.html">Messages</a> 
+    <a href="" id="logoutBtn">Logout</a> 
+</div>
+</nav>
+</header>
 
 <body>
-<nav class="navigationBar">
-  <div class="menuItems"> <a href="/matching.html">Recommendations</a> <a href="/matching.html">My Matches</a> <a href="/favourites.html">Favourites</a> <a href="/messaging.html">Messages</a> <a href="" id="logoutBtn">Logout</a> </div>
-</nav>
 <div style="height: 64px"></div>
 <div class="user_profile_main">
   <div class="backgroundColorView"></div>
   <div class="shortcut_container">
-    <button id="messageBtn" class="button primaryColour shortcut_buttons">Message</button>
-    <button id="friendBtn" class="button primaryColour shortcut_buttons">Add Friend</button>
-    <button class="button primaryColour shortcut_buttons">More</button>
+    <button id="messageBtn" class=" button shortcut_buttons">Message</button>
+    <button id="friendBtn" class=" button shortcut_buttons">Favourite</button>
+    <button class="button shortcut_buttons">More</button>
   </div>
   <div class="avatar"> <img id="profilePicture" class="profilePicture"> </div>
 </div>
