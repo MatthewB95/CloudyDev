@@ -33,7 +33,7 @@ body {
 }
 
 .primaryColour {
-	color: #ff0084;
+	color: #40a4c4;
 }
 
 .lightTextColour {
@@ -58,11 +58,11 @@ body {
 
 .purpleBackground {
 	color: white;
-	background-color: #ff0084;
+	background-color: #40a4c4;
 }
 
 .whiteBackground {
-	color: #ff0084;
+	color: #40a4c4;
 	background-color: white;
 }
 

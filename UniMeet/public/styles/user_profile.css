@@ -13,7 +13,7 @@
 .backgroundColorView {
 	width: 100%;
 	height: calc(100% - 128px);
-	background-color: #ff0084;
+	background-color: #40a4c4;
 }
 
 .avatar {
@@ -55,17 +55,17 @@
     border-radius: 0px;
     height: 100%;
     background-color: #FFFFFF;
-    color: #FF0084;
+    color: #40a4c4;
 }
 
 .shortcut_buttons:hover {
     cursor: pointer;
-    border-bottom: medium inset #FF0084;
+    border-bottom: medium inset #40a4c4;
 }
 
 .shortcut_buttons:active {
     cursor: pointer;
-    border-bottom: medium inset #FF0084;
+    border-bottom: medium inset #40a4c4;
 }
 
 
@@ -126,7 +126,7 @@
 
 
 .course_card {
-	background-color: #ff0084;
+	background-color: #40a4c4;
 	border-radius: 16px;
 	width: 100%;
 	-webkit-box-shadow: 0px 0px 32px rgba(0,0,0,0.20);
