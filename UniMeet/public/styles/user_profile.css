@@ -186,3 +186,27 @@
 .star-rating input[type=radio]:checked ~ label {
     color: #f2b600;
 }
+<<<<<<< HEAD
+=======
+
+.star-average {
+    direction: rtl;
+    display: inline-block;
+    padding: 0px;
+}
+
+.star-average input[type=radio] {
+    display: none;
+}
+
+.star-average label {
+    color: #bbb;
+    font-size: 18px;
+    padding: 0px;
+}
+
+.star-average input[type=radio]:checked ~ label {
+    color: #f2b600;
+}
+
+>>>>>>> a546866f46ae97bdcfdfb9dfbd6a03e2ad3a32ea
