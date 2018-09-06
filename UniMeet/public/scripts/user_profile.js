@@ -275,7 +275,14 @@ function friendProfile() {
 		console.log("Target User: " + uid);
 		console.log("Stars: " + rating);
 		ratingInt = parseInt(rating);
-		rateStudent({uid: currentUserID, tuid: uid, stars: ratingInt}).then(function(result) {
+
+		var data = {
+    		uid   : currentUserID,
+    		tuid  : uid,
+    		stars : ratingInt
+		};
+
+		rateStudent(data).then(function(result) {
   			// Read result of the Cloud Function.
   			console.log("FIREBASE: Successfully updated rating.");
   		}).catch(function(error) {
