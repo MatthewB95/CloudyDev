@@ -82,8 +82,8 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
 
   //get uid and google display name of new user
   var uid = user.uid;
-  var displayName = user.displayName;
-  var proImg = user.photoURL;
+  var displayName = user.displayName || null;
+  var proImg = user.photoURL || null;
   var defaultVerNum = 0;
 
   createMatchList(uid, defaultVerNum);
@@ -448,3 +448,49 @@ function calcMatchTotal(usScore, taScore, uniDegPer){
     }
   });
 }
+
+//check if friend is true 
+function isFriend(uid, tuid){
+  return new Promise(function(resolve, reject){
+    try{
+        //creates a reference to the users friend list
+        var friendRef = db.collection('friends').doc(uid);
+        //get users friend list and save to object
+        const friendList = await friendRef.get();
+
+        //is user friend?
+        var isFriend = false;
+
+        if(friendList.exists){
+          //const FList = Object.assign(friendList.data());
+          for(var frKey in friendList){
+            if(friendList.hasOwnProperty(frKey)){
+              if((frKey.localeCompare(tuid) == 0) && (friendList[frKey] >= 4)){
+                isFriend = true;
+                resolve(isFriend);
+              }
+            }
+          }
+          resolve(isFriend);
+        }
+        else{
+          console.log("Failed to retrieve friend list [error]");
+          reject(e);
+        }
+    }
+    catch(e){
+      reject(e);
+    }
+  });
+}
+
+exports.rateStudent = functions.https.onCall(async(uid, tuid, stars) => {
+
+    var isF = await isFriend(uid, tuid);
+    if(isF == true){
+      console.log("Users are friends!");
+    }
+    else {
+      console.log("User's are not friends, therefore rating can not be processed");
+    }
+});
