@@ -87,6 +87,8 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
   var defaultVerNum = 0;
 
   createMatchList(uid, defaultVerNum);
+  createFriendList(uid);
+  createRatingList(uid);
 
   //user profile fields
   var data = {
@@ -136,6 +138,40 @@ function createMatchList(uid, verNum){
 
   //return and log document
   return (setMatchDoc).then(res => {
+    console.log('set: ', res);
+  });
+}
+
+function createFriendList(uid){
+  //friend list fields
+  var fData = {
+
+  }
+  //database path to current users friend list
+  var userFriendDoc = db.collection('friends').doc(uid);
+
+  //add student friend list doc into friends collection
+  var setFriendDoc = userFriendDoc.set(fData);
+
+  //return and log doc
+  return (setFriendDoc).then(res => {
+    console.log('set: ', res);
+  });
+}
+
+function createRatingList(uid){
+  //rating list fields
+  var rData = {
+
+  }
+  //database path to current users rating list
+  var userRatingDoc = db.collection('ratings').doc(uid);
+
+  //add student rating list doc into ratings collection
+  var setRatingDoc = userRatingDoc.set(rData);
+
+  //return and log doc
+  return (setRatingDoc).then(res => {
     console.log('set: ', res);
   });
 }
@@ -451,8 +487,8 @@ function calcMatchTotal(usScore, taScore, uniDegPer){
 
 //check if friend is true 
 function isFriend(uid, tuid){
-  return new Promise(function(resolve, reject){
-    try{
+  return new Promise(async function(resolve, reject){
+    try {
         //creates a reference to the users friend list
         var friendRef = db.collection('friends').doc(uid);
         //get users friend list and save to object
@@ -486,11 +522,84 @@ function isFriend(uid, tuid){
 
 exports.rateStudent = functions.https.onCall(async(uid, tuid, stars) => {
 
+  if(stars >= 1 && stars <= 5){
     var isF = await isFriend(uid, tuid);
     if(isF == true){
-      console.log("Users are friends!");
+      console.log("User is able to rate!");
+      await addRating(stars, tuid, uid);
     }
     else {
-      console.log("User's are not friends, therefore rating can not be processed");
+      console.log("User can not rate this student as they have no link between them");
     }
+  }
+  else{
+    console.log("ERROR: rating sent from client has incorrect format");
+  }
 });
+// 0 = never been friends
+// 1 = request sent
+// 2 = request rejected
+// 3 = blocked
+// 4 = friends
+// 5 = unfriended
+
+function addRating(rating, tuid, uid){
+  //reference to the student being rateds (rating list)  
+  var ratingListRef = db.collection('ratings').doc(tuid);
+
+  //rating data to submit
+  var ratingData = {
+    [uid]: rating,
+  }
+  //updates data to given firestore path
+  ratingListRef.update(ratingData).then(function() {
+    calcAvgRating(tuid, ratingListRef);
+  }).catch(function (error) {
+    console.log("ERROR: Rating Update error: ", error);
+  });
+
+  //return and log both writes to Firestore Database
+  // return (setRatingDoc).then(res => {
+  //     console.log('set: ', res);
+  // });
+}
+
+function calcAvgRating(tuid, ratingListRef){
+  ratingListRef.get().then(function (doc) {
+    if(doc && doc.exists){
+      const ratingList = doc.data();
+      var total = 0;
+      var count = 0;
+      var result = null;
+
+      //Calculate Average Rating
+      for (var rkey in ratingList){
+        total = total + ratingList[rkey];
+        count + 1;
+      }
+
+      //convert avg rating to 1 decimal place
+      avgRating = Math.round((total / count) * 10) / 10;
+
+      if(avgRating != 0 || avgRating != null){
+        result = avgRating;
+        //return the rating to client
+        saveAvgRating(tuid, result);
+      }
+    }
+  }).catch(function (error) {
+    console.log("Failed to retrieve ratings: ", error)
+  });
+}
+
+function saveAvgRating(uid, avgRating){
+  var studentRef = db.document('student').doc(uid)
+  var srData = {
+    averageRating: avgRating,
+  }
+  studentRef.update(srData).then(function() {
+    console.log("Successfully Updated Rating");
+  }).catch(function (error) {
+    console.log("ERROR: Rating update error: ", error);
+  });
+}
