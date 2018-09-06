@@ -276,7 +276,7 @@ function friendProfile() {
 		console.log("Stars: " + rating);
 		ratingInt = parseInt(rating);
 
-		var data = {
+		const data = {
     		uid   : currentUserID,
     		tuid  : uid,
     		stars : ratingInt
