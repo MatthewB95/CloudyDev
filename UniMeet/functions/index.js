@@ -92,6 +92,7 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
   var data = {
     uid: uid,
     name: displayName,
+    age: null,
     gender: "M/F",
     university: null,
     current_degree: null,
@@ -105,9 +106,10 @@ exports.createStudentProfile = functions.auth.user().onCreate((user) => {
     interest_2: null,
     interest_3: null,
     interest_4: null,
-    averageRating: "No ratings yet", //store how many votes and total stars and then calculate client side
+    averageRating: 0, //store how many votes and total stars and then calculate client side
     gender_interest: "M/F",
     profile_image: proImg,
+    bio: null,
     uniYear: null,
   };
  
@@ -189,7 +191,7 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const interest_2 = newValue.interest_2;
     const interest_3 = newValue.interest_3;
     const interest_4 = newValue.interest_4;
-    const team_rating = newValue.team_rating;
+    const averageRating = newValue.averageRating;
     const gender_interest = newValue.gender_interest;
 
     //access particular fields from old object (oldValue)
@@ -207,7 +209,7 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const oldInterest_2 = oldValue.interest_2;
     const oldInterest_3 = oldValue.interest_3;
     const oldInterest_4 = oldValue.interest_4;
-    const oldTeam_rating = oldValue.team_rating;
+    const oldAverageRating = oldValue.averageRating;
     const oldGender_interest = oldValue.gender_interest;
 
     const getInterestCount = 'interest_';
@@ -217,7 +219,7 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const uniDegreePercent = 10;
     const coursePercent = 60;
     const interestPercent = 10;
-    const team_ratingPercent = 20;
+    const averageRatingPercent = 20;
     //How many stars are used in rating system:
     const numStars = 5;
 
@@ -328,11 +330,11 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                         }
                       }
                       //do user rating part here (likely another if statement)
-                      if(team_rating != 0 || tarUserProfile.team_rating != 0)
+                      if(averageRating != 0 || tarUserProfile.averageRating != 0)
                       {
-                        var ratingPoints = (team_ratingPercent / numStars);
-                        var uRatingScore = (team_rating * ratingPoints);
-                        var tRatingScore = (tarUserProfile.team_rating * ratingPoints);
+                        var ratingPoints = (averageRatingPercent / numStars);
+                        var uRatingScore = (averageRating * ratingPoints);
+                        var tRatingScore = (tarUserProfile.averageRating * ratingPoints);
 
                         uScore = uScore + tRatingScore;
                         tScore = tScore + uRatingScore;
