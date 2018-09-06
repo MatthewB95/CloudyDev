@@ -8,7 +8,7 @@ body {
 .view_panel {
 	width: 60%;
 	height: 100vh;
-	background-color: #ff0084;
+	background-color: #1EA1F2;
 	float: left;
 }
 
@@ -80,7 +80,7 @@ body {
 	height: 42px;
 	margin: 0px 15% 16px 15%;
 	border-radius: 21px;
-	background-color: #ff0084;
+	background-color: #1EA1F2;
 	border: 0px solid transparent;
 	color: white;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -90,13 +90,13 @@ body {
 
 .form_login_btn:hover {
 	cursor: pointer;
-	background-color: rgb(118, 102, 237, 1);
+	background-color: rgba(118, 102, 237, 1);
 }
 
 .form_login_btn:active {
 	background:#eb3b60;
 	transform:translateY(1px);
-	background-color: rgb(112, 95, 236, 1);
+	background-color: rgba(112, 95, 236, 1);
 }
 
 .form_login_google_btn:hover {
@@ -113,7 +113,7 @@ body {
 	margin: 0px 20%;
 	background-color: transparent;
 	border: 0px solid transparent;
-	color: #ff0084;
+	color: #1EA1F2;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 16px;

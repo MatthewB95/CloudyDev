@@ -7,13 +7,13 @@
 /*	background-color: white;*/
 	position: relative;
 	margin-bottom: 32px;
-	/*rgba(123,109,238,1);*/
+	/*#1EA1F2;*/
 }
 
 .backgroundColorView {
 	width: 100%;
 	height: calc(100% - 128px);
-	background-color: #40a4c4;
+	background-color: #1EA1F2;
 }
 
 .avatar {
@@ -55,17 +55,17 @@
     border-radius: 0px;
     height: 100%;
     background-color: #FFFFFF;
-    color: #40a4c4;
+    color: #1EA1F2;
 }
 
 .shortcut_buttons:hover {
     cursor: pointer;
-    border-bottom: medium inset #40a4c4;
+    border-bottom: medium inset #1EA1F2;
 }
 
 .shortcut_buttons:active {
     cursor: pointer;
-    border-bottom: medium inset #40a4c4;
+    border-bottom: medium inset #1EA1F2;
 }
 
 
@@ -126,7 +126,7 @@
 
 
 .course_card {
-	background-color: #40a4c4;
+	background-color: #1EA1F2;
 	border-radius: 16px;
 	width: 100%;
 	-webkit-box-shadow: 0px 0px 32px rgba(0,0,0,0.20);
