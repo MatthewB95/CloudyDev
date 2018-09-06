@@ -7,8 +7,6 @@ firestore.settings(settings);
 var uid = window.localStorage.getItem("selectedProfileID");
 
 
-
-
 firebase.auth().onAuthStateChanged(function (user) {
 	if (user) {
 		loadProfile();
@@ -17,7 +15,8 @@ firebase.auth().onAuthStateChanged(function (user) {
 			var getRating = $(this).val();
 			var rating = parseInt(getRating, 10);
 			if (rating >= 1 && rating <= 5) {
-				sendRating(rating, user.uid);
+				rateStudent(rating, user.uid);	// Back-end Function
+				sendRating(rating, user.uid);	// Front-end Function
 			}
 		});
 
@@ -202,9 +201,9 @@ function friendProfile() {
 	function calculateAverageRating() {
 		var averageRating = 0;
 
-        firestore.doc("ratings/" + uid).get().then(function (doc) {
-            if (doc && doc.exists) {
-                const ratings = doc.data();
+		firestore.doc("ratings/" + uid).get().then(function (doc) {
+			if (doc && doc.exists) {
+				const ratings = doc.data();
 
                 // Calculate average
                 var sum = 0;
@@ -217,18 +216,18 @@ function friendProfile() {
                 averageRating = Math.round( (sum/count) * 10) / 10;
 
                 if (averageRating == 0 || averageRating == null) {
-					document.getElementById("averageRating").innerHTML = "No ratings yet";
-				}
-				else {
-					document.getElementById("averageRating").innerHTML = "Rating: " + averageRating;
-				}
+                	document.getElementById("averageRating").innerHTML = "No ratings yet";
+                }
+                else {
+                	document.getElementById("averageRating").innerHTML = "Rating: " + averageRating;
+                }
 
                 updateStudentAverageRating(averageRating);
             }
         }).catch(function (error) {
-            console.log("Failed to retrieve ratings: ", error)
+        	console.log("Failed to retrieve ratings: ", error)
         });
-	}
+    }
 
 	// Updates rating for a user in database
 	function sendRating(rating, currentUserID) {
@@ -239,9 +238,9 @@ function friendProfile() {
 		}
 
 		console.log("Rating " + document.title + ": " + rating);
-		firestore.doc("ratings/" + uid).set({
+		firestore.doc("ratings/" + uid).update({
 			[currentUserID]: rating,
-		},{merge: true}
+		}
 		).then(function() {
 			calculateAverageRating();
 		}).catch(function (error) {
@@ -251,12 +250,24 @@ function friendProfile() {
 
 	// Update the student's average rating
 	function updateStudentAverageRating(averageRating) {
-		firestore.doc("student/" + uid).set({
+		firestore.doc("student/" + uid).update({
 			averageRating: averageRating,
-		},{merge: true}
+		}
 		).then(function() {
 			console.log("Successfully Updated Rating.");
 		}).catch(function (error) {
 			console.log("Rating Update Error: ", error);
 		});
 	}
+
+	// Uses Firebase functions to submit ratings -- THIS ONE MATT
+	function rateStudent(rating, currentUserID) {
+		var rateStudent = firebase.functions().httpsCallable('rateStudent');
+		rateStudent(currentUserID, uid, rating).then(function(result) {
+  			// Read result of the Cloud Function.
+  			console.log("Firebase Call success");
+  		}).catch(function(error) {
+  			// Getting the Error details.
+  			console.log("Failed so submit rating.");
+  		});
+  	}
