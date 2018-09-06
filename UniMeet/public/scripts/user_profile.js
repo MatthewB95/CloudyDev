@@ -275,11 +275,14 @@ function friendProfile() {
 		console.log("Target User: " + uid);
 		console.log("Stars: " + rating);
 		ratingInt = parseInt(rating);
-		rateStudent(currentUserID, uid, ratingInt).then(function(result) {
+		rateStudent({uid: currentUserID, tuid: uid, stars: ratingInt}).then(function(result) {
   			// Read result of the Cloud Function.
   			console.log("FIREBASE: Successfully updated rating.");
   		}).catch(function(error) {
-  			// Getting the Error details.
-  			console.log("FIREBASE: Failed to update rating.");
+  			var code = error.code;
+  			var message = error.message;
+  			var details = error.details;
+  			// ...
+  			console.error("FIREBASE: Failed to update rating.", error);
   		});
   	}
