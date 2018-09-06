@@ -15,8 +15,8 @@ firebase.auth().onAuthStateChanged(function (user) {
 			var getRating = $(this).val();
 			var rating = parseInt(getRating, 10);
 			if (rating >= 1 && rating <= 5) {
-				rateStudent(rating, user.uid);	// Back-end Function
-				sendRating(rating, user.uid);	// Front-end Function
+				rateStudentFirebase(uid, user.uid, rating);	// Back-end Function
+				//sendRating(rating, user.uid);	// Front-end Function
 			}
 		});
 
@@ -269,13 +269,17 @@ function friendProfile() {
   	}
 
 	// Uses Firebase functions to submit ratings -- THIS ONE MATT
-	function rateStudent(rating, currentUserID) {
+	function rateStudentFirebase(currentUserID, uid, rating) {
 		var rateStudent = firebase.functions().httpsCallable('rateStudent');
-		rateStudent(currentUserID, uid, rating).then(function(result) {
+		console.log("Current User: " + currentUserID);
+		console.log("Target User: " + uid);
+		console.log("Stars: " + rating);
+		ratingInt = parseInt(rating);
+		rateStudent(currentUserID, uid, ratingInt).then(function(result) {
   			// Read result of the Cloud Function.
-  			console.log("Firebase Call success");
+  			console.log("FIREBASE: Successfully updated rating.");
   		}).catch(function(error) {
   			// Getting the Error details.
-  			console.log("Failed to submit rating.");
+  			console.log("FIREBASE: Failed to update rating.");
   		});
   	}
