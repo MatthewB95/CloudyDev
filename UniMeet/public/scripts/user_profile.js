@@ -132,7 +132,7 @@ function getStudent(docRef) {
 				document.getElementById("averageRating").innerHTML = "No ratings yet";
 			}
 			else {
-				document.getElementById("averageRating").innerHTML = student.averageRating;
+				document.getElementById("averageRating").innerHTML = "Rating: " + student.averageRating;
 			}
 		}
 	});
@@ -224,7 +224,7 @@ function friendProfile() {
 					document.getElementById("averageRating").innerHTML = "No ratings yet";
 				}
 				else {
-					document.getElementById("averageRating").innerHTML = averageRating;
+					document.getElementById("averageRating").innerHTML = "Rating: " + averageRating;
 				}
 
                 updateStudentAverageRating(averageRating);

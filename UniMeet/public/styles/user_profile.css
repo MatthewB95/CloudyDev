@@ -2,66 +2,75 @@
 /* CSS Document */
 
 .user_profile_main {
-	position: fixed;
-	width: 30%;
-	height: 100vh;
-	background-color: rgba(123,109,238,1);
-	float: left;
-}
-.user_profile_detail {
+	width: 100vw;
+	height: 328px;
+/*	background-color: white;*/
 	position: relative;
-	width: 70%;
-	height: 100vh;
-	background-color: white;
-	float: right;
+	margin-bottom: 32px;
+	/*rgba(123,109,238,1);*/
 }
-.profile_view {
-	text-align: center;
+
+.backgroundColorView {
+	width: 100%;
+	height: calc(100% - 128px);
+	background-color: rgba(123,109,238,1);
+}
+
+.avatar {
 	position: absolute;
-	width: 70%;
-	margin: 0px 15%;
-	top: 50%;
-	transform: translateY(-50%);
+/*	background: url(/../images/purple_profile_placeholder.png);*/
+	background-position: 50% 50%;
+	height: 200px;
+	width: 200px;
+	background-size: cover;
+	border-radius: 32px;
+	left: 10vw;
+	bottom: 0px;
+	background-color: white;
+	border: 5px solid #F9F9F9;
+	overflow: hidden;
 }
 
-.avatar-bg {
-  background: url(/../images/white_profile_placeholder.png);
-  background-position: 50% 50%;
-  height: 200px;
-  width: 200px;
-  background-size: cover;
-  border-radius: 50%;
-/*  margin-left: calc(50% - 100px);*/
+.profilePicture {
+	height: 100%;
+	width: 100%;
 }
 
-.profile_largeTitle {
-	color: white;
-	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: bold;
-	font-size: 24px;
-	text-align: center;
-	padding: 16px 0px 4px 0px;
-}	
-
-.profile_mediumTitle {
-	color: rgba(255,255,255,0.75);
-	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: normal;
-	font-size: 20px;
-	text-align: center;
-}
-
-.profile_smallTitle {
-	color: rgba(255,255,255,0.75);
-	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: normal;
-	font-size: 16px;
-	text-align: center;
-}
 
 .shortcut_container {
-	margin: 0px auto;
-	padding: 16px 16px;
+	width: 100%;
+	height: 64px;
+	padding: 0px 16px;
+	padding-left: calc(10vw + 186px + 6vw);
+	background-color: white;
+	vertical-align: middle;
+	float: right;
+}
+
+.shortcut_buttons {
+	margin: 16px 8px;
+	padding: 0px 2px;
+}
+
+
+
+
+.mainView {
+	margin: 0px 10%;
+	margin-top: -64px;
+}
+
+
+
+.bioView {
+	width: 200px;
+	float: left;
+}
+
+.infoView {
+	width: calc(100% - (200px + 6vw));
+	margin-left: 6vw;
+	float: right;
 }
 
 
@@ -70,10 +79,29 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 .main_view {
 	width: 80%;
 	margin: 0px 10%;
 }
+*/
 
 .enrolledCoursesCollectionView {
 	position: relative;
@@ -121,7 +149,7 @@
 .star-rating {
     direction: rtl;
     display: inline-block;
-    padding: 4px
+    padding: 0px;
 }
 
 .star-rating input[type=radio] {
@@ -131,7 +159,7 @@
 .star-rating label {
     color: #bbb;
     font-size: 18px;
-    padding: 0;
+    padding: 0px;
     cursor: pointer;
     -webkit-transition: all .3s ease-in-out;
     transition: all .3s ease-in-out;

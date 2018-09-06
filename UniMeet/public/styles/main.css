@@ -4,6 +4,7 @@
 body {
 	margin: 0px;
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	background-color: #e6e6e6;
 }
 
 .subHeader {
@@ -15,6 +16,11 @@ body {
 .largeBodyText {
 	font-weight: normal;
 	font-size: 20px;
+}
+
+.smallText {
+	font-weight: normal;
+	font-size: 14px;
 }
 
 .bodyText {
@@ -35,8 +41,8 @@ body {
 }
 
 .button {
-	height: 42px;
-	margin: 8px;
+	height: 36px;
+	margin: 16px 8px;
 	padding: 0px 16px;
 	border-radius: 21px;
 	border: 0px solid transparent;

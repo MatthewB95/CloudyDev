@@ -1,85 +1,82 @@
 <!doctype html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<title>User Profile</title>
+<meta charset="UTF-8">
+<title>User Profile</title>
 
-	<!-- FIREBASE -->
-	<script src="/__/firebase/5.4.0/firebase-app.js"></script>
-	<script src="/__/firebase/5.4.0/firebase-auth.js"></script>
-	<script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
-	<script src="/__/firebase/init.js"></script>
-	<!-- FIREBASE -->
+<!-- FIREBASE -->
+<script src="/__/firebase/5.4.0/firebase-app.js"></script>
+<script src="/__/firebase/5.4.0/firebase-auth.js"></script>
+<script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
+<script src="/__/firebase/init.js"></script>
+<!-- FIREBASE -->
 
-    <script src="scripts/jquery.min.js"></script>
-	<script src="scripts/user_profile.js"></script>
-	<link href="css/bootstrap-4.0.0.css" rel="stylesheet">
-	<link rel="stylesheet" href="styles/main.css">
-	<link rel="stylesheet" href="styles/user_profile.css">
-	<!-- Icon Library for Stars -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/user_profile.js"></script>
+<link href="css/bootstrap-4.0.0.css" rel="stylesheet">
+<link rel="stylesheet" href="styles/main.css">
+<link rel="stylesheet" href="styles/navigation.css">
+<link rel="stylesheet" href="styles/user_profile.css">
+<!-- Icon Library for Stars -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
-	<div class="user_profile_main">
-		<div class="profile_view">
-			<div class="avatar"> <img id="profilePicture" class="avatar-bg center"> </div>
-			<h1 id="profileNameLabel" class="profile_largeTitle"></h1>
-			<h2 id="universityOutput" class="profile_smallTitle">Bachelor of Information Technology</h2>
-
-			<div class="shortcut_container">
-				<button id="messageBtn" class="button equalWidths whiteBackground">Message</button>
-				<button id="friendBtn" class="button equalWidths whiteBackground">Add Friend</button>
-				<button class="button equalWidths whiteBackground">More</button>
-			</div>
-		</div>
-	</div>
-	<div class="user_profile_detail">
-		<div class="main_view">
-			<h2 class="subHeader">About</h2>
-			<h5 id="bioLabel" class="bodyText"></h5>
-			<br>
-			<h3 id="ageLabel" class="bodyText lightTextColour">Age:</h3>
-			<h3 id="uniLabel" class="bodyText lightTextColour">University:</h3>
-			<h3 id="yearLabel" class="bodyText lightTextColour">Year:</h3>
-			<h2 class="subHeader">Enrolled Courses</h2>
-			<div id="enrolledCoursesCollectionView" class="row"></div>
-			<h2 class="subHeader">Contact</h2>
-			<h3 class="table_title primaryColour">Student Email</h3>
-			<h3 id="studentEmail" class="bodyText">--</h3>
-			<br>
-			<h3 class="table_title primaryColour">Personal Email</h3>
-			<h3 id="personalEmail" class="bodyText">--</h3>
-			<br>
-			<h3 class="table_title primaryColour">Mobile</h3>
-			<h3 id="mobile" class="bodyText">--</h3>
-
-			<h2 class="subHeader">Rate</h2>
-			<h3 class="table_title primaryColour">Average Rating:</h3>
-			<h3 id="averageRating" class="table_title primaryColour"></h3>
-			<div class="star-rating">
-			<input id="star-5" type="radio" name="rating" value=5>
-				<label for="star-5" title="5 stars">
-					<i class="active fa fa-star" aria-hidden="true"></i>
-				</label>
-				<input id="star-4" type="radio" name="rating" value=4>
-				<label for="star-4" title="4 stars">
-					<i class="active fa fa-star" aria-hidden="true"></i>
-				</label>
-				<input id="star-3" type="radio" name="rating" value=3>
-				<label for="star-3" title="3 stars">
-					<i class="active fa fa-star" aria-hidden="true"></i>
-				</label>
-				<input id="star-2" type="radio" name="rating" value=2>
-				<label for="star-2" title="2 stars">
-					<i class="active fa fa-star" aria-hidden="true"></i>
-				</label>
-				<input id="star-1" type="radio" name="rating" value=1>
-				<label for="star-1" title="1 star">
-					<i class="active fa fa-star" aria-hidden="true"></i>
-				</label>
-			</div>
-		</div>
-	</div>
+<nav class="navigationBar">
+  <div class="menuItems"> <a href="/matching.html">Recommendations</a> <a href="/matching.html">My Matches</a> <a href="/favourites.html">Favourites</a> <a href="/messaging.html">Messages</a> <a href="" id="logoutBtn">Logout</a> </div>
+</nav>
+<div style="height: 64px"></div>
+<div class="user_profile_main">
+  <div class="backgroundColorView"></div>
+  <div class="shortcut_container">
+    <button id="messageBtn" class="button primaryColour shortcut_buttons">Message</button>
+    <button id="friendBtn" class="button primaryColour shortcut_buttons">Add Friend</button>
+    <button class="button primaryColour shortcut_buttons">More</button>
+  </div>
+  <div class="avatar"> <img id="profilePicture" class="profilePicture"> </div>
+</div>
+<div class="mainView">
+  <section class="bioView">
+    <h1 id="profileNameLabel" class="subHeader">Rating: </h1>
+    <h5 id="bioLabel" class="smallText"></h5>
+    <br>
+    <h3 id="averageRating" class="table_title primaryColour"></h3>
+    <div class="star-rating">
+      <input id="star-5" type="radio" name="rating" value=5>
+      <label for="star-5" title="5 stars"> <i class="active fa fa-star" aria-hidden="true"></i> </label>
+      <input id="star-4" type="radio" name="rating" value=4>
+      <label for="star-4" title="4 stars"> <i class="active fa fa-star" aria-hidden="true"></i> </label>
+      <input id="star-3" type="radio" name="rating" value=3>
+      <label for="star-3" title="3 stars"> <i class="active fa fa-star" aria-hidden="true"></i> </label>
+      <input id="star-2" type="radio" name="rating" value=2>
+      <label for="star-2" title="2 stars"> <i class="active fa fa-star" aria-hidden="true"></i> </label>
+      <input id="star-1" type="radio" name="rating" value=1>
+      <label for="star-1" title="1 star"> <i class="active fa fa-star" aria-hidden="true"></i> </label>
+    </div>
+	  <br>
+	  <br>
+	<h3 class="table_title primaryColour">About</h3>
+    <h3 id="ageLabel" class="smallText lightTextColour">Age:</h3>
+    <h3 id="uniLabel" class="smallText lightTextColour">University:</h3>
+    <h3 id="yearLabel" class="smallText lightTextColour">Year:</h3>
+	<br>
+	<h3 class="table_title primaryColour">Interests</h3>
+	  
+  </section>
+  <section class="infoView">
+    <h2 class="subHeader">Enrolled Courses</h2>
+    <div id="enrolledCoursesCollectionView" class="row"></div>
+    <h2 class="subHeader">Contact</h2>
+    <h3 class="table_title primaryColour">Student Email</h3>
+    <h3 id="studentEmail" class="bodyText">--</h3>
+    <br>
+    <h3 class="table_title primaryColour">Personal Email</h3>
+    <h3 id="personalEmail" class="bodyText">--</h3>
+    <br>
+    <h3 class="table_title primaryColour">Mobile</h3>
+    <h3 id="mobile" class="bodyText">--</h3>
+    <h2 class="subHeader">Rate</h2>
+  </section>
+</div>
 </body>
 </html>

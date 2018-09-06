@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-    <script src="http://www.w3schools.com/lib/w3data.js"></script>
- <script>
-    w3IncludeHTML();
- </script>
+
 <head>
+	
+
+	
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -17,18 +17,35 @@
   <!-- FIREBASE -->
 
   <title>uniMeet</title>
+	
+	<script src="scripts/main.js"></script>
 
   <!-- Bootstrap -->
   <link href="css/bootstrap-4.0.0.css" rel="stylesheet">
   <link href="styles/navigation.css" rel="stylesheet">
   <link href="styles/matching.css" rel="stylesheet">
 
-    
 </head>
 
 <body>
+	
+<!--<div w3-include-html="navigation"></div>-->
+	
+<!--	<div id="include_once"></div>-->
+	
+	<nav class="navigationBar">
+  <div class="menuItems">
+      <a href="/matching.html">Recommendations</a>
+    <a href="/matching.html">My Matches</a>
+    <a href="/favourites.html">Favourites</a>
+    <a href="/messaging.html">Messages</a>
+    <a href="" id="logoutBtn">Logout</a>
+  </div>
+</nav>
+	
+	<div style="height: 64px"></div>
         
-<div w3-include-html="navigation.html"></div>
+
     
 <!--<nav class="navbar navbar-expand-lg navbar-light bg-light"> <a class="navbar-brand" href="#">Navbar</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
@@ -50,6 +67,7 @@
   </div>
 </nav>-->
 
+<!--
 <nav class="navBar">
   <div id="navProfileBtn" class="nav_profile">
     <img id="nav_profile_image" class="nav_profile_image" src="images/white_profile_placeholder.png" alt="Profile Image"/>
@@ -63,6 +81,7 @@
     <li><a href="" id="logoutBtn">Log Out</a></li>
   </ul>
 </nav>
+-->
 <section class="mainView">
   <section>
     <div class="container">
@@ -76,6 +95,7 @@
     <div class="container">
       <div id="matchedCollectionView" class="row" style="display: none"> 
       </div>
+		</div>
       <footer>
         <p>Copyright ©2018 Cloudy Dev. All rights reserved.</p>
       </footer>
@@ -87,5 +107,6 @@
       <script src="scripts/matching.js"></script> 
       <script src="scripts/navigation.js"></script>
     </section>
+	</section>
   </body>
   </html>
