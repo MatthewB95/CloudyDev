@@ -521,20 +521,22 @@ function isFriend(uid, tuid){
 }
 
 exports.rateStudent = functions.https.onCall(async(uid, tuid, stars) => {
-
-  if(stars >= 1 && stars <= 5){
-    var isF = await isFriend(uid, tuid);
-    if(isF == true){
-      console.log("User is able to rate!");
-      await addRating(stars, tuid, uid);
+  //check user is authenticated:
+    if(stars >= 1 && stars <= 5){
+      var isF = await isFriend(uid, tuid);
+      if(isF == true){
+        console.log("User is able to rate!");
+        await addRating(stars, tuid, uid);
+      }
+      else {
+        console.log("User can not rate this student as they have no link between them");
+        throw new functions.https.HttpsError('permission-denied', 'User can only rate students they have been friends with');
+      }
     }
-    else {
-      console.log("User can not rate this student as they have no link between them");
+    else{
+      console.log("ERROR: rating sent from client has incorrect format");
+      throw new functions.https.HttpsError('invalid-argument', 'ERROR: rating sent from client has incorrect format')
     }
-  }
-  else{
-    console.log("ERROR: rating sent from client has incorrect format");
-  }
 });
 // 0 = never been friends
 // 1 = request sent
@@ -565,7 +567,7 @@ function addRating(rating, tuid, uid){
 }
 
 function calcAvgRating(tuid, ratingListRef){
-  ratingListRef.get().then(function (doc) {
+  ratingListRef.get().then(async function (doc) {
     if(doc && doc.exists){
       const ratingList = doc.data();
       var total = 0;
@@ -584,7 +586,8 @@ function calcAvgRating(tuid, ratingListRef){
       if(avgRating != 0 || avgRating != null){
         result = avgRating;
         //return the rating to client
-        saveAvgRating(tuid, result);
+        await saveAvgRating(tuid, result);
+        return result;
       }
     }
   }).catch(function (error) {
@@ -601,5 +604,6 @@ function saveAvgRating(uid, avgRating){
     console.log("Successfully Updated Rating");
   }).catch(function (error) {
     console.log("ERROR: Rating update error: ", error);
+    throw new functions.https.HttpsError('aborted', 'ERROR: Rating update error: ', error)
   });
 }
