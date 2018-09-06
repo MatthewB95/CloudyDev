@@ -493,17 +493,19 @@ function isFriend(uid, tuid){
         var friendRef = db.collection('friends').doc(uid);
         //get users friend list and save to object
         const friendList = await friendRef.get();
-
+        var FriendLt = Object.assign(friendList.data()); 
         //is user friend?
         var isFriend = false;
 
         if(friendList.exists){
           //const FList = Object.assign(friendList.data());
-          for(var frKey in friendList){
-            if(friendList.hasOwnProperty(frKey)){
-              if((frKey.localeCompare(tuid) == 0) && (friendList[frKey] >= 4)){
-                isFriend = true;
-                resolve(isFriend);
+          for(var frKey in FriendLt){
+            if(FriendLt.hasOwnProperty(frKey)){
+              if(FriendLt[frKey] != null){
+                if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] >= 4)){
+                  isFriend = true;
+                  resolve(isFriend);
+                }
               }
             }
           }
@@ -520,13 +522,20 @@ function isFriend(uid, tuid){
   });
 }
 
-exports.rateStudent = functions.https.onCall(async(uid, tuid, stars) => {
+exports.rateStudent = functions.https.onCall(async(data) => {
+  var uid = data.uid;
+  var tuid = data.tuid;
+  var stars = data.stars;
+
+  //reference to the student being rateds (rating list)  
+  var ratingListRef = db.collection('ratings').doc(tuid);
+
   //check user is authenticated:
     if(stars >= 1 && stars <= 5){
       var isF = await isFriend(uid, tuid);
       if(isF == true){
-        console.log("User is able to rate!");
-        await addRating(stars, tuid, uid);
+        await addRating(stars, uid, ratingListRef);
+        await calcAvgRating(tuid, ratingListRef);
       }
       else {
         console.log("User can not rate this student as they have no link between them");
@@ -545,65 +554,76 @@ exports.rateStudent = functions.https.onCall(async(uid, tuid, stars) => {
 // 4 = friends
 // 5 = unfriended
 
-function addRating(rating, tuid, uid){
-  //reference to the student being rateds (rating list)  
-  var ratingListRef = db.collection('ratings').doc(tuid);
-
-  //rating data to submit
-  var ratingData = {
-    [uid]: rating,
-  }
-  //updates data to given firestore path
-  ratingListRef.update(ratingData).then(function() {
-    calcAvgRating(tuid, ratingListRef);
-  }).catch(function (error) {
-    console.log("ERROR: Rating Update error: ", error);
+function addRating(rating, uid, ratingListRef){
+  return new Promise(async function(resolve, reject) {
+    try{
+      //rating data to submit
+      var ratingData = {
+        [uid]: rating,
+      }
+      //updates data to given firestore path
+      var result = await ratingListRef.update(ratingData);
+      resolve(result);
+    }
+    catch(e){
+      reject(e);
+    }
   });
-
-  //return and log both writes to Firestore Database
-  // return (setRatingDoc).then(res => {
-  //     console.log('set: ', res);
-  // });
 }
 
 function calcAvgRating(tuid, ratingListRef){
-  ratingListRef.get().then(async function (doc) {
-    if(doc && doc.exists){
-      const ratingList = doc.data();
-      var total = 0;
-      var count = 0;
-      var result = null;
+  return new Promise(async function(resolve, reject) {
+    try{
+      var doc = await ratingListRef.get();  
+      if(doc != null){
+        var ratingList = Object.assign(doc.data());
+        var total = 0;
+        var count = 0;
+        var result = null;
+        var avgRating = 0;
 
-      //Calculate Average Rating
-      for (var rkey in ratingList){
-        total = total + ratingList[rkey];
-        count + 1;
-      }
-
-      //convert avg rating to 1 decimal place
-      avgRating = Math.round((total / count) * 10) / 10;
-
-      if(avgRating != 0 || avgRating != null){
-        result = avgRating;
-        //return the rating to client
-        await saveAvgRating(tuid, result);
-        return result;
+        //Calculate Average Rating
+        for (var rkey in ratingList){
+          total = total + ratingList[rkey];
+          count ++;
+        }
+  
+        //convert avg rating to 1 decimal place
+        if(total != 0 && count != 0){
+          avgRating = Math.round((total / count) * 10) / 10;
+        }
+  
+        if(avgRating != 0){
+          result = avgRating;
+          await saveAvgRating(tuid, result);
+          resolve(result);
+        }
+      }else{
+        console.log('Failed to retrieve rating list document to calculate average rating');
       }
     }
-  }).catch(function (error) {
-    console.log("Failed to retrieve ratings: ", error)
+    catch(e){
+      reject(e);
+    }
   });
 }
 
 function saveAvgRating(uid, avgRating){
-  var studentRef = db.document('student').doc(uid)
-  var srData = {
-    averageRating: avgRating,
-  }
-  studentRef.update(srData).then(function() {
-    console.log("Successfully Updated Rating");
-  }).catch(function (error) {
-    console.log("ERROR: Rating update error: ", error);
-    throw new functions.https.HttpsError('aborted', 'ERROR: Rating update error: ', error)
+  return new Promise(function(resolve, reject) {
+    try{
+      var studentRef = db.collection('student').doc(uid);
+      var srData = {
+        averageRating: avgRating,
+      }
+      studentRef.update(srData).then(function() {
+        resolve(console.log("Successfully Updated Rating"));
+      }).catch(function (error) {
+        reject(console.log("ERROR: Rating update error: ", error));
+        throw new functions.https.HttpsError('aborted', 'ERROR: Rating update error: ', error);
+      });
+    }
+    catch(e){
+      reject(e);
+    }
   });
 }
