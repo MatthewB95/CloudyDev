@@ -201,7 +201,6 @@ function friendProfile() {
 	// Get and calculate the average rating for a user
 	function calculateAverageRating() {
 		var averageRating = 0;
-		var roundedRating = 0;
 
         firestore.doc("ratings/" + uid).get().then(function (doc) {
             if (doc && doc.exists) {
@@ -214,11 +213,8 @@ function friendProfile() {
                 	sum+= ratings[key];
                 	count++;
                 }
-                // Average decimal rating
-                averageRating = (sum / count).toFixed(1);
-
-                // Rounded to nearest whole number
-                roundedRating = Math.round(averageRating);
+                // Average rating to 1 decimal place
+                averageRating = Math.round( (sum/count) * 10) / 10;
 
                 if (averageRating == 0 || averageRating == null) {
 					document.getElementById("averageRating").innerHTML = "No ratings yet";
