@@ -98,7 +98,7 @@ function populateCollectionView(matchedData) {
 				infoLabel.setAttribute('class', 'profile_info_title');
 				card.appendChild(infoLabel);
 
-				shortcutsContainer = document.createElement('div');
+				/*shortcutsContainer = document.createElement('div');
 				shortcutsContainer.setAttribute("class", "shortcut_container");
 				card.appendChild(shortcutsContainer);
 
@@ -115,7 +115,7 @@ function populateCollectionView(matchedData) {
 				moreShortcut = document.createElement('img');
 				moreShortcut.src = "images/more.png";
 				moreShortcut.setAttribute('class', 'shortcut_item');
-				shortcutsContainer.appendChild(moreShortcut);
+				shortcutsContainer.appendChild(moreShortcut);*/
 
 
 				document.getElementById("matchedCollectionView").appendChild(containingCard);
