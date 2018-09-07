@@ -5,6 +5,21 @@ body {
 	margin: 0px;
 }
 
+.loginLogo{
+    float: left;
+    position: relative;
+    width: 50px;
+    height: 50px;
+    margin-top: -10%;
+    padding-top: 0px;
+    padding-right: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    margin-bottom: -10%;
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
 .view_panel {
 	width: 60%;
 	height: 100vh;
@@ -90,13 +105,13 @@ body {
 
 .form_login_btn:hover {
 	cursor: pointer;
-	background-color: rgba(118, 102, 237, 1);
+	background-color: #016DBF;
 }
 
 .form_login_btn:active {
 	background:#eb3b60;
 	transform:translateY(1px);
-	background-color: rgba(112, 95, 236, 1);
+	background-color: #016DBF;
 }
 
 .form_login_google_btn:hover {
@@ -148,18 +163,3 @@ body {
 	font-weight: normal;
 	font-size: 12px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
