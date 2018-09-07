@@ -52,8 +52,12 @@ function checkFriend() {
 			var friends = doc.data();
 			for (var friendID in friends) {
 				if (friendID == uid) {
+					// Change the Friend request button
 					document.getElementById('friendBtn').innerHTML = "Unfriend";
 					document.getElementById('friendBtn').addEventListener('click', unfriendProfile, false);
+					// Display the Your Rating section on page
+					document.getElementById("yourRatingText").style.display = "block";
+					document.getElementById("yourRating").style.display = "block";
 					break;
 				}
 			}
@@ -152,7 +156,7 @@ function friendProfile() {
 	var currentUser = firebase.auth().currentUser;
 	if (currentUser != null) {
 		firestore.doc("friends/" + currentUser.uid).set(
-			{[uid]: "0"},
+			{[uid]: 0},
 			{merge: true}
 			).then(function () {
 				console.log("Document successfully written!");
@@ -173,7 +177,7 @@ function friendProfile() {
 		var currentUser = firebase.auth().currentUser;
 		if (currentUser != null) {
 			firestore.doc("friends/" + currentUser.uid).update({
-				[uid]: firebase.firestore.FieldValue.delete()
+				[uid]: 5
 			}).then(function () {
 				console.log("Value Removed");
 				checkFriend();
@@ -320,8 +324,6 @@ function friendProfile() {
 		};
 
 		rateStudent(data).then(function(result) {
-  			// Read result of the Cloud Function.
-			console.log(result);
   			console.log("FIREBASE: Successfully updated rating.");
   			$('input:radio[name="rating"]').attr('disabled', false);
 			$(".star-rating").css('opacity', '1');
