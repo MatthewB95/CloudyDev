@@ -16,8 +16,9 @@ firebase.auth().onAuthStateChanged(function (user) {
 			var getRating = $(this).val();
 			var rating = parseInt(getRating, 10);
 			if (rating >= 1 && rating <= 5) {
+				$('input:radio[name="rating"]').attr('disabled', true);
+				$(".star-rating").css('opacity', '.5');
 				rateStudentFirebase(user.uid, uid, rating);
-				//sendRating(rating, user.uid);	// Front-end Function. TO BE REMOVED
 			}
 		});
 
@@ -320,12 +321,25 @@ function friendProfile() {
 
 		rateStudent(data).then(function(result) {
   			// Read result of the Cloud Function.
+			console.log(result);
   			console.log("FIREBASE: Successfully updated rating.");
+  			$('input:radio[name="rating"]').attr('disabled', false);
+			$(".star-rating").css('opacity', '1');
+			// Return Average rating and total number of reviews
+
+			displayAverageStars(result.data.averageRating);
+            if (result.data.count == 1) {
+            	document.getElementById("averageRating").innerHTML = result.data.averageRating + " Stars | " + result.data.count + " Rating";
+            }
+            else {
+            	document.getElementById("averageRating").innerHTML = result.data.averageRating + " Stars | " + result.data.count + " Ratings";
+            }
   		}).catch(function(error) {
   			var code = error.code;
   			var message = error.message;
   			var details = error.details;
-  			// ...
   			console.error("FIREBASE: Failed to update rating.", error);
+  			$('input:radio[name="rating"]').attr('disabled', false);
+			$(".star-rating").css('opacity', '1');
   		});
   	}

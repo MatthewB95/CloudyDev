@@ -536,6 +536,8 @@ exports.rateStudent = functions.https.onCall(async(data) => {
       if(isF == true){
         await addRating(stars, uid, ratingListRef);
         await calcAvgRating(tuid, ratingListRef);
+        // Get variables for averageRating and count here
+        return { averageRating: 4, count: 2 };
       }
       else {
         console.log("User can not rate this student as they have no link between them");
