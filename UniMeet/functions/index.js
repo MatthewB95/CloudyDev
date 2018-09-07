@@ -287,9 +287,6 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
       });
     }
 
-    console.log('Percentage value Per (COURSE) for MAIN user: -> ', userCoursePercent);
-    console.log('Percentage value Per (INTEREST) for MAIN user: -> ', userIntPercent);
-
     //creates a reference to the firestore 'student' collection
     var studRef = db.collection('student');
 
@@ -343,26 +340,20 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
 
                       //Compare both users courses and calculate match score
                       if((tarCoursePercent != 0) && (userCoursePercent != 0)){
-                        console.log('Percentage value Per (COURSE) for TARGET user: -> ',tarStudUid, ' -> ', tarCoursePercent);
                         //Find how many courses both users have in common
                         var courseMatchCount = await numOfMatches(newValue ,tarUserProfile, getCourseCount);
                         if(courseMatchCount != 0){
                            uScore = uScore + (courseMatchCount * userCoursePercent);
                            tScore = tScore + (courseMatchCount * tarCoursePercent);
-                           console.log('USER SCORE after count * percent in (COURSE) --> ', uScore);
-                           console.log('TARGET SCORE after count * percent in (COURSE) --> ', tScore);
                         }
                       }
                       //Compare both users interests and calculate match score
                       if((tarIntPercent != 0) && (userIntPercent != 0)){
-                        console.log('Percentage value Per (INTEREST) for TARGET user: -> ', tarStudUid, ' -> ',tarIntPercent);
                         //Find how many Interests both users have in common
                         var interestMatchCount = await numOfMatches(newValue ,tarUserProfile, getInterestCount);
                         if(interestMatchCount != 0){
                            uScore = uScore + (interestMatchCount * userIntPercent);
                            tScore = tScore + (interestMatchCount * tarIntPercent);
-                           console.log('USER SCORE after count * percent in (INTEREST) --> ', uScore);
-                           console.log('TARGET SCORE after count * percent in (INTEREST) --> ', tScore);
                         }
                       }
                       //do user rating part here (likely another if statement)
@@ -377,7 +368,6 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                       }
                       //final averaged match score for both users (defualt adds 10% for matching based on uni & degree)
                       var matchTotal = await calcMatchTotal(uScore, tScore, uniDegreePercent);
-                      console.log('MATCH TOTAL = ', matchTotal); 
                   }
                   else{
                     console.log('User: ', uid, ' does not have matching gender preferences with target user -> ',tarStudUid);
@@ -536,8 +526,6 @@ exports.rateStudent = functions.https.onCall(async(data) => {
       if(isF == true){
         await addRating(stars, uid, ratingListRef);
         await calcAvgRating(tuid, ratingListRef);
-        // Get variables for averageRating and count here
-        return { averageRating: 4, count: 2 };
       }
       else {
         console.log("User can not rate this student as they have no link between them");
@@ -592,7 +580,10 @@ function calcAvgRating(tuid, ratingListRef){
         if(avgRating != 0){
           result = avgRating;
           await saveAvgRating(tuid, result);
-          resolve(result);
+          console.log('result -> ',result);
+          console.log('count -> ', count);
+          // Return variables for averageRating and count here
+          resolve({averageRating: result, count: count});
         }
       }else{
         console.log('Failed to retrieve rating list document to calculate average rating');
