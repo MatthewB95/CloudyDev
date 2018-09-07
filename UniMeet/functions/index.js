@@ -525,7 +525,9 @@ exports.rateStudent = functions.https.onCall(async(data) => {
       var isF = await isFriend(uid, tuid);
       if(isF == true){
         await addRating(stars, uid, ratingListRef);
-        await calcAvgRating(tuid, ratingListRef);
+        var resolve = await calcAvgRating(tuid, ratingListRef);
+        console.log('resolve -> ',resolve);
+        return resolve;
       }
       else {
         console.log("User can not rate this student as they have no link between them");
