@@ -530,7 +530,7 @@ exports.rateStudent = functions.https.onCall(async(data) => {
   //reference to the student being rateds (rating list)  
   var ratingListRef = db.collection('ratings').doc(tuid);
 
-  //check user is authenticated:
+  //check rating is of correct value:
     if(stars >= 1 && stars <= 5){
       var isF = await isFriend(uid, tuid);
       if(isF == true){
@@ -547,12 +547,6 @@ exports.rateStudent = functions.https.onCall(async(data) => {
       throw new functions.https.HttpsError('invalid-argument', 'ERROR: rating sent from client has incorrect format')
     }
 });
-// 0 = never been friends
-// 1 = request sent
-// 2 = request rejected
-// 3 = blocked
-// 4 = friends
-// 5 = unfriended
 
 function addRating(rating, uid, ratingListRef){
   return new Promise(async function(resolve, reject) {
@@ -627,3 +621,43 @@ function saveAvgRating(uid, avgRating){
     }
   });
 }
+// 0 = never been friends
+// 1 = request sent
+// 2 = request rejected
+// 3 = blocked
+// 4 = friends
+// 5 = unfriended
+exports.friendStatus = functions.https.onCall(async(data) => {
+  var uid = data.uid;
+  var tuid = data.tuid;
+  var status = data.status;
+
+  //reference to the target student's friend list' 
+  var tarFriendListRef = db.collection('friends').doc(tuid);
+
+  //reference to the user's friend list' 
+  var UserFriendListRef = db.collection('friends').doc(uid);
+
+  //check if status number is in correct range:
+    if(status >= 1 && status <= 5){
+      if(status == 1){
+
+      }
+      else if(status == 2){
+
+      }
+      else if(status == 3){
+      
+      }
+      else if(status == 4){
+
+      }
+      else{
+        //status equals 5
+      }
+    }
+    else{
+      console.log("ERROR: friend status sent from client has incorrect format");
+      throw new functions.https.HttpsError('invalid-argument', 'ERROR: friend status sent from client has incorrect format')
+    }
+});
