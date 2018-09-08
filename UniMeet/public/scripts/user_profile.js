@@ -75,7 +75,7 @@ function getStudent(docRef) {
 						if (student[key] != null) {
 
 							containingCard = document.createElement('div');
-							containingCard.setAttribute('class', 'col-lg-3 col-md-4 col-sm-6 text-center');
+							containingCard.setAttribute('class', 'col-lg-4 col-md-6 col-sm-12 text-center');
 
 							card = document.createElement('div');
 							card.setAttribute('class', 'course_card');
@@ -96,6 +96,25 @@ function getStudent(docRef) {
 
 					}
 				}
+//				} else if (key.includes("interest_")) {
+//					if (student.hasOwnProperty(key)) {
+//						if (student[key] != null) {
+//							containingCard = document.createElement('div');
+//							containingCard.setAttribute('class', 'col-lg-3 col-md-4 col-sm-6 text-center');
+//
+//							card = document.createElement('div');
+//							card.setAttribute('class', 'course_card');
+//							containingCard.appendChild(card);
+//							
+//							courseLabel = document.createElement('h1');
+//							courseLabel.setAttribute('class', 'course_title');
+//							courseLabel.innerHTML = student[key];
+//							card.appendChild(courseLabel);
+//
+//							document.getElementById("interestsCollectionView").appendChild(containingCard);
+//						}
+//					}
+//				}
 			}
 
 			document.title = student.name;

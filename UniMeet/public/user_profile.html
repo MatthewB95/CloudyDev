@@ -14,7 +14,6 @@
 
 <script src="scripts/jquery.min.js"></script>
 <script src="scripts/user_profile.js"></script>
-
 <link href="css/bootstrap-4.0.0.css" rel="stylesheet">
 <link rel="stylesheet" href="styles/main.css">
 <link rel="stylesheet" href="styles/navigation.css">
@@ -22,17 +21,10 @@
 <!-- Icon Library for Stars -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-    
 <header>
-<nav class="navigationBar">
-<a href="/"><img src="images/logo.png" class="logoPos" alt="uniMeet"></a>
-<div class="menuItems"> 
-    <a href="/matching.html">Matches</a> 
-    <a href="/friends.html">Friends</a> 
-    <a href="/messaging.html">Messages</a> 
-    <a href="" id="logoutBtn">Log Out</a> 
-</div>
-</nav>
+  <nav class="navigationBar"><a href="/"><img src="images/logo.png" class="logoPos" alt="uniMeet"></a>
+    <div class="menuItems"><a href="/matching.html">Matches</a><a href="/friends.html">Friends</a><a href="/messaging.html">Messages</a><a href="" id="logoutBtn">Log Out</a></div>
+  </nav>
 </header>
 
 <body>
@@ -51,9 +43,24 @@
     <h1 id="profileNameLabel" class="subHeader">Profile</h1>
     <h5 id="bioLabel" class="smallText"></h5>
     <br>
-
+    <h3 class="table_title primaryColour">About</h3>
+    <h3 id="ageLabel" class="smallText lightTextColour">Age:</h3>
+    <h3 id="uniLabel" class="smallText lightTextColour">University:</h3>
+    <h3 id="yearLabel" class="smallText lightTextColour">Year:</h3>
+    <br>
+    <h3 class="table_title primaryColour">Student Email</h3>
+    <h3 id="studentEmail" class="smallText lightTextColour">--</h3>
+    <br>
+    <h3 class="table_title primaryColour">Personal Email</h3>
+    <h3 id="personalEmail" class="smallText lightTextColour">--</h3>
+    <br>
+    <h3 class="table_title primaryColour">Mobile</h3>
+    <h3 id="mobile" class="smallText lightTextColour">--</h3>
+  </section>
+  <section class="infoView">
+    <h2 class="subHeader">Rating</h2>
     <h3 class="table_title primaryColour">Average Rating</h3>
-    <span id="averageRating" class="smallText lightTextColour">No ratings yet</span><br>
+    <span id="averageRating" class="bodyText lightTextColour">No ratings yet</span><br>
     <div class="star-average">
       <input id="5" type="radio" name="averageRating" onclick="return false;">
       <label for="5"> <i class="active fa fa-star" aria-hidden="true"></i> </label>
@@ -66,7 +73,6 @@
       <input id="1" type="radio" name="averageRating" onclick="return false;">
       <label for="1"> <i class="active fa fa-star" aria-hidden="true"></i> </label>
     </div>
-
     <h3 class="table_title primaryColour">Your Rating</h3>
     <div class="star-rating">
       <input id="star-5" type="radio" name="rating" value=5>
@@ -80,29 +86,30 @@
       <input id="star-1" type="radio" name="rating" value=1>
       <label for="star-1" title="1 star"> <i class="active fa fa-star" aria-hidden="true"></i> </label>
     </div>
-	  <br>
-	  <br>
-	<h3 class="table_title primaryColour">About</h3>
-    <h3 id="ageLabel" class="smallText lightTextColour">Age:</h3>
-    <h3 id="uniLabel" class="smallText lightTextColour">University:</h3>
-    <h3 id="yearLabel" class="smallText lightTextColour">Year:</h3>
-	<br>
-	<h3 class="table_title primaryColour">Interests</h3>
-	  
-  </section>
-  <section class="infoView">
+	  <section>
+		  <div class="container">
+      <div class="row">
+          <div class="col-lg-12 mb-5 mt-5 text-left">
+          <h1 class="headerText">My Matches</h1>
+          <input type="button" class="refresh_button" id="refreshButton" value="Refresh" disabled>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div id="enrolledCoursesCollectionView" class="row"> 
+      </div>
+		</div>
+		  </section>
+<!--
     <h2 class="subHeader">Enrolled Courses</h2>
-    <div id="enrolledCoursesCollectionView" class="row"></div>
-    <h2 class="subHeader">Contact</h2>
-    <h3 class="table_title primaryColour">Student Email</h3>
-    <h3 id="studentEmail" class="bodyText">--</h3>
-    <br>
-    <h3 class="table_title primaryColour">Personal Email</h3>
-    <h3 id="personalEmail" class="bodyText">--</h3>
-    <br>
-    <h3 class="table_title primaryColour">Mobile</h3>
-    <h3 id="mobile" class="bodyText">--</h3>
-    <h2 class="subHeader">Rate</h2>
+      <div class="container">
+        <div id="enrolledCoursesCollectionView" class="row"></div>
+      </div>
+    <h2 class="subHeader">Interests</h2>
+    <div class="container">
+      <div id="interestsCollectionView" class="row"></div>
+		</div>
+-->
   </section>
 </div>
 </body>
