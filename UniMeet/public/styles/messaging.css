@@ -1,0 +1,150 @@
+@charset "UTF-8";
+
+.mainView {
+	width: 100%;
+	height: calc(100vh - 64px);
+}
+
+.userBar {
+	width: 20%;
+	height: 100%;
+	float: left;
+	background-color: white;
+}
+
+.messagesView {
+	width: 80%;
+	height: 100%;
+	float: right;
+/*	background-color: red;*/
+}
+
+
+
+
+
+.userCell {
+	background-color: white;
+	height: 100px;
+	width: 100%;
+	position: relative;
+	border-bottom: 1px solid rgba(0,0,0,0.1);
+	transition: .5s;
+}
+
+.userCell:hover {
+	background-color: #1EA1F2;
+	color: white;
+}
+
+.userImage {
+	position: absolute;
+	width: 68px;
+	height: 68px;
+	border-radius: 16px;
+	background-color: green;
+	left: 16px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.textContainer {
+	position: absolute;
+	left: 100px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+
+
+/*
+
+.messagesView {
+	height: 100%;
+	justify-content: center;
+	overflow-y: auto;
+	
+	background-color: #FFFFFF;
+	border-radius: 32px;
+	-webkit-box-shadow: 0px 0px 32px rgba(0,0,0,0.20);
+	box-shadow: 0px 0px 32px rgba(0,0,0,0.20);
+	padding: 32px;
+	margin: 0px 0px 32px 0px;
+}
+*/
+
+.messages {
+	margin: 16px;
+}
+
+.messageForm {
+	position: fixed;
+	margin: 0px;
+	bottom: 0px;
+	height: 64px;
+	width: 100%;
+	background-color: rgba(255,255,255,0.5);
+}
+
+
+.submitBtn {
+	height: 100%;
+	color: #1EA1F2;
+	background-color: transparent;
+	border-width: 0px;
+}
+
+.textFeild {
+	margin-left: 16px;
+	height: 100%;
+	width: calc(80% - 100px);
+	background-color: transparent;
+	border-width: 0px;
+}
+
+
+
+.floatRight {
+	float:right;
+}
+
+.floatLeft {
+	float: left;
+}
+
+.messageContainer {
+/*	background-color: red;*/
+/*	position: relative;*/
+}
+
+.messageName {
+	margin-left: 40px;
+	font-weight: normal;
+	font-size: 12px;
+}
+
+.messageInlineBlock {
+	display: inline-block;
+	margin-bottom: 8px;
+	vertical-align: bottom;
+}
+
+.messageBubble {
+/*	position: absolute;*/
+	padding: 8px;
+	background-color: #1EA1F2;
+	border-radius: 16px 16px 16px 4px;
+	color: white;
+	width: auto;
+	float: right;
+}
+
+.messageImageIcon {
+/*	position: absolute;*/
+	width: 32px;
+	height: 32px;
+	margin-right: 8px;
+	border-radius: 50%;
+	vertical-align: bottom;
+	float: left;
+}

@@ -16,8 +16,9 @@ firebase.auth().onAuthStateChanged(function (user) {
 			var getRating = $(this).val();
 			var rating = parseInt(getRating, 10);
 			if (rating >= 1 && rating <= 5) {
+				$('input:radio[name="rating"]').attr('disabled', true);
+				$(".star-rating").css('opacity', '.5');
 				rateStudentFirebase(user.uid, uid, rating);
-				//sendRating(rating, user.uid);	// Front-end Function. TO BE REMOVED
 			}
 		});
 
@@ -51,8 +52,12 @@ function checkFriend() {
 			var friends = doc.data();
 			for (var friendID in friends) {
 				if (friendID == uid) {
+					// Change the Friend request button
 					document.getElementById('friendBtn').innerHTML = "Unfriend";
 					document.getElementById('friendBtn').addEventListener('click', unfriendProfile, false);
+					// Display the Your Rating section on page
+//					document.getElementById("yourRatingText").style.display = "block";
+//					document.getElementById("yourRating").style.display = "block";
 					break;
 				}
 			}
@@ -75,7 +80,7 @@ function getStudent(docRef) {
 						if (student[key] != null) {
 
 							containingCard = document.createElement('div');
-							containingCard.setAttribute('class', 'col-lg-4 col-md-6 col-sm-12 text-center');
+							containingCard.setAttribute('class', 'col-lg-4 col-md-6 col-sm-12 text-center customRow');
 
 							card = document.createElement('div');
 							card.setAttribute('class', 'course_card');
@@ -87,7 +92,7 @@ function getStudent(docRef) {
 							card.appendChild(uniLabel);
 
 							courseLabel = document.createElement('h1');
-							courseLabel.setAttribute('class', 'course_title');
+							courseLabel.setAttribute('class', 'course_title left');
 							courseLabel.innerHTML = student[key];
 							card.appendChild(courseLabel);
 
@@ -95,26 +100,25 @@ function getStudent(docRef) {
 						}
 
 					}
+				} else if (key.includes("interest_")) {
+					if (student.hasOwnProperty(key)) {
+						if (student[key] != null) {
+							containingCard = document.createElement('div');
+							containingCard.setAttribute('class', 'col-lg-3 col-md-4 col-sm-6 text-center customRow');
+
+							card = document.createElement('div');
+							card.setAttribute('class', 'course_card');
+							containingCard.appendChild(card);
+							
+							courseLabel = document.createElement('h1');
+							courseLabel.setAttribute('class', 'course_title center');
+							courseLabel.innerHTML = student[key];
+							card.appendChild(courseLabel);
+
+							document.getElementById("interestsCollectionView").appendChild(containingCard);
+						}
+					}
 				}
-//				} else if (key.includes("interest_")) {
-//					if (student.hasOwnProperty(key)) {
-//						if (student[key] != null) {
-//							containingCard = document.createElement('div');
-//							containingCard.setAttribute('class', 'col-lg-3 col-md-4 col-sm-6 text-center');
-//
-//							card = document.createElement('div');
-//							card.setAttribute('class', 'course_card');
-//							containingCard.appendChild(card);
-//							
-//							courseLabel = document.createElement('h1');
-//							courseLabel.setAttribute('class', 'course_title');
-//							courseLabel.innerHTML = student[key];
-//							card.appendChild(courseLabel);
-//
-//							document.getElementById("interestsCollectionView").appendChild(containingCard);
-//						}
-//					}
-//				}
 			}
 
 			document.title = student.name;
@@ -170,7 +174,7 @@ function friendProfile() {
 	var currentUser = firebase.auth().currentUser;
 	if (currentUser != null) {
 		firestore.doc("friends/" + currentUser.uid).set(
-			{[uid]: "0"},
+			{[uid]: 0},
 			{merge: true}
 			).then(function () {
 				console.log("Document successfully written!");
@@ -191,7 +195,7 @@ function friendProfile() {
 		var currentUser = firebase.auth().currentUser;
 		if (currentUser != null) {
 			firestore.doc("friends/" + currentUser.uid).update({
-				[uid]: firebase.firestore.FieldValue.delete()
+				[uid]: 5
 			}).then(function () {
 				console.log("Value Removed");
 				checkFriend();
@@ -338,13 +342,24 @@ function friendProfile() {
 		};
 
 		rateStudent(data).then(function(result) {
-  			// Read result of the Cloud Function.
   			console.log("FIREBASE: Successfully updated rating.");
+  			$('input:radio[name="rating"]').attr('disabled', false);
+			$(".star-rating").css('opacity', '1');
+			// Return Average rating and total number of reviews
+
+			displayAverageStars(result.data.averageRating);
+            if (result.data.count == 1) {
+            	document.getElementById("averageRating").innerHTML = result.data.averageRating + " Stars | " + result.data.count + " Rating";
+            }
+            else {
+            	document.getElementById("averageRating").innerHTML = result.data.averageRating + " Stars | " + result.data.count + " Ratings";
+            }
   		}).catch(function(error) {
   			var code = error.code;
   			var message = error.message;
   			var details = error.details;
-  			// ...
   			console.error("FIREBASE: Failed to update rating.", error);
+  			$('input:radio[name="rating"]').attr('disabled', false);
+			$(".star-rating").css('opacity', '1');
   		});
   	}

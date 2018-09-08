@@ -2,9 +2,8 @@
 /* CSS Document */
 
 body {
-	margin: 0px;
-	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
-	background-color: #e6e6e6;
+    margin: 0px;
+    font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .subHeader {
@@ -66,6 +65,13 @@ body {
 	background-color: white;
 }
 
+.center {
+	text-align: center;
+}
+
+.left {
+	text-align: left;
+}
 
 
 

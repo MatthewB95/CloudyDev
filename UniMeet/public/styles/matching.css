@@ -3,22 +3,6 @@
 .body {
      background-color: #f3f5f6;
 }
-.mainView {
-/*
-	margin-left: 10vw;
-	margin-right: 10vw;
-	background-position: 0% 0%;
-*/
-}
-
-/*
-.navBar {
-	position: fixed;
-	height: 100vh;
-	width: 16vw;
-	background-color: #1EA1F2;
-}
-*/
 
 .headerText {
     font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
