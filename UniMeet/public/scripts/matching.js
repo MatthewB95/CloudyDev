@@ -77,10 +77,7 @@ function populateCollectionView(matchedData) {
 	var nameLabel;
 	var degreeLabel;
 	var infoLabel;
-	var shortcutsContainer;
-	var messageShortcut;
-	var friendShortcut;
-	var moreShortcut;
+	var percentageLabel;
 
 	// Remove any existing matches from the page
 	document.getElementById("matchedCollectionView").innerHTML = "";
@@ -131,6 +128,11 @@ function populateCollectionView(matchedData) {
 					infoLabel.innerHTML = myData.university;
 					infoLabel.setAttribute('class', 'profile_info_title');
 					card.appendChild(infoLabel);
+					
+					percentageLabel = document.createElement('h3');
+					percentageLabel.setAttribute('class', 'profile_info_title primaryColour');
+					percentageLabel.innerHTML = Object(matchedData)[key] + "% matched";
+					card.appendChild(percentageLabel);
 /*
 					shortcutsContainer = document.createElement('div');
 					shortcutsContainer.setAttribute("class", "shortcut_container");

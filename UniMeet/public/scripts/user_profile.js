@@ -159,7 +159,7 @@ function getStudent(docRef) {
 
 function messageProfile(uid) {
 	window.localStorage.setItem("selectedProfileID", uid);
-	window.open("/user_messaging.html", "_self");
+	window.open("/messaging.html", "_self");
 }
 
 

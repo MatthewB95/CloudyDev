@@ -21,6 +21,11 @@
 
 
 
+.newConversation {
+	position: fixed;
+	left: 0px;
+	bottom: 0px;
+}
 
 
 .userCell {
@@ -36,6 +41,12 @@
 	background-color: #1EA1F2;
 	color: white;
 }
+
+.userCell:active {
+	background-color: #1EA1F2;
+	color: white;
+}
+
 
 .userImage {
 	position: absolute;
@@ -83,7 +94,7 @@
 	bottom: 0px;
 	height: 64px;
 	width: 100%;
-	background-color: rgba(255,255,255,0.5);
+	background-color: #FDFDFD;
 }
 
 
@@ -103,18 +114,10 @@
 }
 
 
-
-.floatRight {
-	float:right;
-}
-
-.floatLeft {
-	float: left;
-}
-
 .messageContainer {
-/*	background-color: red;*/
-/*	position: relative;*/
+	background-color: red;
+	width: 100%;
+	height: auto;
 }
 
 .messageName {
@@ -123,28 +126,57 @@
 	font-size: 12px;
 }
 
-.messageInlineBlock {
+.messageInlineBlockRecieved {
 	display: inline-block;
 	margin-bottom: 8px;
 	vertical-align: bottom;
+	float: left;
+	clear:both;
 }
 
-.messageBubble {
-/*	position: absolute;*/
-	padding: 8px;
-	background-color: #1EA1F2;
-	border-radius: 16px 16px 16px 4px;
-	color: white;
+.messageInlineBlockSent {
+	display: inline-block;
+	margin-bottom: 8px;
+	vertical-align: bottom;
+	float:right;
+	clear:both;
+}
+
+.messageBubbleRecieved {
+	padding: 8px 16px;
+	background-color: #FDFDFD;
+	border-radius: 4px 16px 16px 16px;
+	color: black;
 	width: auto;
 	float: right;
 }
 
-.messageImageIcon {
-/*	position: absolute;*/
+.messageImageIconRecieved {
 	width: 32px;
 	height: 32px;
 	margin-right: 8px;
-	border-radius: 50%;
+	border-radius: 4px;
 	vertical-align: bottom;
 	float: left;
 }
+
+
+.messageBubbleSent {
+	padding: 8px 16px;
+	background-color: #1EA1F2;
+	border-radius: 16px 4px 16px 16px;
+	color: white;
+	width: auto;
+	float: left;
+}
+
+.messageImageIconSent {
+	width: 32px;
+	height: 32px;
+	margin-left: 8px;
+	border-radius: 4px;
+	vertical-align: bottom;
+	float: right;
+}
+
+
