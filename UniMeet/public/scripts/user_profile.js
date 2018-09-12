@@ -46,7 +46,7 @@ function checkFriend() {
 	if (currentUser != null) {
 
 		document.getElementById('friendBtn').innerHTML = "Add Friend";
-		document.getElementById('friendBtn').addEventListener('click', friendProfile, false);
+		document.getElementById('friendBtn').addEventListener('click', addFriend, false);
 
 		firestore.doc("friends/" + currentUser.uid).get().then(function (doc) {
 			var friends = doc.data();
@@ -54,17 +54,16 @@ function checkFriend() {
 				if (friendID == uid) {
 					// Change the Friend request button
 					document.getElementById('friendBtn').innerHTML = "Unfriend";
-					document.getElementById('friendBtn').addEventListener('click', unfriendProfile, false);
+					document.getElementById('friendBtn').addEventListener('click', unfriend, false);
 					// Display the Your Rating section on page
 //					document.getElementById("yourRatingText").style.display = "block";
 //					document.getElementById("yourRating").style.display = "block";
-					break;
-				}
-			}
-		})
+break;
+}
+}
+})
 	}
 }
-
 
 function getStudent(docRef) {
 
@@ -155,22 +154,52 @@ function getStudent(docRef) {
 }
 
 
-
-
 function messageProfile(uid) {
 	window.localStorage.setItem("selectedProfileID", uid);
 	window.open("/messaging.html", "_self");
 }
 
 
+function updateFriendStatus(status) {
+	document.getElementById('friendBtn').disabled = true;
+
+	var currentUser = firebase.auth().currentUser;
+
+	const data = {
+		uid   : currentUser,
+		tuid  : uid,
+		status : status
+	};
+
+	var friendStatus = firebase.functions().httpsCallable('friendStatus');
+	friendStatus(data).then(function(result) {
+		console.log("FIREBASE: Successfully updated friend status.");
+		document.getElementById('friendBtn').disabled = false;
+	}).catch(function(error) {
+		var code = error.code;
+		var message = error.message;
+		var details = error.details;
+		console.error("FIREBASE: Failed to update friend status.", error);
+		document.getElementById('friendBtn').disabled = false;
+	});
+}
+
+// Sends friend request
+function addFriend() {
+	updateFriendStatus(1);
+}
+
+// Removes friend
+function unfriend() {
+	updateFriendStatus(5);
+}
 
 
-
-
+// Switching this to backend
 function friendProfile() {
 	
 	document.getElementById('friendBtn').disabled = true;
-	
+
 	var currentUser = firebase.auth().currentUser;
 	if (currentUser != null) {
 		firestore.doc("friends/" + currentUser.uid).set(
@@ -187,179 +216,113 @@ function friendProfile() {
 		}
 	}
 
+// Switching this to backend
+function unfriendProfile() {
 
-	function unfriendProfile() {
+	document.getElementById('friendBtn').disabled = true;
 
-		document.getElementById('friendBtn').disabled = true;
-
-		var currentUser = firebase.auth().currentUser;
-		if (currentUser != null) {
-			firestore.doc("friends/" + currentUser.uid).update({
-				[uid]: 5
-			}).then(function () {
-				console.log("Value Removed");
-				checkFriend();
-				document.getElementById('friendBtn').disabled = false;
-			}).catch(function (error) {
-				console.error("Error writing document: ", error);
-				document.getElementById('friendBtn').disabled = false;
-			});
-		}
-	}
-
-
-
-	function redirectEmail(email) {
-		window.location.href = "mailto:" + email + "?Subject=Hello from uniMeet!";
-	}
-
-
-
-	// Get and calculate the average rating for a user // Front-end Function. TO BE REMOVED
-	function calculateAverageRating() {
-		var averageRating = 0;
-
-		firestore.doc("ratings/" + uid).get().then(function (doc) {
-			if (doc && doc.exists) {
-				const ratings = doc.data();
-
-                // Calculate average rating
-                var sum = 0;
-                var count = 0;
-                for (var key in ratings) {
-                	sum+= ratings[key];
-                	count++;
-                }
-                // Average rating to 1 decimal place
-                averageRating = Math.round( (sum/count) * 10) / 10;
-
-                if (averageRating == 0 || averageRating == null) {
-                	document.getElementById("averageRating").innerHTML = "No ratings yet";
-                }
-                else {
-                	displayAverageStars(averageRating);
-                	document.getElementById("averageRating").innerHTML = averageRating + " Stars | " + count + " Ratings";
-                }
-
-                updateStudentAverageRating(averageRating);
-            }
-        }).catch(function (error) {
-        	console.log("Failed to retrieve ratings: ", error)
-        });
-    }
-
-	// Updates rating for a user in database // Front-end Function. TO BE REMOVED
-	function sendRating(rating, currentUserID) {
-
-		if (rating > 5 && rating < 1) {
-			console.log("Invalid rating.");
-			return;
-		}
-
-		console.log("Rating " + document.title + ": " + rating);
-		firestore.doc("ratings/" + uid).update({
-			[currentUserID]: rating,
-		}
-		).then(function() {
-			calculateAverageRating();
+	var currentUser = firebase.auth().currentUser;
+	if (currentUser != null) {
+		firestore.doc("friends/" + currentUser.uid).update({
+			[uid]: 5
+		}).then(function () {
+			console.log("Value Removed");
+			checkFriend();
+			document.getElementById('friendBtn').disabled = false;
 		}).catch(function (error) {
-			console.log("Rating Update Error: ", error);
+			console.error("Error writing document: ", error);
+			document.getElementById('friendBtn').disabled = false;
 		});
 	}
+}
 
-	// Update the student's average rating // Front-end Function. TO BE REMOVED
-	function updateStudentAverageRating(averageRating) {
-		firestore.doc("student/" + uid).update({
-			averageRating: averageRating,
-		}
-		).then(function() {
-			console.log("Successfully Updated Rating.");
-		}).catch(function (error) {
-			console.log("Rating Update Error: ", error);
-		});
-	}
 
-	// Displays the user's average rating in stars
-  	function displayAverageStars(averageRating) {
-  		var roundedRating = Math.round(averageRating);
-  		document.getElementById(roundedRating).checked = true;
-  	}
+function redirectEmail(email) {
+	window.location.href = "mailto:" + email + "?Subject=Hello from uniMeet!";
+}
 
-  	// Load and display reviews for user
-	function loadRatings(currentUserID) {
-		var averageRating = 0;
 
-		firestore.doc("ratings/" + uid).get().then(function (doc) {
-			if (doc && doc.exists) {
-				const ratings = doc.data();
+// Displays the user's average rating in stars
+function displayAverageStars(averageRating) {
+	var roundedRating = Math.round(averageRating);
+	document.getElementById(roundedRating).checked = true;
+}
 
-                // Calculate average rating
-                var sum = 0;
-                var count = 0;
-                for (var key in ratings) {
-                	sum+= ratings[key];
-                	count++;
 
-                	// If current user has already rated this person, show their previous rating
-                	if (key == currentUserID) {
-                		document.getElementById("star-" + ratings[key]).checked = true;
-                	}
-                }
-                // Average rating to 1 decimal place
-                averageRating = Math.round( (sum/count) * 10) / 10;
+// Load and display reviews for user
+function loadRatings(currentUserID) {
+	var averageRating = 0;
 
-                if (averageRating == 0 || averageRating == null) {
-                	document.getElementById("averageRating").innerHTML = "No ratings yet";
-                }
-                else {
-                	displayAverageStars(averageRating);
-                	if (count == 1) {
-                		document.getElementById("averageRating").innerHTML = averageRating + " Stars | " + count + " Rating";
-                	}
-                	else {
-                		document.getElementById("averageRating").innerHTML = averageRating + " Stars | " + count + " Ratings";
-                	}
-                	
-                }
+	firestore.doc("ratings/" + uid).get().then(function (doc) {
+		if (doc && doc.exists) {
+			const ratings = doc.data();
+            // Calculate average rating
+            var sum = 0;
+            var count = 0;
+            for (var key in ratings) {
+            	sum+= ratings[key];
+            	count++;
+               	// If current user has already rated this person, show their previous rating
+               	if (key == currentUserID) {
+               		document.getElementById("star-" + ratings[key]).checked = true;
+               	}
             }
-        }).catch(function (error) {
-        	console.log("Failed to retrieve ratings: ", error)
-        });
-    }
+            // Average rating to 1 decimal place
+            averageRating = Math.round( (sum/count) * 10) / 10;
 
-	// Uses Firebase functions to submit ratings
-	function rateStudentFirebase(currentUserID, uid, rating) {
-		var rateStudent = firebase.functions().httpsCallable('rateStudent');
-		console.log("Current User: " + currentUserID);
-		console.log("Target User: " + uid);
-		console.log("Stars: " + rating);
-		ratingInt = parseInt(rating);
-
-		const data = {
-    		uid   : currentUserID,
-    		tuid  : uid,
-    		stars : ratingInt
-		};
-
-		rateStudent(data).then(function(result) {
-  			console.log("FIREBASE: Successfully updated rating.");
-  			$('input:radio[name="rating"]').attr('disabled', false);
-			$(".star-rating").css('opacity', '1');
-			// Return Average rating and total number of reviews
-
-			displayAverageStars(result.data.averageRating);
-            if (result.data.count == 1) {
-            	document.getElementById("averageRating").innerHTML = result.data.averageRating + " Stars | " + result.data.count + " Rating";
+            if (averageRating == 0 || averageRating == null) {
+            	document.getElementById("averageRating").innerHTML = "No ratings yet";
             }
             else {
-            	document.getElementById("averageRating").innerHTML = result.data.averageRating + " Stars | " + result.data.count + " Ratings";
+            	displayAverageStars(averageRating);
+            	if (count == 1) {
+            		document.getElementById("averageRating").innerHTML = averageRating + " Stars | " + count + " Rating";
+            	}
+            	else {
+            		document.getElementById("averageRating").innerHTML = averageRating + " Stars | " + count + " Ratings";
+            	}
+
             }
-  		}).catch(function(error) {
-  			var code = error.code;
-  			var message = error.message;
-  			var details = error.details;
-  			console.error("FIREBASE: Failed to update rating.", error);
-  			$('input:radio[name="rating"]').attr('disabled', false);
-			$(".star-rating").css('opacity', '1');
-  		});
-  	}
+        }
+    }).catch(function (error) {
+    	console.log("Failed to retrieve ratings: ", error)
+    });
+}
+
+
+// Uses Firebase functions to submit ratings
+function rateStudentFirebase(currentUserID, uid, rating) {
+	var rateStudent = firebase.functions().httpsCallable('rateStudent');
+	console.log("Current User: " + currentUserID);
+	console.log("Target User: " + uid);
+	console.log("Stars: " + rating);
+	ratingInt = parseInt(rating);
+
+	const data = {
+		uid   : currentUserID,
+		tuid  : uid,
+		stars : ratingInt
+	};
+
+	rateStudent(data).then(function(result) {
+		console.log("FIREBASE: Successfully updated rating.");
+		$('input:radio[name="rating"]').attr('disabled', false);
+		$(".star-rating").css('opacity', '1');
+		// Return Average rating and total number of reviews
+
+		displayAverageStars(result.data.averageRating);
+		if (result.data.count == 1) {
+			document.getElementById("averageRating").innerHTML = result.data.averageRating + " Stars | " + result.data.count + " Rating";
+		}
+		else {
+			document.getElementById("averageRating").innerHTML = result.data.averageRating + " Stars | " + result.data.count + " Ratings";
+		}
+	}).catch(function(error) {
+		var code = error.code;
+		var message = error.message;
+		var details = error.details;
+		console.error("FIREBASE: Failed to update rating.", error);
+		$('input:radio[name="rating"]').attr('disabled', false);
+		$(".star-rating").css('opacity', '1');
+	});
+}

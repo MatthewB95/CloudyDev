@@ -37,6 +37,16 @@
 	transition: .5s;
 }
 
+.userCellActive {
+	background-color: #1EA1F2;
+	color: white;
+	height: 100px;
+	width: 100%;
+	position: relative;
+	border-bottom: 1px solid rgba(0,0,0,0.1);
+	transition: .5s;
+}
+
 .userCell:hover {
 	background-color: #1EA1F2;
 	color: white;

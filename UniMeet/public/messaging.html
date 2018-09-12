@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Untitled Document</title>
+<title>Messages</title>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,6 +16,7 @@
 <!-- FIREBASE -->
 
 <title>uniMeet</title>
+<script src="scripts/jquery.min.js"></script>
 <script src="scripts/messaging.js"></script>
 <script src="scripts/main.js"></script>
 
@@ -34,9 +35,11 @@
 <body>
 <div style="height: 64px"></div>
 <div class="mainView">
-  <div id="userBar" class="userBar">
-	<button id="refreshButton" type="submit"> Refresh </button>
-	<button id="newConversation" class="Conversation" type="submit">New Conversation</button>
+  <div id="userBarButtons" class="userBar">
+	 <button id="refreshButton" type="submit"> Refresh </button>
+	 <button id="newConversation" class="Conversation" type="submit">New Conversation</button>
+     <div id="userBar">
+  </div>
 	</div>
   <div class="messagesView">
 	  <div id="messages" class="messages"></div>

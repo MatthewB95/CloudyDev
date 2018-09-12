@@ -89,6 +89,9 @@ function createUserCell(user) {
 	var cell = document.createElement('div');
 	cell.setAttribute('class', 'userCell');
 	cell.addEventListener('click', function () {
+		console.log("Active");
+		// Set active highlight
+		$(this).removeClass('userCell').addClass('userCellActive').siblings().removeClass('userCellActive').addClass('userCell');
 		loadMessages(user.uid);
 	});
 
