@@ -79,6 +79,7 @@ function loadUserConversations() {
 			}
 		});
 	});
+//	checkHistory();
 }
 
 
