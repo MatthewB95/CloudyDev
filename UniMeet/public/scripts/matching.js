@@ -82,11 +82,10 @@ function populateCollectionView(matchedData) {
 	// Remove any existing matches from the page
 	document.getElementById("matchedCollectionView").innerHTML = "";
 
-	for (var key in Object(matchedData)) {
+	for (var key in matchedData) {
 
 		if (key != "version") {
 
-			console.log("Loading Profile " + key);
 			const docRef = firestore.doc("student/" + key);
 
 			docRef.get().then(function (doc) {
@@ -131,9 +130,10 @@ function populateCollectionView(matchedData) {
 					
 					percentageLabel = document.createElement('h3');
 					percentageLabel.setAttribute('class', 'profile_info_title primaryColour');
-					percentageLabel.innerHTML = Object(matchedData)[key] + "% matched";
+					percentageLabel.innerHTML = matchedData[myData.uid] + "% matched";
 					card.appendChild(percentageLabel);
-/*
+					
+					/*
 					shortcutsContainer = document.createElement('div');
 					shortcutsContainer.setAttribute("class", "shortcut_container");
 					card.appendChild(shortcutsContainer);

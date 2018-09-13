@@ -47,34 +47,42 @@ function checkFriend() {
 
 		var friendButton = document.getElementById('friendBtn');
 
-		friendButton.removeEventListener('click', addFriend, false);
-		friendButton.removeEventListener('click', unfriend, false);
-		friendButton.removeEventListener('click', acceptFriend, false);
+		friendButton.innerHTML = "Add Friend";
+		friendButton.addEventListener('click', addFriend, false);
 
 		firestore.doc("friends/" + currentUser.uid).get().then(function (doc) {
 			var friends = doc.data();
 			for (var friendID in friends) {
 				if (friendID == uid) {
+
+					// Display the Your Rating section on page
+					document.getElementById("yourRatingText").style.display = "block";
+					document.getElementById("yourRating").style.display = "block";
+
+					friendButton.removeEventListener('click', addFriend, false);
+					friendButton.removeEventListener('click', unfriend, false);
+					friendButton.removeEventListener('click', acceptFriend, false);
+
 					if (friends[friendID] == 0 || friends[friendID] == 5 || friends[friendID] == 3) {
 						friendButton.innerHTML = "Add Friend";
 						friendButton.addEventListener('click', addFriend, false);
-						break;
+						return;
 					}
 					else if (friends[friendID] == 4) {
 						friendButton.innerHTML = "Unfriend";
 						friendButton.addEventListener('click', unfriend, false);
-						break;
+						return;
 					}
 					else if (friends[friendID] == 1) {
 						friendButton.innerHTML = "Friend Request Sent";
 						// Need option to take request away
-						break;
+						return;
 					}
 					else if (friends[friendID] == 2) {
 						friendButton.innerHTML = "Accept Friend Request";
 						friendButton.addEventListener('click', acceptFriend, false);
 						// Need option to reject friend
-						break;
+						return;
 					}
 				}
 			}
@@ -191,6 +199,7 @@ function updateFriendStatus(status) {
 	var friendStatus = firebase.functions().httpsCallable('friendStatus');
 	friendStatus(data).then(function(result) {
 		console.log("FIREBASE: Successfully updated friend status.");
+		checkFriend();
 		document.getElementById('friendBtn').disabled = false;
 	}).catch(function(error) {
 		var code = error.code;
