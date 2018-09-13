@@ -45,23 +45,40 @@ function checkFriend() {
 	var currentUser = firebase.auth().currentUser;
 	if (currentUser != null) {
 
-		document.getElementById('friendBtn').innerHTML = "Add Friend";
-		document.getElementById('friendBtn').addEventListener('click', addFriend, false);
+		var friendButton = document.getElementById('friendBtn');
+
+		friendButton.removeEventListener('click', addFriend, false);
+		friendButton.removeEventListener('click', unfriend, false);
+		friendButton.removeEventListener('click', acceptFriend, false);
 
 		firestore.doc("friends/" + currentUser.uid).get().then(function (doc) {
 			var friends = doc.data();
 			for (var friendID in friends) {
 				if (friendID == uid) {
-					// Change the Friend request button
-					document.getElementById('friendBtn').innerHTML = "Unfriend";
-					document.getElementById('friendBtn').addEventListener('click', unfriend, false);
-					// Display the Your Rating section on page
-//					document.getElementById("yourRatingText").style.display = "block";
-//					document.getElementById("yourRating").style.display = "block";
-break;
-}
-}
-})
+					if (friends[friendID] == 0 || friends[friendID] == 5 || friends[friendID] == 3) {
+						friendButton.innerHTML = "Add Friend";
+						friendButton.addEventListener('click', addFriend, false);
+						break;
+					}
+					else if (friends[friendID] == 4) {
+						friendButton.innerHTML = "Unfriend";
+						friendButton.addEventListener('click', unfriend, false);
+						break;
+					}
+					else if (friends[friendID] == 1) {
+						friendButton.innerHTML = "Friend Request Sent";
+						// Need option to take request away
+						break;
+					}
+					else if (friends[friendID] == 2) {
+						friendButton.innerHTML = "Accept Friend Request";
+						friendButton.addEventListener('click', acceptFriend, false);
+						// Need option to reject friend
+						break;
+					}
+				}
+			}
+		})
 	}
 }
 
@@ -166,7 +183,7 @@ function updateFriendStatus(status) {
 	var currentUser = firebase.auth().currentUser;
 
 	const data = {
-		uid   : currentUser,
+		uid   : currentUser.uid,
 		tuid  : uid,
 		status : status
 	};
@@ -192,6 +209,11 @@ function addFriend() {
 // Removes friend
 function unfriend() {
 	updateFriendStatus(5);
+}
+
+// Accepts friend request
+function acceptFriend() {
+	updateFriendStatus(4);
 }
 
 
@@ -266,7 +288,7 @@ function loadRatings(currentUserID) {
                	if (key == currentUserID) {
                		document.getElementById("star-" + ratings[key]).checked = true;
                	}
-            }
+               }
             // Average rating to 1 decimal place
             averageRating = Math.round( (sum/count) * 10) / 10;
 
