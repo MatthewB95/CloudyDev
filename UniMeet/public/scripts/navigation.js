@@ -13,7 +13,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 			docRef.get().then(function (doc) {
                 if (doc && doc.exists) {
                     const myData = doc.data();
-					document.getElementById('nav_profile_title').innerHTML = myData.name;
+					//document.getElementById('nav_profile_title').innerHTML = myData.name;
 				}
 			});
 			
