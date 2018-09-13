@@ -476,7 +476,7 @@ function calcMatchTotal(usScore, taScore, uniDegPer){
 }
 
 //check if friend is true 
-function isFriend(uid, tuid){
+function isFriend(uid, tuid, func){
   return new Promise(async function(resolve, reject){
     try {
         //creates a reference to the users friend list
@@ -492,9 +492,44 @@ function isFriend(uid, tuid){
           for(var frKey in FriendLt){
             if(FriendLt.hasOwnProperty(frKey)){
               if(FriendLt[frKey] != null){
-                if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] >= 4)){
-                  isFriend = true;
-                  resolve(isFriend);
+                if(func == "rate"){
+                  if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] >= 4) && (FriendLt[frKey] <= 5)){
+                    isFriend = true;
+                    resolve(isFriend);
+                  }
+                }
+                else if(func == "friendReq"){
+                  if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] != 2) && (FriendLt[frKey] != 4) && (FriendLt[frKey] != 6)){
+                    isFriend = true;
+                    resolve(isFriend);
+                  }
+                  else if(FriendLt[frKey] == 2){
+                    isFriend = "alreadySent";
+                    resolve(isFriend);
+                  }
+                }
+                else if (func == "friendRej"){
+                  if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] == 1)){
+                    isFriend = true;
+                    resolve(isFriend);
+                  }
+                  else if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] != 1)){
+                    isFriend = "cantRejORadd";
+                    resolve(isFriend);
+                  }
+                }
+                else if(func == "unFriend"){
+                  if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] == 4)){
+                    isFriend = true;
+                    resolve(isFriend);
+                  }
+                  else if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] != 4)){
+                    isFriend = "cantUnfriend";
+                    resolve(isFriend);
+                  }
+                }
+                else { //probs need to get rid of this 'else' statment
+                  reject(console.log('CRITICAL ERROR: Unauthorised function call'));
                 }
               }
             }
@@ -519,10 +554,10 @@ exports.rateStudent = functions.https.onCall(async(data) => {
 
   //reference to the student being rateds (rating list)  
   var ratingListRef = db.collection('ratings').doc(tuid);
-
+  var func = "rate";
   //check rating is of correct value:
     if(stars >= 1 && stars <= 5){
-      var isF = await isFriend(uid, tuid);
+      var isF = await isFriend(uid, tuid, func);
       if(isF == true){
         await addRating(stars, uid, ratingListRef);
         var resolve = await calcAvgRating(tuid, ratingListRef);
@@ -616,16 +651,29 @@ function saveAvgRating(uid, avgRating){
     }
   });
 }
-// 0 = never been friends
-// 1 = request sent
-// 2 = request rejected
-// 3 = blocked
-// 4 = friends
-// 5 = unfriended
+
 exports.friendStatus = functions.https.onCall(async(data) => {
   var uid = data.uid;
   var tuid = data.tuid;
   var status = data.status;
+  
+  var funcReq = "friendReq";
+  var funcRej = "friendRej";
+  var funcUnf = "unFriend";
+  // 0 = never been friends
+  var statZero = 0;
+  // 1 = request sent
+  var reqSent = 1;
+  // 2 = request received
+  var reqRec = 2;
+  // 3 = request rejected
+  var reqRej = 3;
+  // 4 = friends
+  var friend = 4;
+  // 5 = unfriended
+  var unFriend = 5;
+  // 6 = blocked
+  var block = 6;
 
   //reference to the target student's friend list' 
   var tarFriendListRef = db.collection('friends').doc(tuid);
@@ -634,25 +682,110 @@ exports.friendStatus = functions.https.onCall(async(data) => {
   var UserFriendListRef = db.collection('friends').doc(uid);
 
   //check if status number is in correct range:
-    if(status >= 1 && status <= 5){
+    if((status >= 1) && (status <= 5) && (uid != null) && (tuid != null)){
       if(status == 1){
-
-      }
-      else if(status == 2){
-
+        var fb = await isFriend(tuid, uid, funcReq); //may be incorrect order of ID's (test as is first!)
+        if(fb == true){
+          await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, reqSent, reqRec);
+          return({friendStat: fb});
+        }
+        else if((fb == "alreadySent") || (fb == false)){
+          //user is either blocked, already friends OR already has a pending friend request
+          return({friendStat: fb});
+        }
+        else{
+          console.log("CRITICAL ERROR: [Status 1] Variable 'fb' from isFriend Function isn't being passed correctly");
+          return;
+        }
       }
       else if(status == 3){
-      
+        //save a 3 to tuid (user who sent request)
+        //save a 0 to uid (user who received request)
+        var fb = await isFriend(tuid, uid, funcRej); //may be incorrect order of ID's (test as is first!)
+        if(fb == true){
+          await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, statZero, reqRej);
+          return({friendStat: fb});
+        }
+        else if((fb == "cantRejORadd") || (fb == false)){
+          //user is either blocked or is already friends or friend request was cancelled before rejection could happen
+          return({friendStat: fb});
+        }
+        else{
+          console.log("CRITICAL ERROR: [Status 3] Variable 'fb' from isFriend Function isn't being passed correctly");
+          return;
+        }       
       }
       else if(status == 4){
-
+        //save a 4 to both users
+        var fb = await isFriend(tuid, uid, funcRej);
+        if(fb == true){
+          await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, friend, friend);
+          return({friendStat: fb});
+        }
+        else if((fb == "cantRejORadd") || (fb == false)){
+          //user is either blocked, already friends or friend request was cancelled
+          return({friendStat: fb});
+        }
+        else{
+          console.log("CRITICAL ERROR: [Status 4] Variable 'fb' from isFriend Function isn't being passed correctly");
+          return;
+        }
+      }
+      else if(status == 5){
+        //save a 5 to both users
+        var fb = await isFriend(tuid, uid, funcUnf);
+        if(fb == true){
+          await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, unFriend, unFriend);
+          return({friendStat: fb});
+        }
+        else if((fb == "cantUnfriend") || (fb == false)){
+          //user isn't friends
+          return({friendStat: fb});
+        }
+        else{
+          console.log("CRITICAL ERROR: [Status 5] Variable 'fb' from isFriend Function isn't being passed correctly");
+          return;
+        }
       }
       else{
-        //status equals 5
+        //status equals 6
       }
     }
     else{
       console.log("ERROR: friend status sent from client has incorrect format");
-      throw new functions.https.HttpsError('invalid-argument', 'ERROR: friend status sent from client has incorrect format')
+      throw new functions.https.HttpsError('invalid-argument', 'ERROR: data sent from client has incorrect format')
     }
 });
+
+//saves relevant values to User and target user's friends lists
+function sendToFL(uid, tuid, tarFL, userFL, userVal, tarVal){
+  return new Promise(function(resolve, reject) { 
+    try{  
+        //Data to save to friend list
+        var ufData = {
+          [tuid]: userVal,
+        }
+        //Data to save to Targets friend list
+        var tfData = {
+          [uid]: tarVal,
+        }
+
+        tarFL.update(tfData).then(function() {
+          resolve(console.log("Successfully saved to target student's friend list"));
+        }).catch(function (error) {
+          reject(console.log("ERROR: Failed to save to target student's friend list"));
+          throw new functions.https.HttpsError('aborted', "ERROR: Failed to save to target student's friend list", error);
+        });
+
+        userFL.update(ufData).then(function() {
+          resolve(console.log("Successfully saved to friend list"));
+        }).catch(function (error) {
+          reject(console.log("ERROR: Failed to save to friend list"));
+          throw new functions.https.HttpsError('aborted', "ERROR: Failed to save to friend list", error);
+        });
+      }
+      catch(e){
+        reject(e);
+      }
+  });
+}
