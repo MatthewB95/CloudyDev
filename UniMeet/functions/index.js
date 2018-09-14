@@ -484,14 +484,18 @@ function isFriend(uid, tuid, func){
         //get users friend list and save to object
         const friendList = await friendRef.get();
         var FriendLt = Object.assign(friendList.data()); 
+
+        const flSize = await getObSize(FriendLt);
         //is user friend?
         var isFriend = false;
+        var lcount = 0;
 
         if(friendList.exists){
           //const FList = Object.assign(friendList.data());
           for(var frKey in FriendLt){
             if(FriendLt.hasOwnProperty(frKey)){
               if(FriendLt[frKey] != null){
+                lcount ++;
                 if(func == "rate"){
                   if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] >= 4) && (FriendLt[frKey] <= 5)){
                     isFriend = true;
@@ -499,14 +503,30 @@ function isFriend(uid, tuid, func){
                   }
                 }
                 else if(func == "friendReq"){
-                  if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] != 2) && (FriendLt[frKey] != 4) && (FriendLt[frKey] != 6)){
-                    isFriend = true;
-                    resolve(isFriend);
-                  }
-                  else if(FriendLt[frKey] == 2){
-                    isFriend = "alreadySent";
-                    resolve(isFriend);
-                  }
+                    if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] != 2) && (FriendLt[frKey] != 4) && (FriendLt[frKey] != 6)){
+                      isFriend = true;
+                      lcount = 0;
+                      resolve(isFriend);
+                    }
+                    else if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] == 2)){
+                      isFriend = "alreadySent";
+                      lcount = 0;
+                      resolve(isFriend);
+                    }
+                    else if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] == 4 || FriendLt[frKey] == 6)){
+                      console.log('USER is blocked/alrdy friends and can not send request');
+                      lcount = 0;
+                      resolve(isFriend);
+                    }
+                    else{ 
+                      if(flSize == lcount){
+                        console.log('Target is not in friends list yet');
+                        isFriend = true;
+                        lcount = 0;
+                        resolve(isFriend);
+                      }
+                      console.log('frkey isnt target user: ',frKey);
+                    }
                 }
                 else if (func == "friendRej"){
                   if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] == 1)){
@@ -675,6 +695,10 @@ exports.friendStatus = functions.https.onCall(async(data) => {
   // 6 = blocked
   var block = 6;
 
+  console.log('UID: -> ', uid);
+  console.log('TUID: -> ', tuid);
+  console.log('STATUS: -> ', status);
+
   //reference to the target student's friend list' 
   var tarFriendListRef = db.collection('friends').doc(tuid);
 
@@ -684,7 +708,9 @@ exports.friendStatus = functions.https.onCall(async(data) => {
   //check if status number is in correct range:
     if((status >= 1) && (status <= 5) && (uid != null) && (tuid != null)){
       if(status == 1){
+        console.log('status 1 if statement passes!');
         var fb = await isFriend(tuid, uid, funcReq); //may be incorrect order of ID's (test as is first!)
+        console.log('isFriend function completes and fb = ',fb);
         if(fb == true){
           await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, reqSent, reqRec);
           return({friendStat: fb});
@@ -785,6 +811,22 @@ function sendToFL(uid, tuid, tarFL, userFL, userVal, tarVal){
         });
       }
       catch(e){
+        reject(e);
+      }
+  });
+}
+
+function getObSize(dataSet){
+  return new Promise(function(resolve, reject) {
+    try{
+        var counter = 0;
+        for(var key in dataSet){
+            if(dataSet.hasOwnProperty(key)){
+                counter ++;
+            }
+        }
+        resolve(counter);
+    }catch (e){ 
         reject(e);
       }
   });
