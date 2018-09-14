@@ -46,6 +46,7 @@ function checkFriend() {
 	if (currentUser != null) {
 
 		var friendButton = document.getElementById('friendBtn');
+		var rejButton = document.getElementById('rejBtn');
 
 		friendButton.innerHTML = "Add Friend";
 		friendButton.addEventListener('click', addFriend, false);
@@ -62,10 +63,16 @@ function checkFriend() {
 					friendButton.removeEventListener('click', addFriend, false);
 					friendButton.removeEventListener('click', unfriend, false);
 					friendButton.removeEventListener('click', acceptFriend, false);
+					rejButton.removeEventListener('click', rejUser, false);
+					rejButton.removeEventListener('click', blkUser, false);
 
 					if (friends[friendID] == 0 || friends[friendID] == 5 || friends[friendID] == 3) {
 						friendButton.innerHTML = "Add Friend";
 						friendButton.addEventListener('click', addFriend, false);
+
+						rejButton.innerHTML = "Block User";
+						rejButton.addEventListener('click', blkUser, false);
+
 						return;
 					}
 					else if (friends[friendID] == 4) {
@@ -82,6 +89,8 @@ function checkFriend() {
 						friendButton.innerHTML = "Accept Friend Request";
 						friendButton.addEventListener('click', acceptFriend, false);
 						// Need option to reject friend
+						rejButton.innerHTML = "Reject Friend Request";
+						rejButton.addEventListener('click', rejUser, false);
 						return;
 					}
 				}
@@ -223,6 +232,16 @@ function unfriend() {
 // Accepts friend request
 function acceptFriend() {
 	updateFriendStatus(4);
+}
+
+// Rejects a friend request
+function rejUser() {
+	updateFriendStatus(3);
+}
+
+// Blocks a user
+function blkUser(){
+	updateFriendStatus(6);
 }
 
 

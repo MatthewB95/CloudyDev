@@ -706,7 +706,7 @@ exports.friendStatus = functions.https.onCall(async(data) => {
   var UserFriendListRef = db.collection('friends').doc(uid);
 
   //check if status number is in correct range:
-    if((status >= 1) && (status <= 5) && (uid != null) && (tuid != null)){
+    if((status >= 1) && (status <= 6) && (uid != null) && (tuid != null)){
       if(status == 1){
         console.log('status 1 if statement passes!');
         var fb = await isFriend(tuid, uid, funcReq); //may be incorrect order of ID's (test as is first!)
@@ -775,6 +775,7 @@ exports.friendStatus = functions.https.onCall(async(data) => {
       }
       else{
         //status equals 6
+        console.log('BLOCK CODE WILL RUN');
       }
     }
     else{
