@@ -548,6 +548,22 @@ function isFriend(uid, tuid, func){
                     resolve(isFriend);
                   }
                 }
+                else if(func == "block"){
+                  if((frKey.localeCompare(tuid) == 0) && ((FriendLt[frKey] == 0) || (FriendLt[frKey] == 3) || (FriendLt[frKey] == 5))){
+                    isFriend = true;
+                    resolve(isFriend);
+                  }
+                  else if((frKey.localeCompare(tuid) == 0) && ((FriendLt[frKey] == 1) || (FriendLt[frKey] == 2) || (FriendLt[frKey] == 4))){
+                    isFriend = "cantBlk";
+                    resolve(isFriend);
+                  }              
+                }
+                else if(func == "ublock"){
+                  if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] == 7)){
+                    isFriend = "unBlock";
+                    resolve(isFriend);
+                  }
+                }
                 else { //probs need to get rid of this 'else' statment
                   reject(console.log('CRITICAL ERROR: Unauthorised function call'));
                 }
@@ -680,6 +696,8 @@ exports.friendStatus = functions.https.onCall(async(data) => {
   var funcReq = "friendReq";
   var funcRej = "friendRej";
   var funcUnf = "unFriend";
+  var funcBlk = "block";
+  var funcUBLK = "ublock";
   // 0 = never been friends
   var statZero = 0;
   // 1 = request sent
@@ -694,6 +712,8 @@ exports.friendStatus = functions.https.onCall(async(data) => {
   var unFriend = 5;
   // 6 = blocked
   var block = 6;
+  // 7 = unblocked
+  var unblocked = 7;
 
   console.log('UID: -> ', uid);
   console.log('TUID: -> ', tuid);
@@ -706,7 +726,7 @@ exports.friendStatus = functions.https.onCall(async(data) => {
   var UserFriendListRef = db.collection('friends').doc(uid);
 
   //check if status number is in correct range:
-    if((status >= 1) && (status <= 6) && (uid != null) && (tuid != null)){
+    if((status >= 1) && (status <= 7) && (uid != null) && (tuid != null)){
       if(status == 1){
         console.log('status 1 if statement passes!');
         var fb = await isFriend(tuid, uid, funcReq); //may be incorrect order of ID's (test as is first!)
@@ -773,9 +793,29 @@ exports.friendStatus = functions.https.onCall(async(data) => {
           return;
         }
       }
+      else if(status == 7){
+        var fb = await isFriend(tuid, uid, funcUBLK);
+        if(fb == "unBlock"){
+          await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, statZero, statZero);
+          return({friendStat: fb});
+        }
+      }
       else{
         //status equals 6
-        console.log('BLOCK CODE WILL RUN');
+        var fb = await isFriend(tuid, uid, funcBlk);
+
+        if(fb == true){
+          await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, block, unblocked);
+          return({friendStat: fb});
+        }
+        else if((fb == "cantBlk") || (fb == false)){
+          //user cant be blocked
+          return({friendStat: fb});
+        }
+        else{
+          console.log("CRITICAL ERROR: [Status 5] Variable 'fb' from isFriend Function isn't being passed correctly");
+          return;
+        }        
       }
     }
     else{

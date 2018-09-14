@@ -51,6 +51,9 @@ function checkFriend() {
 		friendButton.innerHTML = "Add Friend";
 		friendButton.addEventListener('click', addFriend, false);
 
+		rejButton.innerHTML = "Block User";
+		rejButton.addEventListener('click', blkUser, false);
+
 		firestore.doc("friends/" + currentUser.uid).get().then(function (doc) {
 			var friends = doc.data();
 			for (var friendID in friends) {
@@ -64,7 +67,7 @@ function checkFriend() {
 					friendButton.removeEventListener('click', unfriend, false);
 					friendButton.removeEventListener('click', acceptFriend, false);
 					rejButton.removeEventListener('click', rejUser, false);
-					rejButton.removeEventListener('click', blkUser, false);
+					//rejButton.removeEventListener('click', blkUser, false);
 
 					if (friends[friendID] == 0 || friends[friendID] == 5 || friends[friendID] == 3) {
 						friendButton.innerHTML = "Add Friend";
@@ -78,10 +81,14 @@ function checkFriend() {
 					else if (friends[friendID] == 4) {
 						friendButton.innerHTML = "Unfriend";
 						friendButton.addEventListener('click', unfriend, false);
+						rejButton.innerHTML = "";
+						rejButton.removeEventListener('click', blkUser, false);
 						return;
 					}
 					else if (friends[friendID] == 1) {
 						friendButton.innerHTML = "Friend Request Sent";
+						rejButton.innerHTML = "";
+						rejButton.removeEventListener('click', blkUser, false);
 						// Need option to take request away
 						return;
 					}
@@ -91,6 +98,11 @@ function checkFriend() {
 						// Need option to reject friend
 						rejButton.innerHTML = "Reject Friend Request";
 						rejButton.addEventListener('click', rejUser, false);
+						return;
+					}
+					else if (friends[friendID] == 6){
+						rejButton.innerHTML = "UnBlock user";
+						rejButton.addEventListener('click', unBlkUser, false);
 						return;
 					}
 				}
@@ -242,6 +254,11 @@ function rejUser() {
 // Blocks a user
 function blkUser(){
 	updateFriendStatus(6);
+}
+
+//unBlocks a user
+function unBlkUser(){
+	updateFriendStatus(7);
 }
 
 
