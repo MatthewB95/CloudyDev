@@ -48,10 +48,7 @@ function checkFriend() {
 		var friendButton = document.getElementById('friendBtn');
 		var rejButton = document.getElementById('rejBtn');
 
-		friendButton.innerHTML = "Add Friend";
 		friendButton.addEventListener('click', addFriend, false);
-
-		rejButton.innerHTML = "Block User";
 		rejButton.addEventListener('click', blkUser, false);
 
 		firestore.doc("friends/" + currentUser.uid).get().then(function (doc) {
@@ -63,32 +60,31 @@ function checkFriend() {
 					document.getElementById("yourRatingText").style.display = "block";
 					document.getElementById("yourRating").style.display = "block";
 
+					// Remove any existing event listeners on friend buttons
 					friendButton.removeEventListener('click', addFriend, false);
 					friendButton.removeEventListener('click', unfriend, false);
 					friendButton.removeEventListener('click', acceptFriend, false);
 					rejButton.removeEventListener('click', rejUser, false);
-					//rejButton.removeEventListener('click', blkUser, false);
+					rejButton.removeEventListener('click', blkUser, false);
 
 					if (friends[friendID] == 0 || friends[friendID] == 5 || friends[friendID] == 3) {
 						friendButton.innerHTML = "Add Friend";
 						friendButton.addEventListener('click', addFriend, false);
-
 						rejButton.innerHTML = "Block User";
 						rejButton.addEventListener('click', blkUser, false);
-
 						return;
 					}
 					else if (friends[friendID] == 4) {
 						friendButton.innerHTML = "Unfriend";
 						friendButton.addEventListener('click', unfriend, false);
-						rejButton.innerHTML = "";
-						rejButton.removeEventListener('click', blkUser, false);
+						rejButton.innerHTML = "Block User";
+						rejButton.addEventListener('click', blkUser, false);
 						return;
 					}
 					else if (friends[friendID] == 1) {
 						friendButton.innerHTML = "Friend Request Sent";
-						rejButton.innerHTML = "";
-						rejButton.removeEventListener('click', blkUser, false);
+						rejButton.innerHTML = "Block User";
+						rejButton.addEventListener('click', blkUser, false);
 						// Need option to take request away
 						return;
 					}
@@ -100,8 +96,9 @@ function checkFriend() {
 						rejButton.addEventListener('click', rejUser, false);
 						return;
 					}
-					else if (friends[friendID] == 6){
-						rejButton.innerHTML = "UnBlock user";
+					else if (friends[friendID] == 6) {
+						friendButton.disabled = true;
+						rejButton.innerHTML = "Unblock user";
 						rejButton.addEventListener('click', unBlkUser, false);
 						return;
 					}
@@ -220,8 +217,8 @@ function updateFriendStatus(status) {
 	var friendStatus = firebase.functions().httpsCallable('friendStatus');
 	friendStatus(data).then(function(result) {
 		console.log("FIREBASE: Successfully updated friend status.");
-		checkFriend();
 		document.getElementById('friendBtn').disabled = false;
+		checkFriend();
 	}).catch(function(error) {
 		var code = error.code;
 		var message = error.message;
@@ -259,6 +256,7 @@ function blkUser(){
 //unBlocks a user
 function unBlkUser(){
 	updateFriendStatus(7);
+	document.getElementById('friendBtn').disabled = false;
 }
 
 
