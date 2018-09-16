@@ -712,7 +712,7 @@ exports.friendStatus = functions.https.onCall(async(data) => {
   var unFriend = 5;
   // 6 = blocked
   var block = 6;
-  // 7 = unblocked (user with this is friends list means they have been blocked by said user)
+  // 7 = unblocked (user with this in friends list means they have been blocked by said user)
   var unblocked = 7;
 
   console.log('UID: -> ', uid);
@@ -729,7 +729,7 @@ exports.friendStatus = functions.https.onCall(async(data) => {
     if((status >= 1) && (status <= 7) && (uid != null) && (tuid != null)){
       if(status == 1){
         console.log('status 1 if statement passes!');
-        var fb = await isFriend(tuid, uid, funcReq); //may be incorrect order of ID's (test as is first!)
+        var fb = await isFriend(tuid, uid, funcReq); 
         console.log('isFriend function completes and fb = ',fb);
         if(fb == true){
           await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, reqSent, reqRec);
