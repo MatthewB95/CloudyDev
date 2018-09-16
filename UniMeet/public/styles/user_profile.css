@@ -66,6 +66,13 @@
 .shortcut_buttons:active {
     cursor: pointer;
     border-bottom: medium inset #1EA1F2;
+    transform:translateY(1px);
+}
+
+.shortcut_buttons:disabled {
+    cursor: default;
+    border-bottom: none;
+    transform:translateY(1px);
 }
 
 

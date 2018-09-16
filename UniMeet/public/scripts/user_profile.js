@@ -47,11 +47,10 @@ function checkFriend() {
 
 		var friendButton = document.getElementById('friendBtn');
 		var rejButton = document.getElementById('rejBtn');
-
-		friendButton.addEventListener('click', addFriend, false);
-		rejButton.addEventListener('click', blkUser, false);
+		var blockButton = document.getElementById('blockBtn');
 
 		firestore.doc("friends/" + currentUser.uid).get().then(function (doc) {
+
 			var friends = doc.data();
 			for (var friendID in friends) {
 				if (friendID == uid) {
@@ -60,50 +59,72 @@ function checkFriend() {
 					document.getElementById("yourRatingText").style.display = "block";
 					document.getElementById("yourRating").style.display = "block";
 
+					rejButton.style.display = "none";
+
+					friendButton.addEventListener('click', addFriend, false);
+					blockButton.addEventListener('click', blkUser, false);
+
 					// Remove any existing event listeners on friend buttons
 					friendButton.removeEventListener('click', addFriend, false);
 					friendButton.removeEventListener('click', unfriend, false);
 					friendButton.removeEventListener('click', acceptFriend, false);
 					rejButton.removeEventListener('click', rejUser, false);
-					rejButton.removeEventListener('click', blkUser, false);
 
+					// If the users are not currently friends
 					if (friends[friendID] == 0 || friends[friendID] == 5 || friends[friendID] == 3) {
+						friendButton.disabled = false;
 						friendButton.innerHTML = "Add Friend";
 						friendButton.addEventListener('click', addFriend, false);
-						rejButton.innerHTML = "Block User";
-						rejButton.addEventListener('click', blkUser, false);
 						return;
 					}
+					// If the users are both friends
 					else if (friends[friendID] == 4) {
+						friendButton.disabled = false;
 						friendButton.innerHTML = "Unfriend";
 						friendButton.addEventListener('click', unfriend, false);
-						rejButton.innerHTML = "Block User";
-						rejButton.addEventListener('click', blkUser, false);
 						return;
 					}
+					// If the user has sent a friend request
 					else if (friends[friendID] == 1) {
+						friendButton.disabled = true;
 						friendButton.innerHTML = "Friend Request Sent";
-						rejButton.innerHTML = "Block User";
-						rejButton.addEventListener('click', blkUser, false);
-						// Need option to take request away
-						return;
-					}
-					else if (friends[friendID] == 2) {
-						friendButton.innerHTML = "Accept Friend Request";
-						friendButton.addEventListener('click', acceptFriend, false);
-						// Need option to reject friend
-						rejButton.innerHTML = "Reject Friend Request";
+						rejButton.style.display = "inline";
+						rejButton.innerHTML = "Cancel Request";
 						rejButton.addEventListener('click', rejUser, false);
 						return;
 					}
+					// If the user has recieved a friend request
+					else if (friends[friendID] == 2) {
+						friendButton.disabled = false;
+						friendButton.innerHTML = "Accept Friend Request";
+						friendButton.addEventListener('click', acceptFriend, false);
+						// Need option to reject friend
+						rejButton.style.display = "inline";
+						rejButton.innerHTML = "Reject Request";
+						rejButton.addEventListener('click', rejUser, false);
+						return;
+					}
+					// If the user has blocked other profile
 					else if (friends[friendID] == 6) {
 						friendButton.disabled = true;
-						rejButton.innerHTML = "Unblock user";
-						rejButton.addEventListener('click', unBlkUser, false);
+						friendButton.innerHTML = "Blocked";
+						blockButton.innerHTML = "Unblock";
+						blockButton.removeEventListener('click', blkUser, false);
+						blockButton.addEventListener('click', unBlkUser, false);
+						return;
+					}
+					// If the user has been blocked
+					else if (friends[friendID] == 7) {
+						friendButton.disabled = true;
+						friendButton.innerHTML = "Blocked";
 						return;
 					}
 				}
 			}
+			// If users have never been friends
+			friendButton.disabled = false;
+			friendButton.addEventListener('click', addFriend, false);
+			blockButton.addEventListener('click', blkUser, false);
 		})
 	}
 }
@@ -317,13 +338,13 @@ function displayAverageStars(averageRating) {
 // Load and display reviews for user
 function loadRatings(currentUserID) {
 	var averageRating = 0;
+	var sum = 0;
+	var count = 0;
 
 	firestore.doc("ratings/" + uid).get().then(function (doc) {
 		if (doc && doc.exists) {
 			const ratings = doc.data();
             // Calculate average rating
-            var sum = 0;
-            var count = 0;
             for (var key in ratings) {
             	sum+= ratings[key];
             	count++;
@@ -335,8 +356,10 @@ function loadRatings(currentUserID) {
             // Average rating to 1 decimal place
             averageRating = Math.round( (sum/count) * 10) / 10;
 
-            if (averageRating == 0 || averageRating == null) {
+            // If there are no previous ratings
+            if (count == 0 || sum == 0) {
             	document.getElementById("averageRating").innerHTML = "No ratings yet";
+            	return;
             }
             else {
             	displayAverageStars(averageRating);
