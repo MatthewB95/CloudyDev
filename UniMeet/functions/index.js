@@ -712,7 +712,7 @@ exports.friendStatus = functions.https.onCall(async(data) => {
   var unFriend = 5;
   // 6 = blocked
   var block = 6;
-  // 7 = unblocked
+  // 7 = unblocked (user with this is friends list means they have been blocked by said user)
   var unblocked = 7;
 
   console.log('UID: -> ', uid);
@@ -735,8 +735,13 @@ exports.friendStatus = functions.https.onCall(async(data) => {
           await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, reqSent, reqRec);
           return({friendStat: fb});
         }
-        else if((fb == "alreadySent") || (fb == false)){
-          //user is either blocked, already friends OR already has a pending friend request
+        else if(fb == "alreadySent"){
+          //user already has a pending friend request so instead cancels request entirely
+          await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, statZero, statZero);
+          return({friendStat: fb});
+        }
+        else if(fb == false){
+          //user is either blocked or already friends
           return({friendStat: fb});
         }
         else{
