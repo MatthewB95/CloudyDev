@@ -332,48 +332,54 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                   var tScore = 0;
                   //Filter out blocked users
                              //<--------------------CALL ISFRIEND FUNCTION HERE AND USE IF STATEMENT TO FILTER OUT BLOCKED USERS
-                  //Filter based on gender preferences
-                  if((gender_interest == tarUserProfile.gender || gender_interest == 'M/F') && 
-                     (tarUserProfile.gender_interest == gender || tarUserProfile.gender_interest == 'M/F'))
-                  {
-                      var tarCoursePercent = await getPercent(tarUserProfile, getCourseCount, coursePercent);
-                      var tarIntPercent = await getPercent(tarUserProfile, getInterestCount, interestPercent);
-
-                      //Compare both users courses and calculate match score
-                      if((tarCoursePercent != 0) && (userCoursePercent != 0)){
-                        //Find how many courses both users have in common
-                        var courseMatchCount = await numOfMatches(newValue ,tarUserProfile, getCourseCount);
-                        if(courseMatchCount != 0){
-                           uScore = uScore + (courseMatchCount * userCoursePercent);
-                           tScore = tScore + (courseMatchCount * tarCoursePercent);
-                        }
-                      }
-                      //Compare both users interests and calculate match score
-                      if((tarIntPercent != 0) && (userIntPercent != 0)){
-                        //Find how many Interests both users have in common
-                        var interestMatchCount = await numOfMatches(newValue ,tarUserProfile, getInterestCount);
-                        if(interestMatchCount != 0){
-                           uScore = uScore + (interestMatchCount * userIntPercent);
-                           tScore = tScore + (interestMatchCount * tarIntPercent);
-                        }
-                      }
-                      //do user rating part here (likely another if statement)
-                      if(averageRating != 0 || tarUserProfile.averageRating != 0)
+                  var func = 'isUserBlocked';
+                  var idBlocked = await isFriend(uid, tarStudUid, func);
+                  if(idBlocked == false){
+                      //Filter based on gender preferences
+                      if((gender_interest == tarUserProfile.gender || gender_interest == 'M/F') && 
+                        (tarUserProfile.gender_interest == gender || tarUserProfile.gender_interest == 'M/F'))
                       {
-                        var ratingPoints = (averageRatingPercent / numStars);
-                        var uRatingScore = (averageRating * ratingPoints);
-                        var tRatingScore = (tarUserProfile.averageRating * ratingPoints);
+                          var tarCoursePercent = await getPercent(tarUserProfile, getCourseCount, coursePercent);
+                          var tarIntPercent = await getPercent(tarUserProfile, getInterestCount, interestPercent);
 
-                        uScore = uScore + tRatingScore;
-                        tScore = tScore + uRatingScore;
+                          //Compare both users courses and calculate match score
+                          if((tarCoursePercent != 0) && (userCoursePercent != 0)){
+                            //Find how many courses both users have in common
+                            var courseMatchCount = await numOfMatches(newValue ,tarUserProfile, getCourseCount);
+                            if(courseMatchCount != 0){
+                              uScore = uScore + (courseMatchCount * userCoursePercent);
+                              tScore = tScore + (courseMatchCount * tarCoursePercent);
+                            }
+                          }
+                          //Compare both users interests and calculate match score
+                          if((tarIntPercent != 0) && (userIntPercent != 0)){
+                            //Find how many Interests both users have in common
+                            var interestMatchCount = await numOfMatches(newValue ,tarUserProfile, getInterestCount);
+                            if(interestMatchCount != 0){
+                              uScore = uScore + (interestMatchCount * userIntPercent);
+                              tScore = tScore + (interestMatchCount * tarIntPercent);
+                            }
+                          }
+                          //do user rating part here (likely another if statement)
+                          if(averageRating != 0 || tarUserProfile.averageRating != 0)
+                          {
+                            var ratingPoints = (averageRatingPercent / numStars);
+                            var uRatingScore = (averageRating * ratingPoints);
+                            var tRatingScore = (tarUserProfile.averageRating * ratingPoints);
+
+                            uScore = uScore + tRatingScore;
+                            tScore = tScore + uRatingScore;
+                          }
+                          //final averaged match score for both users (default adds 10% for matching based on uni & degree)
+                          var matchTotal = await calcMatchTotal(uScore, tScore, uniDegreePercent);
                       }
-                      //final averaged match score for both users (defualt adds 10% for matching based on uni & degree)
-                      var matchTotal = await calcMatchTotal(uScore, tScore, uniDegreePercent);
-                  }
-                  else{
-                    console.log('User: ', uid, ' does not have matching gender preferences with target user -> ',tarStudUid);
-                  }
-                  
+                      else{
+                        console.log('User: ', uid, ' does not have matching gender preferences with target user -> ',tarStudUid);
+                      }
+                    }
+                    else{
+                      console.log('User: ', tarStudUid, ' is blocked by ', uid, ' and therefore will not be added to match list!')
+                    }
                    //Below code finalises and saves match to db match lists
                    //get target users old match list
                    var getTML = await tarMatchRef.get();
@@ -514,7 +520,7 @@ function isFriend(uid, tuid, func){
                       resolve(isFriend);
                     }
                     else if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] == 4 || FriendLt[frKey] == 6)){
-                      console.log('USER is blocked/alrdy friends and can not send request');
+                      console.log('USER is blocked/already friends and can not send request');
                       lcount = 0;
                       resolve(isFriend);
                     }
@@ -554,7 +560,7 @@ function isFriend(uid, tuid, func){
                     resolve(isFriend);
                   }
                   else if((frKey.localeCompare(tuid) == 0) && ((FriendLt[frKey] == 1) || (FriendLt[frKey] == 2) || (FriendLt[frKey] == 4))){
-                    isFriend = "cantBlk";
+                    isFriend = "cantBlk";  //remove this else if later to make block always work
                     resolve(isFriend);
                   }              
                 }
@@ -564,7 +570,17 @@ function isFriend(uid, tuid, func){
                     resolve(isFriend);
                   }
                 }
-                else { //probs need to get rid of this 'else' statment
+                else if(func == "isUserBlocked"){
+                  if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] == 7 || FriendLt[frKey] == 6)){
+                    isFriend = true;
+                    resolve(isFriend);
+                  }
+                  else if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] != 7 || FriendLt[frKey] != 6)){
+                    isFriend = false;
+                    resolve(isFriend);
+                  }
+                }
+                else { 
                   reject(console.log('CRITICAL ERROR: Unauthorised function call'));
                 }
               }
