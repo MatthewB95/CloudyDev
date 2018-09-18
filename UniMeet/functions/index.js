@@ -330,7 +330,8 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                   var uScore = 0;
                   //target user match score (how well target user matches with user)
                   var tScore = 0;
-
+                  //Filter out blocked users
+                             //<--------------------CALL ISFRIEND FUNCTION HERE AND USE IF STATEMENT TO FILTER OUT BLOCKED USERS
                   //Filter based on gender preferences
                   if((gender_interest == tarUserProfile.gender || gender_interest == 'M/F') && 
                      (tarUserProfile.gender_interest == gender || tarUserProfile.gender_interest == 'M/F'))
@@ -491,7 +492,6 @@ function isFriend(uid, tuid, func){
         var lcount = 0;
 
         if(friendList.exists){
-          //const FList = Object.assign(friendList.data());
           for(var frKey in FriendLt){
             if(FriendLt.hasOwnProperty(frKey)){
               if(FriendLt[frKey] != null){

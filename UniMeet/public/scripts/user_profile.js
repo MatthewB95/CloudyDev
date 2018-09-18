@@ -90,7 +90,7 @@ function checkFriend() {
 						friendButton.innerHTML = "Friend Request Sent";
 						rejButton.style.display = "inline";
 						rejButton.innerHTML = "Cancel Request";
-						rejButton.addEventListener('click', rejUser, false);
+						rejButton.addEventListener('click', addFriend, false);
 						return;
 					}
 					// If the user has recieved a friend request
