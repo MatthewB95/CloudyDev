@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Untitled Document</title>
+
+<!-- FIREBASE -->
+<script src="/__/firebase/5.4.0/firebase-app.js"></script>
+<script src="/__/firebase/5.4.0/firebase-auth.js"></script>
+<script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
+<script src="/__/firebase/5.4.0/firebase-functions.js"></script>
+<script src="/__/firebase/init.js"></script>
+<!-- FIREBASE -->
+	
+	<script src="scripts/edit_profile.js"></script>
+	<script src="scripts/navigation.js"></script>
+
+<link rel="stylesheet" href="styles/main.css">
+<link rel="stylesheet" href="styles/navigation.css">
+<link rel="stylesheet" href="styles/edit_profile.css">
+</head>
+<header>
+  <nav class="navigationBar"><a href="/"><img src="images/logo.png" class="logoPos" alt="uniMeet"></a>
+    <div class="menuItems"><a href="/matching.html">Matches</a><a href="/friends.html">Friends</a><a href="/messaging.html">Messages</a><a href="/edit_profile.html"><img id="profileIcon" class="nav_profile_image"></a>
+  </nav>
+</header>
+
+<body>
+<div style="height: 64px"></div>
+<div class="sideNavigation">
+  <div id="editProfileMenuItem" class="sideButton">
+    <div class="sideText">Edit Profile</div>
+    <img class="sideIndicator" src="images/discind.png"> </div>
+  <div id="friendRequestMenuItem" class="sideButton">
+    <div class="sideText">Friend Requests</div>
+    <img class="sideIndicator" src="images/discind.png"> </div>
+  <div id="blockMenuItem" class="sideButton">
+    <div class="sideText">Block List</div>
+    <img class="sideIndicator" src="images/discind.png"> </div>
+</div>
+<div class="mainView">
+	  
+	  <div id="profilePreview" class="profilePreview">
+    <div class="backgroundColorView"></div>
+    <div class="shortcut_container">
+    </div>
+    <div class="avatar"> <img id="profilePicture" class="profilePicture"> </div>
+  </div>
+	
+	<div id="editProfileView" class="editProfileView">
+	  
+    <h1 class="headerText">Edit Profile</h1>
+    <button id="saveProfile">Save</button>
+	  
+	  
+	  
+    <h3 class="table_title primaryColour">Display Name</h3>
+    <input type="text" id="nameField" class="form_field">
+	  <h3 class="table_title primaryColour">Bio</h3>
+    <input type="text" id="bioField" class="form_field">
+	  <h3 class="table_title primaryColour">Student Email</h3>
+    <input type="text" id="studentEmailField" class="form_field">
+		<h3 class="table_title primaryColour">Personal Email</h3>
+    <input type="text" id="personalEmailField" class="form_field">
+		<h3 class="table_title primaryColour">Mobile</h3>
+    <input type="text" id="mobileField" class="form_field">
+    </input>
+	<h1 class="headerText">Enrolled Courses</h1>
+	<div class="tab">
+      <p><select id="subject1" oninput="this.className = ''" name="subject2" class="form_field">
+        <option value="">Please select your first course</option>
+      </select></p>
+      <p><select id="subject2" oninput="this.className = ''" name="subject2" class="form_field">
+        <option value="">Please select your second course</option>
+      </select></p>
+      <p><select id="subject3" oninput="this.className = ''" name="subject3" class="form_field">
+        <option value="">Please select your third course</option>
+      </select></p>
+      <p><select id="subject4" oninput="this.className = ''" name="subject4" class="form_field">
+        <option value="">Please select your fourth course</option>
+      </select></p>
+    </div>
+	<h1 class="headerText">Interests</h1>
+	<div class="tab">
+      <p><select id="interest1" oninput="this.className = ''" name="interest1" class="form_field">
+        <option value="" hidden>Interest 1</option>
+      </select></p>
+      <p><select id="interest2" oninput="this.className = ''" name="interest2" class="form_field">
+        <option value="" hidden>Interest 2</option>
+      </select></p>
+      <p><select id="interest3" oninput="this.className = ''" name="interest3" class="form_field">
+        <option value="" hidden>Interest 3</option>
+      </select></p>
+    </div>
+  </div>
+	
+	<div id="friendRequestListView" class="editProfileView">
+		<h1 class="headerText">Friend Requests</h1>
+	
+	</div>
+	
+	<div id="blockListView" class="editProfileView">
+		<h1 class="headerText">Blocked List</h1>
+	
+	</div>
+	
+	
+</div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

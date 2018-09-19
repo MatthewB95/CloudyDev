@@ -4,6 +4,7 @@
 body {
     margin: 0px;
     font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	background-color: #F3F5F6;
 }
 
 .subHeader {
@@ -15,6 +16,13 @@ body {
 .largeBodyText {
 	font-weight: normal;
 	font-size: 20px;
+}
+
+.table_title {
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: normal;
+	font-size: 14px;
+	text-transform: uppercase;
 }
 
 .smallText {

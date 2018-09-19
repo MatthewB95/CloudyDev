@@ -13,6 +13,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 			docRef.get().then(function (doc) {
                 if (doc && doc.exists) {
                     const myData = doc.data();
+					document.getElementById('profileIcon').src = myData.profile_image;
 					//document.getElementById('nav_profile_title').innerHTML = myData.name;
 				}
 			});
@@ -25,7 +26,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 	}
 });
 
-document.getElementById('logoutBtn').addEventListener('click', toggleSignIn, false);
+//document.getElementById('logoutBtn').addEventListener('click', toggleSignIn, false);
 //document.getElementById('nav_profile_image').addEventListener('click', loadProfile, false);
 //document.getElementById('nav_profile_title').addEventListener('click', loadProfile, false);
 
@@ -78,10 +79,10 @@ function toggleSignIn() {
 
 
 
-
-function loadProfile() {
-    window.open("/profile.html","_self");
-}
+//
+//function loadProfile() {
+//    window.open("/profile.html","_self");
+//}
 
 
 

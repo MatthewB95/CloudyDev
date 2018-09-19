@@ -1,23 +1,140 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile</title>
+
+  <!-- FIREBASE -->
+  <script src="/__/firebase/5.4.0/firebase-app.js"></script>
+  <script src="/__/firebase/5.4.0/firebase-auth.js"></script>
+  <script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
+  <script src="/__/firebase/5.4.0/firebase-functions.js"></script>
+  <script src="/__/firebase/init.js"></script>
+  <!-- FIREBASE -->
+
+  <script src="scripts/jquery.min.js"></script>
+  <script src="scripts/profile.js"></script>
+	<script src="scripts/navigation.js"></script>
+  <link href="css/bootstrap-4.0.0.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/navigation.css">
+  <link rel="stylesheet" href="styles/user_profile.css">
+  <!-- Icon Library for Stars -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+	<header>
+  <nav class="navigationBar">
+    <a href="/"><img src="images/logo.png" class="logoPos" alt="uniMeet"></a>
+    <div class="menuItems">
+      <a href="/matching.html">Matches</a>
+      <a href="/friends.html">Friends</a>
+      <a href="/messaging.html">Messages</a>
+      <a href="/profile.html"><img id="profileIcon" class="nav_profile_image"></a>
+    </div>
+  </nav>
+</header>
+
+<body>
+  <div style="height: 64px"></div>
+  <div class="user_profile_main">
+    <div class="backgroundColorView"></div>
+    <div class="shortcut_container">
+      <button id="messageBtn" class=" button shortcut_buttons">Message</button>
+      <button id="friendBtn" class=" button shortcut_buttons">Add Friend</button>
+      <button id="rejBtn" class=" button shortcut_buttons" style="display: none;">Reject Request</button>
+      <button id="blockBtn" class=" button shortcut_buttons">Block</button>
+      <!-- <button class="button shortcut_buttons">More</button>-->
+    </div>
+    <div class="avatar"> <img id="profilePicture" class="profilePicture"> </div>
+  </div>
+  <div class="mainView">
+    <section class="bioView">
+      <input type="text" id="nameField" class="subHeader"></input>
+      <input type="text" id="bioField" class="smallText"></input>
+      <br>
+      <h3 class="table_title primaryColour">About</h3>
+      <input type="text" id="ageField" class="smallText lightTextColour"></input>
+      <input type="text" id="universityField" class="smallText lightTextColour"></input>
+      <input type="text" id="degreeField" class="smallText lightTextColour"></input>
+      <br>
+      <h3 class="table_title primaryColour">Student Email</h3>
+      <input type="text"  id="studentEmailField" class="smallText lightTextColour"></input>
+      <br>
+      <h3 class="table_title primaryColour">Personal Email</h3>
+      <input type="text" id="personalEmailField" class="smallText lightTextColour"></input>
+      <br>
+      <h3 class="table_title primaryColour">Mobile</h3>
+      <input type="text" id="mobileField" class="smallText lightTextColour"></input>
+    </section>
+    <section class="infoView">
+      <h2 class="subHeader">Enrolled Courses</h2>
+      <div class="container">
+        <div id="enrolledCoursesCollectionView" class="row enrolledCoursesCollectionView"></div>
+      </div>
+      <h2 class="subHeader">Interests</h2>
+      <div class="container">
+        <div id="interestsCollectionView" class="row enrolledCoursesCollectionView"></div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+<html>
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile</title>
 
-    <!-- FIREBASE -->
+     FIREBASE 
     <script src="/__/firebase/5.4.0/firebase-app.js"></script>
     <script src="/__/firebase/5.4.0/firebase-auth.js"></script>
     <script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
     <script src="/__/firebase/init.js"></script>
-    <!-- FIREBASE -->
+     FIREBASE 
 
     <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="styles/Profile-Edit-Form.css">
     <link rel="stylesheet" href="styles/styles.css">
+	
+	<link href="styles/navigation.css" rel="stylesheet">
 
 </head>
+	
+	<header>
+  <nav class="navigationBar">
+    <a href="/"><img src="images/logo.png" class="logoPos" alt="uniMeet"></a>
+    <div class="menuItems">
+      <a href="/matching.html">Matches</a>
+      <a href="/friends.html">Friends</a>
+      <a href="/messaging.html">Messages</a>
+      <a href="/profile.html"><img id="profileIcon" class="nav_profile_image"></a>
+    </div>
+  </nav>
+</header>
 
 <body>
     <div class="container profile profile-view" id="profile">
@@ -67,8 +184,9 @@
     <script src="scripts/jquery.min.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <script src="scripts/Profile-Edit-Form.js"></script>
-
+<script src="scripts/navigation.js"></script>
     <script src="scripts/profile.js?14"></script>
 </body>
 
 </html>
+-->
