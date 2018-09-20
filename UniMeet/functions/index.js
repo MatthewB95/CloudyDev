@@ -502,7 +502,7 @@ function isFriend(uid, tuid, func){
               if(FriendLt[frKey] != null){
                 lcount ++;
                 if(func == "rate"){
-                  if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] >= 4) && (FriendLt[frKey] <= 5)){
+                  if((frKey.localeCompare(tuid) == 0) && (FriendLt[frKey] >= 4) && (FriendLt[frKey] <= 7)){
                     isFriend = true;
                     resolve(isFriend);
                   }
@@ -554,7 +554,7 @@ function isFriend(uid, tuid, func){
                   }
                 }
                 else if(func == "block"){
-                  if((frKey.localeCompare(tuid) == 0) && ((FriendLt[frKey] == 0) || (FriendLt[frKey] == 3) || (FriendLt[frKey] == 5))){
+                  if(frKey.localeCompare(tuid) == 0){
                     isFriend = true;
                     resolve(isFriend);
                   }
@@ -822,7 +822,7 @@ exports.friendStatus = functions.https.onCall(async(data) => {
       else if(status == 7){
         var fb = await isFriend(tuid, uid, funcUBLK);
         if(fb == "unBlock"){
-          await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, statZero, statZero);
+          await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, unFriend, unFriend);
           return({friendStat: fb});
         }
       }
@@ -902,7 +902,7 @@ function getObSize(dataSet){
   });
 }
 
-//removes user and target user from eachothers match lists 
+//removes tarField from tarCollectionDoc in Database
 function deleteField(tarField, tarCollectionDoc){
   return new Promise(function(resolve, reject) {
     try{
