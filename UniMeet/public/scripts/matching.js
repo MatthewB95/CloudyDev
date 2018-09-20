@@ -13,6 +13,11 @@ firebase.auth().onAuthStateChanged(function (user) {
 		var uid = user.uid;
 		var version = 0;
 
+		// Check if user's email has been verified
+		if (user.emailVerified == false) {
+			window.open("/verify.html","_self");
+        }
+
 		// Check for Firestore changes and update match list
 		var getRealTimeMatches = function () {
 			console.log("Retrieving matches");

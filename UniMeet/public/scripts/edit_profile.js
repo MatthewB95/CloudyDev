@@ -62,7 +62,13 @@ firebase.auth().onAuthStateChanged(function (user) {
 		docRef.get().then(function (doc) {
 			if (doc && doc.exists) {
 				const myData = doc.data();
-				document.getElementById('profilePicture').src = myData.profile_image;
+
+				if (myData.profile_image == null) {
+					document.getElementById('profilePicture').src = '/../images/profile_placeholder.png';
+				}
+				else {
+					document.getElementById('profilePicture').src = myData.profile_image;
+				}
 				//				document.getElementById('ageField').value = myData.age.toString();
 				document.getElementById('nameField').value = myData.name;
 				document.getElementById('bioField').value = myData.bio;

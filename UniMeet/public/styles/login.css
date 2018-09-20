@@ -108,10 +108,10 @@ body {
 	background-color: #016DBF;
 }
 
-.form_login_btn:active {
-	background:#eb3b60;
-	transform:translateY(1px);
-	background-color: #016DBF;
+.form_login_btn:active, .form_login_btn.active {
+  	background:#eb3b60;
+  	transform:translateY(1px);
+  	background-color: #016DBF;
 }
 
 .form_login_google_btn:hover {
@@ -132,10 +132,6 @@ body {
 	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-weight: normal;
 	font-size: 16px;
-}
-
-.form_login_google_btn:active {
-	cursor: pointer;
 }
 
 .warning {

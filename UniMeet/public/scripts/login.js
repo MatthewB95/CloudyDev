@@ -63,7 +63,11 @@ function initApp() {
 	// [START authstatelistener]
 	firebase.auth().onAuthStateChanged(function (user) {
 		if (user) {
-			window.open("/matching.html", "_self");
+			if (user.emailVerified == true) {
+				window.open("/matching.html", "_self");
+			} else {
+				window.open("/verify.html", "_self");
+			}
 		}
 	});
 	// [END authstatelistener]
@@ -82,6 +86,8 @@ document.getElementById("loginForm").addEventListener("submit", function() {
     var email = document.getElementById('email').value.trim();
     var password = document.getElementById('password').value;
 
+    $("#loginButton").toggleClass('active', true);
+
     firebase.auth().signInWithEmailAndPassword(email, password)
    		.then(function(user) {
    			$("#warning").text("");
@@ -89,6 +95,7 @@ document.getElementById("loginForm").addEventListener("submit", function() {
    		})
   		.catch(function(error) {
   			$("#warning").text("● Oops, that's not a match.");
+  			$("#loginButton").toggleClass('active', false);
        		// Error Handling
   	});
 
