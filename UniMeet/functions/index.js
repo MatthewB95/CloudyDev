@@ -331,7 +331,6 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                   //target user match score (how well target user matches with user)
                   var tScore = 0;
                   //Filter out blocked users
-                             //<--------------------CALL ISFRIEND FUNCTION HERE AND USE IF STATEMENT TO FILTER OUT BLOCKED USERS
                   var func = 'isUserBlocked';
                   var idBlocked = await isFriend(uid, tarStudUid, func);
                   if(idBlocked == false){
@@ -741,6 +740,12 @@ exports.friendStatus = functions.https.onCall(async(data) => {
   //reference to the user's friend list' 
   var UserFriendListRef = db.collection('friends').doc(uid);
 
+  //reference to the target student's friend list' 
+  var tarMatchListRef = db.collection('match').doc(tuid);
+
+  //reference to the user's friend list' 
+  var UserMatchListRef = db.collection('match').doc(uid);
+
   //check if status number is in correct range:
     if((status >= 1) && (status <= 7) && (uid != null) && (tuid != null)){
       if(status == 1){
@@ -827,6 +832,9 @@ exports.friendStatus = functions.https.onCall(async(data) => {
 
         if(fb == true){
           await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, block, unblocked);
+          //removes user and target user from eachothers match lists 
+          await deleteField(tuid, UserMatchListRef);
+          await deleteField(uid, tarMatchListRef);
           return({friendStat: fb});
         }
         else if((fb == "cantBlk") || (fb == false)){
@@ -879,7 +887,7 @@ function sendToFL(uid, tuid, tarFL, userFL, userVal, tarVal){
 }
 
 function getObSize(dataSet){
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve, reject){
     try{
         var counter = 0;
         for(var key in dataSet){
@@ -891,5 +899,23 @@ function getObSize(dataSet){
     }catch (e){ 
         reject(e);
       }
+  });
+}
+
+//removes user and target user from eachothers match lists 
+function deleteField(tarField, tarCollectionDoc){
+  return new Promise(function(resolve, reject) {
+    try{
+      tarCollectionDoc.update({
+        [tarField]: FieldValue.delete(),
+      }).then(function() {
+        resolve(console.log("Successfully removed user from ", tarField, "'s match lists!"));
+      }).catch(function(){
+        reject(console.log("ERROR: failed to remove user from ", tarField, "'s match lists!"));
+      });
+    }
+    catch(e){
+      reject(e);
+    }
   });
 }
