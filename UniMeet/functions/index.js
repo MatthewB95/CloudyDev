@@ -70,7 +70,7 @@ exports.sendNotifications = functions.database.ref('/messages/{messageId}').onCr
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-// BELOW IS MATCH MAKING CODE
+// ABOVE IS MATCH MESSAGING CODE
 var db = admin.firestore();
 
 /**
@@ -828,7 +828,13 @@ exports.friendStatus = functions.https.onCall(async(data) => {
         var fb = await isFriend(tuid, uid, funcUBLK);
         if(fb == "unBlock"){
           await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, unFriend, unFriend);
-          return({friendStat: fb});
+          var userProfile = await retrieveUser(uid);
+          var targetProfile = await retrieveUser(tuid);
+
+          if((userProfile != false) && (targetProfile != false)){
+            await singleMatch(userProfile, targetProfile);
+          }
+          return({friendStat: fb}); //TODO: ask sam to refresh match list on front end when this returns "unBlock"
         }
       }
       else{
@@ -920,6 +926,80 @@ function deleteField(tarField, tarCollectionDoc){
       });
     }
     catch(e){
+      reject(e);
+    }
+  });
+}
+
+//retrieve a user profile and return object
+function retrieveUser(uid){
+  return new Promise(async function(resolve, reject){
+    try{
+      //creates a reference to the users profile
+      var profileRef = db.collection('student').doc(uid);
+
+      //get the users current list of matches in an object
+      const getProfile = await profileRef.get();
+      if (getProfile.exists) {
+        const profile = Object.assign(getProfile.data());
+        resolve(profile);
+      }
+      else{
+        resolve(false);
+      }
+    }catch(e){
+      reject(e);
+    }
+  });
+}
+
+//check if two users match
+function singleMatch(userProfile, targetProfile){
+  return new Promise(async function(resolve, reject){
+    try{
+      var uid = userProfile.uid;
+      var tarStudUid = targetProfile.uid;
+
+      //creates a reference to the users match list
+      var matchRef = db.collection('match').doc(uid);
+      var matchTRef = db.collection('match').doc(tarStudUid);
+
+      var current_degree = userProfile.current_degree;
+      var tarCurrent_degree = targetProfile.current_degree;
+
+      var university = userProfile.university;
+      var tarUniversity = targetProfile.university;
+
+      if((current_degree != null) && (university != null) && (tarCurrent_degree != null) && (tarUniversity != null)){
+        //get both users current list of matches into objects
+        const getML = await matchRef.get();
+        const getTML = await matchTRef.get();
+
+        if(getML.exists && getTML.exists){
+          const oldMList = Object.assign(getML.data());    
+          const oldTMList = Object.assign(getTML.data());
+    
+          //iterate users match list version number
+          var verNum = (oldMList.version + 1);
+          var tarVerNum = (oldTMList.version + 1);
+
+          var matchTotal = await match(userProfile, targetProfile);
+
+          if(matchTotal != false){
+            await saveMatch(uid, tarStudUid, verNum, tarVerNum, matchTotal);
+            resolve(console.log('single match saved'));
+          }
+          else{
+            resolve(console.log('not a match!'));
+          }
+
+        }else{
+         resolve(console.log("Failed to retrieve match list [error]"));
+        }
+      }else{
+        resolve(console.log('User/s have not correctly filled in UserProfile'));
+      }
+    }catch(e){
       reject(e);
     }
   });
