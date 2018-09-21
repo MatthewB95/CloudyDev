@@ -213,79 +213,8 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     
     //access particular fields from new updated object (newValue)
     const uid = newValue.uid;
-    const name = newValue.name;
-    const gender = newValue.gender;
     const university = newValue.university;
     const current_degree = newValue.current_degree;
-    const course_1 = newValue.course_1;
-    const course_2 = newValue.course_2;
-    const course_3 = newValue.course_3;
-    const course_4 = newValue.course_4;
-    const course_5 = newValue.course_5;
-    const course_6 = newValue.course_6;
-    const interest_1 = newValue.interest_1;
-    const interest_2 = newValue.interest_2;
-    const interest_3 = newValue.interest_3;
-    const interest_4 = newValue.interest_4;
-    const averageRating = newValue.averageRating;
-    const gender_interest = newValue.gender_interest;
-
-    //access particular fields from old object (oldValue)
-    const oldName = oldValue.name;
-    const oldGender = oldValue.gender;
-    const oldUniversity = oldValue.university;
-    const oldCurrent_degree = oldValue.current_degree;
-    const oldCourse_1 = oldValue.course_1;
-    const oldCourse_2 = oldValue.course_2;
-    const oldCourse_3 = oldValue.course_3;
-    const oldCourse_4 = oldValue.course_4;
-    const oldCourse_5 = oldValue.course_5;
-    const oldCourse_6 = oldValue.course_6;
-    const oldInterest_1 = oldValue.interest_1;
-    const oldInterest_2 = oldValue.interest_2;
-    const oldInterest_3 = oldValue.interest_3;
-    const oldInterest_4 = oldValue.interest_4;
-    const oldAverageRating = oldValue.averageRating;
-    const oldGender_interest = oldValue.gender_interest;
-
-    const getInterestCount = 'interest_';
-    const getCourseCount = 'course_';
-
-    //Match Percentage distribution:
-    const uniDegreePercent = 10;
-    const coursePercent = 60;
-    const interestPercent = 10;
-    const averageRatingPercent = 20;
-    //How many stars are used in rating system:
-    const numStars = 5;
-
-    var userCoursePercent = await getPercent(newValue, getCourseCount, coursePercent);
-    var userIntPercent = await getPercent(newValue, getInterestCount, interestPercent);
-
-    function getPercent(profile, getCount, percentage){
-      return new Promise(function(resolve, reject) {
-        try{
-            var counter = 0;
-            var percentVal = 0;
-            for(var key in profile){
-                if(profile.hasOwnProperty(key)){
-                  if((key.startsWith(getCount)) && (profile[key] != null)){
-                    counter ++;
-                  }
-                }
-            }
-          if(counter != 0){
-            percentVal = (percentage / counter);
-            resolve(percentVal);
-          }
-          else{
-            resolve(percentVal);
-          }
-        }catch (e){ 
-            reject(e);
-          }
-      });
-    }
 
     //creates a reference to the firestore 'student' collection
     var studRef = db.collection('student');
@@ -296,7 +225,7 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     //check if sufficient data has been provided by user before matching algorithm is run
     if ((current_degree != null) && (university != null)){
         
-      //get the users old list of matches in an object
+      //get the users current list of matches in an object
       const getML = await matchRef.get();
       if (getML.exists) {
         const oldMList = Object.assign(getML.data());    
@@ -309,7 +238,7 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
 
         //clear users old match list
         await createMatchList(uid, preVerNum);
-        //MAKE BOTH AWAITS RUN AT SAME TIME WITH PROMISE ALL   <----------------------
+
         //clear current user from other students match lists
         await removeUserMatches(uid);
 
@@ -326,59 +255,8 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
                 var tarMatchRef = db.collection('match').doc(tarStudUid);
 
                 if (tarStudUid != uid){
-                  //User match score (how well user matches with target user)
-                  var uScore = 0;
-                  //target user match score (how well target user matches with user)
-                  var tScore = 0;
-                  //Filter out blocked users
-                  var func = 'isUserBlocked';
-                  var idBlocked = await isFriend(uid, tarStudUid, func);
-                  if(idBlocked == false){
-                      //Filter based on gender preferences
-                      if((gender_interest == tarUserProfile.gender || gender_interest == 'M/F') && 
-                        (tarUserProfile.gender_interest == gender || tarUserProfile.gender_interest == 'M/F'))
-                      {
-                          var tarCoursePercent = await getPercent(tarUserProfile, getCourseCount, coursePercent);
-                          var tarIntPercent = await getPercent(tarUserProfile, getInterestCount, interestPercent);
+                   var matchTotal = await match(newValue, tarUserProfile);
 
-                          //Compare both users courses and calculate match score
-                          if((tarCoursePercent != 0) && (userCoursePercent != 0)){
-                            //Find how many courses both users have in common
-                            var courseMatchCount = await numOfMatches(newValue ,tarUserProfile, getCourseCount);
-                            if(courseMatchCount != 0){
-                              uScore = uScore + (courseMatchCount * userCoursePercent);
-                              tScore = tScore + (courseMatchCount * tarCoursePercent);
-                            }
-                          }
-                          //Compare both users interests and calculate match score
-                          if((tarIntPercent != 0) && (userIntPercent != 0)){
-                            //Find how many Interests both users have in common
-                            var interestMatchCount = await numOfMatches(newValue ,tarUserProfile, getInterestCount);
-                            if(interestMatchCount != 0){
-                              uScore = uScore + (interestMatchCount * userIntPercent);
-                              tScore = tScore + (interestMatchCount * tarIntPercent);
-                            }
-                          }
-                          //do user rating part here (likely another if statement)
-                          if(averageRating != 0 || tarUserProfile.averageRating != 0)
-                          {
-                            var ratingPoints = (averageRatingPercent / numStars);
-                            var uRatingScore = (averageRating * ratingPoints);
-                            var tRatingScore = (tarUserProfile.averageRating * ratingPoints);
-
-                            uScore = uScore + tRatingScore;
-                            tScore = tScore + uRatingScore;
-                          }
-                          //final averaged match score for both users (default adds 10% for matching based on uni & degree)
-                          var matchTotal = await calcMatchTotal(uScore, tScore, uniDegreePercent);
-                      }
-                      else{
-                        console.log('User: ', uid, ' does not have matching gender preferences with target user -> ',tarStudUid);
-                      }
-                    }
-                    else{
-                      console.log('User: ', tarStudUid, ' is blocked by ', uid, ' and therefore will not be added to match list!')
-                    }
                    //Below code finalises and saves match to db match lists
                    //get target users old match list
                    var getTML = await tarMatchRef.get();
@@ -387,26 +265,12 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
 
                       //iterate target users match list version number
                       var tarVerNum = (oldTMList.version + 1);
-
-                      //data being saved to users match list
-                      var matchData = {
-                        [tarStudUid]: matchTotal,
-                        version: verNum,
+                      if(matchTotal != false){
+                        await saveMatch(uid, tarStudUid, verNum, tarVerNum, matchTotal);
                       }
-
-                      //data being saved to other students match lists
-                      var matchtData = {
-                        [uid]: matchTotal,
-                        version: tarVerNum, 
+                      else{
+                        console.log('not a match!');
                       }
-                      //Update match list of user whose profile updated
-                      var setMatchDoc = db.collection('match').doc(uid).update(matchData);
-                      //Update match list of students the user matched with
-                      var setTMatchDoc = db.collection('match').doc(tarStudUid).update(matchtData);
-                      //return and log both writes to Firestore Database
-                      return (setMatchDoc, setTMatchDoc).then(res => {
-                          console.log('set: ', res);
-                      });
                     }
                     else {
                       console.log('Failed to retrieve target user match list [error]');
@@ -437,6 +301,147 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
       console.log('User has not correctly filled in UserProfile');
     }
 });
+
+function saveMatch(uid, tarStudUid, verNum, tarVerNum, matchTotal){
+  return new Promise(function(resolve, reject) {
+    try{
+      //data being saved to users match list
+      var matchData = {
+        [tarStudUid]: matchTotal,
+        version: verNum,
+      }
+
+      //data being saved to other students match lists
+      var matchtData = {
+        [uid]: matchTotal,
+        version: tarVerNum, 
+      }
+      //Update match list of user whose profile updated
+      var setMatchDoc = db.collection('match').doc(uid).update(matchData);
+      //Update match list of students the user matched with
+      var setTMatchDoc = db.collection('match').doc(tarStudUid).update(matchtData);
+      //return and log both writes to Firestore Database
+      return (setMatchDoc, setTMatchDoc).then(res => {
+          resolve(console.log('set: ', res));
+      });
+    }catch(e){
+      reject(e);
+    }
+  });
+}
+
+function match(student, tarUserProfile){
+  return new Promise(async function(resolve, reject) {
+    try{
+      //access particular fields from users profile
+      const uid = student.uid;
+      const gender = student.gender;
+      const averageRating = student.averageRating;
+      const gender_interest = student.gender_interest;
+
+      //access particular fields from target users profile
+      const tarStudUid = tarUserProfile.uid;
+
+      const getInterestCount = 'interest_';
+      const getCourseCount = 'course_';
+
+      //Match Percentage distribution:
+      const uniDegreePercent = 10;
+      const coursePercent = 60;
+      const interestPercent = 10;
+      const averageRatingPercent = 20;
+      //How many stars are used in rating system:
+      const numStars = 5;
+
+      var userCoursePercent = await getPercent(student, getCourseCount, coursePercent);
+      var userIntPercent = await getPercent(student, getInterestCount, interestPercent);
+
+      //User match score (how well user matches with target user)
+      var uScore = 0;
+      //target user match score (how well target user matches with user)
+      var tScore = 0;
+      //Filter out blocked users
+      var func = 'isUserBlocked';
+      var idBlocked = await isFriend(uid, tarStudUid, func);
+      if(idBlocked == false){
+          //Filter based on gender preferences
+          if((gender_interest == tarUserProfile.gender || gender_interest == 'M/F') && 
+            (tarUserProfile.gender_interest == gender || tarUserProfile.gender_interest == 'M/F'))
+          {
+              var tarCoursePercent = await getPercent(tarUserProfile, getCourseCount, coursePercent);
+              var tarIntPercent = await getPercent(tarUserProfile, getInterestCount, interestPercent);
+
+              //Compare both users courses and calculate match score
+              if((tarCoursePercent != 0) && (userCoursePercent != 0)){
+                //Find how many courses both users have in common
+                var courseMatchCount = await numOfMatches(student ,tarUserProfile, getCourseCount);
+                if(courseMatchCount != 0){
+                  uScore = uScore + (courseMatchCount * userCoursePercent);
+                  tScore = tScore + (courseMatchCount * tarCoursePercent);
+                }
+              }
+              //Compare both users interests and calculate match score
+              if((tarIntPercent != 0) && (userIntPercent != 0)){
+                //Find how many Interests both users have in common
+                var interestMatchCount = await numOfMatches(student ,tarUserProfile, getInterestCount);
+                if(interestMatchCount != 0){
+                  uScore = uScore + (interestMatchCount * userIntPercent);
+                  tScore = tScore + (interestMatchCount * tarIntPercent);
+                }
+              }
+              //do user rating part here (likely another if statement)
+              if(averageRating != 0 || tarUserProfile.averageRating != 0)
+              {
+                var ratingPoints = (averageRatingPercent / numStars);
+                var uRatingScore = (averageRating * ratingPoints);
+                var tRatingScore = (tarUserProfile.averageRating * ratingPoints);
+
+                uScore = uScore + tRatingScore;
+                tScore = tScore + uRatingScore;
+              }
+              //final averaged match score for both users (default adds 10% for matching based on uni & degree)
+              var matchTotal = await calcMatchTotal(uScore, tScore, uniDegreePercent);
+              resolve(matchTotal);
+          }
+          else{
+            console.log('User: ', uid, ' does not have matching gender preferences with target user -> ',tarStudUid);
+            resolve(false);
+          }
+        }
+        else{
+          console.log('User: ', tarStudUid, ' is blocked by ', uid, ' and therefore will not be added to match list!')
+          resolve(false);
+        }
+    }catch(e){
+      reject(e);
+    }
+  });
+}
+
+function getPercent(profile, getCount, percentage){
+  return new Promise(function(resolve, reject) {
+    try{
+        var counter = 0;
+        var percentVal = 0;
+        for(var key in profile){
+            if(profile.hasOwnProperty(key)){
+              if((key.startsWith(getCount)) && (profile[key] != null)){
+                counter ++;
+              }
+            }
+        }
+      if(counter != 0){
+        percentVal = (percentage / counter);
+        resolve(percentVal);
+      }
+      else{
+        resolve(percentVal);
+      }
+    }catch (e){ 
+        reject(e);
+      }
+  });
+}
 
 function numOfMatches(userProfile, tarProfile, getCount){
   return new Promise(function(resolve, reject) {
