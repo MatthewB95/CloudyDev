@@ -53,7 +53,7 @@ function populateCollectionView(matchedData) {
 	// Remove any existing matches from the page
 	document.getElementById("matchedCollectionView").innerHTML = "";
 
-	for (var key in Object(matchedData)) {
+	for (var key in matchedData) {
 
 		console.log("Loading Profile " + key);
 		const docRef = firestore.doc("student/" + key);
@@ -116,17 +116,19 @@ function populateCollectionView(matchedData) {
 				moreShortcut.src = "images/more.png";
 				moreShortcut.setAttribute('class', 'shortcut_item');
 				shortcutsContainer.appendChild(moreShortcut);*/
-
-
-				document.getElementById("matchedCollectionView").appendChild(containingCard);
-
+				if (matchedData[myData.uid] == 4) {
+					document.getElementById("matchedCollectionView").appendChild(containingCard);
+				} else if (matchedData[myData.uid] == 2) {
+					document.getElementById("friendRequestView").appendChild(containingCard);
+					$("#friendRequestHeading").fadeIn(1250);
+					$("#friendRequestView").fadeIn(1250);
+				}
 			}
 		}).catch(function (error) {
 			console.log("Failed to retrieve error: ", error);
 		});
 
-	}
-	// Fade all collections onto page
+	}	
 	$("#matchedCollectionView").fadeIn(1250);
 }
 
