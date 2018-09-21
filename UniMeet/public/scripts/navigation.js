@@ -6,10 +6,9 @@ firebase.auth().onAuthStateChanged(function (user) {
 		var user = firebase.auth().currentUser;
 		if (user != null) {
 
-			//document.getElementById('nav_profile_image').src = user.photoURL;
-			
+			// Get the user's profile information for the nav bar
 			const docRef = firestore.doc("student/" + user.uid);
-			
+
 			docRef.get().then(function (doc) {
                 if (doc && doc.exists) {
                     const myData = doc.data();
@@ -23,6 +22,27 @@ firebase.auth().onAuthStateChanged(function (user) {
 					//document.getElementById('nav_profile_title').innerHTML = myData.name;
 				}
 			});
+
+			
+			// Check and display if the user has any friend requests
+			var friendRequests = 0;
+			const friendsRef = firestore.doc("friends/" + user.uid);
+
+			friendsRef.get().then(function (doc) {
+				if (doc && doc.exists) {
+					const friendData = doc.data();
+					for (var key in friendData) {
+						if (friendData[key] == 2) {
+							friendRequests++;
+						}
+					}
+					if (friendRequests > 0) {
+						document.getElementById('friendsNavText').innerHTML = "Friends ("+friendRequests+")";
+					}
+					console.log("Friend Requests: ", friendRequests);
+				}
+			});
+
 			
 		} else {
 			// No user is signed in.
