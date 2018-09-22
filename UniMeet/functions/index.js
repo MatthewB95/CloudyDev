@@ -215,6 +215,16 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     const uid = newValue.uid;
     const university = newValue.university;
     const current_degree = newValue.current_degree;
+    const gender = newValue.gender;
+    const averageRating = newValue.averageRating;
+    const gender_interest = newValue.gender_interest;
+
+    //access particular fields from old object (oldValue)
+    const oldUniversity = oldValue.university;
+    const oldCurrent_degree = oldValue.current_degree;
+    const oldGender = oldValue.gender;
+    const oldAverageRating = oldValue.averageRating;
+    const oldGender_interest = oldValue.gender_interest;
 
     //creates a reference to the firestore 'student' collection
     var studRef = db.collection('student');
@@ -222,83 +232,89 @@ exports.profileUpdateCheck = functions.firestore.document('student/{uid}').onUpd
     //creates a reference to the users match list
     var matchRef = db.collection('match').doc(uid);
 
-    //check if sufficient data has been provided by user before matching algorithm is run
-    if ((current_degree != null) && (university != null)){
-        
-      //get the users current list of matches in an object
-      const getML = await matchRef.get();
-      if (getML.exists) {
-        const oldMList = Object.assign(getML.data());    
+    if((university != oldUniversity) || (current_degree != oldCurrent_degree) || (gender != oldGender) ||
+      (averageRating != oldAverageRating) || (gender_interest != oldGender_interest)){
+      //check if sufficient data has been provided by user before matching algorithm is run
+      if ((current_degree != null) && (university != null)){
+          
+        //get the users current list of matches in an object
+        const getML = await matchRef.get();
+        if (getML.exists) {
+          const oldMList = Object.assign(getML.data());    
 
-        //oldVerNum
-        var preVerNum = oldMList.version;
+          //oldVerNum
+          var preVerNum = oldMList.version;
 
-        //iterate users match list version number
-        var verNum = (oldMList.version + 1);
+          //iterate users match list version number
+          var verNum = (oldMList.version + 1);
 
-        //clear users old match list
-        await createMatchList(uid, preVerNum);
+          //clear users old match list
+          await createMatchList(uid, preVerNum);
 
-        //clear current user from other students match lists
-        await removeUserMatches(uid);
+          //clear current user from other students match lists
+          await removeUserMatches(uid);
 
-        //this retrieves all students who go to the same Uni and are in the same degree as the student who updated their profile
-          var query = studRef.where('university', '==', university).where('current_degree', '==', current_degree).get().then(snapshot => {
-            snapshot.forEach(async doc => {                
-                //target users profile object
-                var tarUserProfile = doc.data();
+          //this retrieves all students who go to the same Uni and are in the same degree as the student who updated their profile
+            var query = studRef.where('university', '==', university).where('current_degree', '==', current_degree).get().then(snapshot => {
+              snapshot.forEach(async doc => {                
+                  //target users profile object
+                  var tarUserProfile = doc.data();
 
-                //target users uid
-                var tarStudUid = doc.id;
+                  //target users uid
+                  var tarStudUid = doc.id;
 
-                //creates a reference to target users match list
-                var tarMatchRef = db.collection('match').doc(tarStudUid);
+                  //creates a reference to target users match list
+                  var tarMatchRef = db.collection('match').doc(tarStudUid);
 
-                if (tarStudUid != uid){
-                   var matchTotal = await match(newValue, tarUserProfile);
+                  if (tarStudUid != uid){
+                    var matchTotal = await match(newValue, tarUserProfile);
 
-                   //Below code finalises and saves match to db match lists
-                   //get target users old match list
-                   var getTML = await tarMatchRef.get();
-                   if (getTML.exists){
-                      var oldTMList = Object.assign(getTML.data());
+                    //Below code finalises and saves match to db match lists
+                    //get target users old match list
+                    var getTML = await tarMatchRef.get();
+                    if (getTML.exists){
+                        var oldTMList = Object.assign(getTML.data());
 
-                      //iterate target users match list version number
-                      var tarVerNum = (oldTMList.version + 1);
-                      if(matchTotal != false){
-                        await saveMatch(uid, tarStudUid, verNum, tarVerNum, matchTotal);
+                        //iterate target users match list version number
+                        var tarVerNum = (oldTMList.version + 1);
+                        if(matchTotal != false){
+                          await saveMatch(uid, tarStudUid, verNum, tarVerNum, matchTotal);
+                        }
+                        else{
+                          console.log('not a match!');
+                        }
                       }
-                      else{
-                        console.log('not a match!');
+                      else {
+                        console.log('Failed to retrieve target user match list [error]');
                       }
-                    }
-                    else {
-                      console.log('Failed to retrieve target user match list [error]');
-                    }
-                }
-                else{
-                  if(snapshot.size == 1){
-                    var upData = {
-                      version: verNum,
-                    }
-                    var setUpData = db.collection('match').doc(uid).update(upData);
-                    return(setUpData).then(res => {
-                      console.log('EMPTY MATCH LIST set: ', res);
-                    });
                   }
-                }
+                  else{
+                    if(snapshot.size == 1){
+                      var upData = {
+                        version: verNum,
+                      }
+                      var setUpData = db.collection('match').doc(uid).update(upData);
+                      return(setUpData).then(res => {
+                        console.log('EMPTY MATCH LIST set: ', res);
+                      });
+                    }
+                  }
+              });
+            })
+            .catch(err => {
+              console.log('Error getting documents', err);
             });
-          })
-          .catch(err => {
-            console.log('Error getting documents', err);
-          });
+        }
+        else{
+          console.log("Failed to retrieve match list [error]")
+        }
       }
       else{
-        console.log("Failed to retrieve match list [error]")
+        console.log('User has not correctly filled in UserProfile');
       }
     }
     else{
-      console.log('User has not correctly filled in UserProfile');
+      console.log("No Important Fields in User's Profile have changed");
     }
 });
 
