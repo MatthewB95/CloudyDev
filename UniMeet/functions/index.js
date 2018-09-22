@@ -936,9 +936,25 @@ function deleteField(tarField, tarCollectionDoc){
       tarCollectionDoc.update({
         [tarField]: FieldValue.delete(),
       }).then(function() {
-        resolve(console.log("Successfully removed user from ", tarField, "'s match lists!"));
+        resolve(console.log("Successfully removed ", tarField, " from ", tarCollectionDoc));
       }).catch(function(){
-        reject(console.log("ERROR: failed to remove user from ", tarField, "'s match lists!"));
+        reject(console.log("ERROR: failed to remove ", tarField, " from ", tarCollectionDoc));
+      });
+    }
+    catch(e){
+      reject(e);
+    }
+  });
+}
+
+//removes tarDoc from tarCollection in Database
+function deleteDoc(tarCollectionDoc){
+  return new Promise(function(resolve, reject) {
+    try{
+      tarCollectionDoc.delete().then(function() {
+        resolve(console.log("Successfully removed ", tarCollectionDoc));
+      }).catch(function(error){
+        reject(console.log("ERROR: failed to remove ", ' -> ', error));
       });
     }
     catch(e){
@@ -1014,6 +1030,85 @@ function singleMatch(userProfile, targetProfile){
         }
       }else{
         resolve(console.log('User/s have not correctly filled in UserProfile'));
+      }
+    }catch(e){
+      reject(e);
+    }
+  });
+}
+/*
+level 1 privileges: read, add, delete and create/delete admin users
+level 2 privileges: read, add and delete
+level 3 privileges: read only
+*/
+exports.adminRemove = functions.https.onCall(async(data) => {
+  //uid of admin running function
+  var uid = data.uid;
+  //Integer that chooses which remove function is run
+  var command = data.command;
+  //Reference to what needs to be deleted
+  var item = data.item;
+
+  //verify admin (returns admin privilege level or false if not admin)
+  var adminCheck = await isAdmin(uid); 
+  if((command >= 1) && (command <= 6)){
+    if((adminCheck != false) && (adminCheck >= 1) && (adminCheck <= 3))
+    {
+      if((adminCheck == 1) && (command >= 1) && (command <= 2)){ 
+
+      }
+      else if(((adminCheck == 2) || (adminCheck == 1)) && (command >= 3) && (command <= 6)){ 
+        if(command == 3){ //delete university
+          var fromCourse = db.collection('course').doc(item);
+          var fromDegree = db.collection('degree').doc(item);
+          await deleteDoc(fromCourse);
+          await deleteDoc(fromDegree);//TODO: TEST IF BOTH CAN RUN AT SAME TIME BY REMOVING 'await'
+          //put function to loop through students to delete uni from them if they go to 'item' uni
+          //make this loop function re-usable for other deletes!
+        }
+        else if(command == 4){ //delete degree
+
+        }
+        else if(command == 5){ //delete course
+
+        }
+        else{ //command 6, delete interest
+
+        }
+      }
+      else{ //assumed privilege level == 3 (read only)
+        console.log("ERROR: Admin has an insufficient privilege level");
+        throw new functions.https.HttpsError('aborted', "ERROR: This Admin has an insufficient privilege level!");
+      }
+    }
+    else{
+      console.log("ERROR: User is not an admin");
+      throw new functions.https.HttpsError('aborted', "ERROR: User is not an admin");
+    }
+  }
+  else{
+    console.log("ERROR: Command request is of incorrect type/value");
+    throw new functions.https.HttpsError('failed-precondition', 'ERROR: Command request is of incorrect type/value');
+  }
+});
+
+exports.adminAdd = functions.https.onCall(async(data) => {
+
+});
+
+function isAdmin(uid){
+  return new Promise(async function(resolve, reject){
+    try{
+      //creates a reference to the users match list
+      var adminRef = db.collection('admin').doc(uid);
+      //attempts to retrieve admin
+      const getAdmin = await adminRef.get();
+      if(getAdmin.exists){
+        var privLevel = getAdmin.privilege_level;
+        resolve(privLevel);
+      }else{
+        console.log("User is not an admin [error]")
+        resolve(false);
       }
     }catch(e){
       reject(e);
