@@ -7,9 +7,9 @@ firestore.settings(settings);
 firebase.auth().onAuthStateChanged(function (user) {
 	
 	document.getElementById('profilePreview').style.display = "block";
-			document.getElementById('editProfileView').style.display = "block";
-			document.getElementById('friendRequestListView').style.display = "none";
-			document.getElementById('blockListView').style.display = "none";
+	document.getElementById('editProfileView').style.display = "block";
+	document.getElementById('friendRequestListView').style.display = "none";
+	document.getElementById('blockListView').style.display = "none";
 	
 	if (user) {
 		// User is signed in.
@@ -106,12 +106,12 @@ firebase.auth().onAuthStateChanged(function (user) {
 				mobile: mobileToSave
 					//                university: universityToSave,
 					//                current_degree: degreeToSave
-			}).then(function () {
-				console.log("Successfully Updated Profile.");
-			}).catch(function (error) {
-				console.log("Profile Update Error: ", error);
-			});
-		})
+				}).then(function () {
+					console.log("Successfully Updated Profile.");
+				}).catch(function (error) {
+					console.log("Profile Update Error: ", error);
+				});
+			})
 
 		// Check for Firestore changes and update text labels
 		var getRealTimeUpdates = function () {
@@ -124,6 +124,102 @@ firebase.auth().onAuthStateChanged(function (user) {
 				}
 			});
 		}
+
+		// Retrieves the latest matches from Firestore 
+		function loadRequestsAndBlocked() {
+			console.log("Retrieving friends");
+			const docRef = firestore.doc("friends/" + uid);
+			docRef.get().then(function (doc) {
+				if (doc && doc.exists) {
+					const friendData = doc.data();
+					populateCollectionView(friendData);
+					console.log("Retrieved friends: ", friendData);
+					return;
+				}
+			});
+		}
+
+		function populateCollectionView(matchedData) {
+			var i;
+			var containingCard;
+			var card;
+			var profileImage;
+			var nameLabel;
+			var degreeLabel;
+			var infoLabel;
+			var shortcutsContainer;
+			var messageShortcut;
+			var friendShortcut;
+			var moreShortcut;
+
+			// Remove any existing matches from the page
+			document.getElementById("friendRequestView").innerHTML = "";
+			document.getElementById("blockedUsersView").innerHTML = "";
+
+			for (var key in matchedData) {
+
+				console.log("Loading Profile " + key);
+				const docRef = firestore.doc("student/" + key);
+
+				docRef.get().then(function (doc) {
+					if (doc && doc.exists) {
+						const myData = doc.data();
+						console.log("Returning value");
+
+						containingCard = document.createElement('div');
+						containingCard.setAttribute('class', 'col-lg-4 col-md-6 col-sm-12 text-center');
+
+						card = document.createElement('div');
+						card.setAttribute('class', 'matched_profile_card');
+						card.addEventListener('click', function () {
+							selectMatchedProfile(myData.uid);
+						});
+						containingCard.appendChild(card);
+
+						profileImage = document.createElement('img');
+						profileImage.setAttribute('class', 'profile_image');
+						if (myData.profile_image == null) {
+							profileImage.src = '../images/profile_placeholder.png';
+						}
+						else {
+							profileImage.src = myData.profile_image;
+						}
+						card.appendChild(profileImage);
+
+						nameLabel = document.createElement('h1');
+						nameLabel.setAttribute('class', 'profile_name_title');
+						nameLabel.innerHTML = myData.name;
+						card.appendChild(nameLabel);
+
+						degreeLabel = document.createElement('h2');
+						degreeLabel.innerHTML = myData.current_degree;
+						degreeLabel.setAttribute('class', 'profile_degree_title');
+						card.appendChild(degreeLabel);
+
+						infoLabel = document.createElement('h3');
+						infoLabel.innerHTML = myData.university;
+						infoLabel.setAttribute('class', 'profile_info_title');
+						card.appendChild(infoLabel);
+
+						if (matchedData[myData.uid] == 2) {
+							document.getElementById("friendRequestView").appendChild(containingCard);
+						} else if (matchedData[myData.uid] == 6 || matchedData[myData.uid] == 7) {
+							document.getElementById("blockedUsersView").appendChild(containingCard);
+						}
+					}
+				}).catch(function (error) {
+					console.log("Failed to retrieve error: ", error);
+				});
+			}
+		}
+		
+		
+		function selectMatchedProfile(uid) {
+			window.localStorage.setItem("selectedProfileID", uid);
+			window.open("/user_profile.html", "_self");
+		}
+
+		loadRequestsAndBlocked();
 
 		// Continuously check for updates
 		getRealTimeUpdates();

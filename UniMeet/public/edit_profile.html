@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Untitled Document</title>
+<title>Edit Profile</title>
 
 <!-- FIREBASE -->
 <script src="/__/firebase/5.4.0/firebase-app.js"></script>
@@ -12,13 +12,15 @@
 <script src="/__/firebase/init.js"></script>
 <!-- FIREBASE -->
 	
-	<script src="scripts/edit_profile.js"></script>
-	<script src="scripts/navigation.js"></script>
+<script src="scripts/edit_profile.js"></script>
+<script src="scripts/navigation.js"></script>
 
 <link rel="stylesheet" href="styles/main.css">
 <link rel="stylesheet" href="styles/navigation.css">
 <link rel="stylesheet" href="styles/edit_profile.css">
+<link href="css/bootstrap-4.0.0.css" rel="stylesheet">
 </head>
+
 <header>
   <nav class="navigationBar"><a href="/"><img src="images/logo.png" class="logoPos" alt="uniMeet"></a>
     <div class="menuItems"><a href="/matching.html">Matches</a><a id="friendsNavText" href="/friends.html">Friends</a><a href="/messaging.html">Messages</a><a href="/edit_profile.html"><img id="profileIcon" class="nav_profile_image" src="images/profile_placeholder.png"></a>
@@ -96,41 +98,19 @@
 	
 	<div id="friendRequestListView" class="editProfileView">
 		<h1 class="headerText">Friend Requests</h1>
-	
+    <div class="container">
+      <div id="friendRequestView" class="row"></div>
+    </div>
 	</div>
 	
 	<div id="blockListView" class="editProfileView">
 		<h1 class="headerText">Blocked List</h1>
-	
-	</div>
+    <div class="container">
+      <div id="blockedUsersView" class="row"></div>
+    </div>
+  </div>
 	
 	
 </div>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

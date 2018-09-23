@@ -39,7 +39,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 					if (friendRequests > 0) {
 						document.getElementById('friendsNavText').innerHTML = "Friends ("+friendRequests+")";
 					}
-					console.log("Friend Requests: ", friendRequests);
+					//console.log("Friend Requests: ", friendRequests);
 				}
 			});
 
