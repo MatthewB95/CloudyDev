@@ -512,12 +512,17 @@ function isFriend(uid, tuid, func){
         const friendList = await friendRef.get();
         var FriendLt = Object.assign(friendList.data()); 
 
-        const flSize = await getObSize(FriendLt);
+        var flSize = await getObSize(FriendLt);
         //is user friend?
         var isFriend = false;
         var lcount = 0;
 
         if(friendList.exists){
+          if(flSize == 0){
+            console.log('Friends list is EMPTY!');
+            FriendLt.key1 = "empty";
+            flSize++;
+          }
           for(var frKey in FriendLt){
             if(FriendLt.hasOwnProperty(frKey)){
               if(FriendLt[frKey] != null){
@@ -544,13 +549,13 @@ function isFriend(uid, tuid, func){
                       lcount = 0;
                       resolve(isFriend);
                     }
-                    else{ 
-                      if(flSize == lcount){
+                    else if(flSize == lcount){ 
                         console.log('Target is not in friends list yet');
                         isFriend = true;
                         lcount = 0;
                         resolve(isFriend);
-                      }
+                    }
+                    else{
                       console.log('frkey isnt target user: ',frKey);
                     }
                 }
@@ -575,7 +580,7 @@ function isFriend(uid, tuid, func){
                   }
                 }
                 else if(func == "block"){
-                  if(frKey.localeCompare(tuid) == 0){
+                  if(frKey.localeCompare(tuid) == 0 || FriendLt.key1 == "empty"){
                     isFriend = true;
                     resolve(isFriend);
                   }
@@ -794,7 +799,7 @@ exports.friendStatus = functions.https.onCall(async(data) => {
       else if(status == 3){
         //save a 3 to tuid (user who sent request)
         //save a 0 to uid (user who received request)
-        var fb = await isFriend(tuid, uid, funcRej); //may be incorrect order of ID's (test as is first!)
+        var fb = await isFriend(tuid, uid, funcRej); 
         if(fb == true){
           await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, statZero, reqRej);
           return({friendStat: fb});
@@ -929,40 +934,6 @@ function getObSize(dataSet){
   });
 }
 
-//removes tarField from tarCollectionDoc in Database
-function deleteField(tarField, tarCollectionDoc){
-  return new Promise(function(resolve, reject) {
-    try{
-      tarCollectionDoc.update({
-        [tarField]: FieldValue.delete(),
-      }).then(function() {
-        resolve(console.log("Successfully removed ", tarField, " from ", tarCollectionDoc));
-      }).catch(function(){
-        reject(console.log("ERROR: failed to remove ", tarField, " from ", tarCollectionDoc));
-      });
-    }
-    catch(e){
-      reject(e);
-    }
-  });
-}
-
-//removes tarDoc from tarCollection in Database
-function deleteDoc(tarCollectionDoc){
-  return new Promise(function(resolve, reject) {
-    try{
-      tarCollectionDoc.delete().then(function() {
-        resolve(console.log("Successfully removed ", tarCollectionDoc));
-      }).catch(function(error){
-        reject(console.log("ERROR: failed to remove ", ' -> ', error));
-      });
-    }
-    catch(e){
-      reject(e);
-    }
-  });
-}
-
 //retrieve a user profile and return object
 function retrieveUser(uid){
   return new Promise(async function(resolve, reject){
@@ -1048,32 +1019,46 @@ exports.adminRemove = functions.https.onCall(async(data) => {
   var command = data.command;
   //Reference to what needs to be deleted
   var item = data.item;
+  //Specific field that needs to be deleted from item
+  var subItem = data.subItem;
 
   //verify admin (returns admin privilege level or false if not admin)
   var adminCheck = await isAdmin(uid); 
   if((command >= 1) && (command <= 6)){
     if((adminCheck != false) && (adminCheck >= 1) && (adminCheck <= 3))
     {
-      if((adminCheck == 1) && (command >= 1) && (command <= 2)){ 
+      //References to Database documents
+      var fromCourse = db.collection('course').doc(item);
+      var fromDegree = db.collection('degree').doc(item);
+      var fromInterests = db.collection('interests').doc('interests');
 
+      if((adminCheck == 1) && (command >= 1) && (command <= 2)){ //remove number 2 as not adding here
+        //put code to add/remove admin accounts (when adding a privilege lvl must be selected 
+        //if account already exists only update priv num)
       }
       else if(((adminCheck == 2) || (adminCheck == 1)) && (command >= 3) && (command <= 6)){ 
         if(command == 3){ //delete university
-          var fromCourse = db.collection('course').doc(item);
-          var fromDegree = db.collection('degree').doc(item);
+          await studentLoop(command, item); //Need to also run this function twice more to remove degrees and courses only offered by this course
           await deleteDoc(fromCourse);
           await deleteDoc(fromDegree);//TODO: TEST IF BOTH CAN RUN AT SAME TIME BY REMOVING 'await'
-          //put function to loop through students to delete uni from them if they go to 'item' uni
-          //make this loop function re-usable for other deletes!
         }
         else if(command == 4){ //delete degree
-
+          //delete degree from student profiles
+          await studentLoop(command, subItem);
+          //delete degree from database
+          await deleteField(subItem, fromDegree);
         }
         else if(command == 5){ //delete course
-
+          //delete course from student profiles
+          await studentLoop(command, subItem);
+          //delete course from database
+          await deleteField(subItem, fromCourse);
         }
         else{ //command 6, delete interest
-
+          //delete interest from student profiles
+          await studentLoop(command, subItem);
+          //delete interest from database
+          await deleteField(subItem, fromInterests);
         }
       }
       else{ //assumed privilege level == 3 (read only)
@@ -1115,3 +1100,61 @@ function isAdmin(uid){
     }
   });
 }
+
+//removes tarField from tarCollectionDoc in Database
+function deleteField(tarField, tarCollectionDoc){ //TODO: might need to make another function that actually deletes both key and value
+  return new Promise(function(resolve, reject) {
+    try{
+      tarCollectionDoc.update({
+        [tarField]: FieldValue.delete(),
+      }).then(function() {
+        resolve(console.log("Successfully removed ", tarField, " from ", tarCollectionDoc));
+      }).catch(function(){
+        reject(console.log("ERROR: failed to remove ", tarField, " from ", tarCollectionDoc));
+      });
+    }
+    catch(e){
+      reject(e);
+    }
+  });
+}
+
+//removes tarDoc from tarCollection in Database
+function deleteDoc(tarCollectionDoc){
+  return new Promise(function(resolve, reject) {
+    try{
+      tarCollectionDoc.delete().then(function() {
+        resolve(console.log("Successfully removed ", tarCollectionDoc));
+      }).catch(function(error){
+        reject(console.log("ERROR: failed to remove ", ' -> ', error));
+      });
+    }
+    catch(e){
+      reject(e);
+    }
+  });
+}
+
+//loops through and removes certain items (fields) from student profiles
+function studentLoop(command, item){
+  return new Promise(function(resolve, reject) {
+    try{
+      if(command == 3){
+
+      }
+      else if(command == 4){//for removing a uni remove all courses in user profiles when a user has a degree in the uni
+        //likely need a foreach loop that wraps around all these ifs
+      }
+      else if(command == 5){
+
+      }
+      else{
+        reject(console.log("ERROR: incorrect command has been requested"));
+      }
+    }
+    catch(e){
+      reject(e);
+    }
+  });
+}
+
