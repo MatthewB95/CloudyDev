@@ -8,6 +8,14 @@
     <link rel="stylesheet" href="styles/bootstrap.min.css">
     <link rel="stylesheet" href="styles/font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="styles/list.css">
+
+    <!-- FIREBASE -->
+	<script src="/__/firebase/5.4.0/firebase-app.js"></script>
+	<script src="/__/firebase/5.4.0/firebase-auth.js"></script>
+	<script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
+	<script src="/__/firebase/5.4.0/firebase-functions.js"></script>
+	<script src="/__/firebase/init.js"></script>
+	<!-- FIREBASE -->
 </head>
 
 <body>
@@ -19,7 +27,7 @@
                         <div class="col-md-12">
                             <h1>Interests</h1>
                             <div class="text-center clearfix _todo-main-controls">
-                                <div class="btn-group _todo-history-controls" role="group"><button class="btn btn-light" type="button" data-main-controls="undo"> <i class="fa fa-undo"></i></button></div>
+                                <div class="btn-group _todo-history-controls" role="group"><button class="btn btn-light" id="refreshButton" type="button" data-main-controls="undo"> <i class="fa fa-undo"></i></button></div>
                             </div>
                         </div>
                     </div>
@@ -31,12 +39,10 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <section class="_add-task-form">
-                                    <form id="task-main-controller">
-                                        <div class="form-group"><input class="form-control" type="text" placeholder="Add a task..." id="task-adder"></div>
-                                        <div class="form-group"><button class="btn btn-success" type="submit">Submit </button></div>
-                                    </form>
+                                    <div class="form-group"><input class="form-control" type="text" placeholder="Add an interest" id="newInterest"></div>
+                                    <div class="form-group"><button class="btn btn-success" type="button" id="newInterestButton">Submit </button></div>
                                 </section>
-                                <section id="todolist-cont" class="_todo-list">
+                                <section id="todolist-cont" class="_todo-list" style="display: none">
                                     <ul class="list-group _to-do-list-group sortable" id="task-list">
                                         <li class="list-group-item _task"><span class="_todo-text">Interest</span>
                                             <div class="btn-group pull-right _task-controls" role="group"><button class="btn btn-light _todo-remove" type="button"> <i class="fa fa-trash"></i></button></div>
@@ -53,6 +59,7 @@
     </section>
     <script src="scripts/jquery.min.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="scripts/admin.js"></script>
 </body>
 
 </html>
