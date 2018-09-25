@@ -2,67 +2,104 @@
 <html>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="styles/setup.css">
-	<link rel="stylesheet" href="styles/main.css">
-  <title>Setup</title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="styles/setup.css">
+<link rel="stylesheet" href="styles/main.css">
+<title>Setup</title>
 
-  <!-- FIREBASE -->
-  <script src="/__/firebase/5.4.0/firebase-app.js"></script>
-  <script src="/__/firebase/5.4.0/firebase-auth.js"></script>
-  <script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
-  <script src="/__/firebase/init.js"></script>
-  <!-- FIREBASE -->
+<!-- FIREBASE -->
+<script src="/__/firebase/5.4.0/firebase-app.js"></script>
+<script src="/__/firebase/5.4.0/firebase-auth.js"></script>
+<script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
+<script src="/__/firebase/init.js"></script>
+<!-- FIREBASE -->
 
 </head>
 
 <body>
-	<div class="view_panel">
+<div class="view_panel">
   <form id="regForm" action="/action_page.php">
-	  
-	  <a href="/"><img src="images/logo.png" class="loginLogo" alt="uniMeet"></a>
-      <h3 class="sml_title">uniMeet.</h3>
-	  
+    <a href="/"><img src="images/logo.png" class="loginLogo" alt="uniMeet"></a>
+    <h3 class="sml_title">uniMeet.</h3>
     <h1><b>Set up</b> your profile.</h1>
     <!-- One "tab" for each step in the form: -->
     <div class="tab">Let's start with the basics.
-      <p><input placeholder="First name" oninput="this.className = ''" name="fname"></p>
-      <p><input placeholder="Last name" oninput="this.className = ''" name="lname"></p>
-      <p><input type="date" placeholder="Date of birth" oninput="this.className = ''" name="birthday"></p>
+      <p>
+      <div><img id="uploadImage" class="uploadImage" src="images/profile_placeholder.png"></div>
+      </p>
+      <input type="file" id="files">
+      <p>
+        <input placeholder="Add your name here..." oninput="this.className = ''" name="name" id="name">
+      </p>
+      <p>
+        <input placeholder="Tell us a bit about yourself..." oninput="this.className = ''" name="bio" id="bio">
+      </p>
+      <p>
+        <input type="date" placeholder="Date of birth" oninput="this.className = ''" name="birthday" id="birthday">
+      </p>
+    </div>
+    <div class="tab">Let's add some links for people to contact you
+      <p>
+        <input placeholder="Student Email" oninput="this.className = ''" name="studentEmail">
+      </p>
+        <p>
+        <input placeholder="Personal Email" oninput="this.className = ''" name="personalEmail">
+      </p>
+        <p>
+        <input placeholder="Mobile Number" oninput="this.className = ''" name="mobileNumber">
+      </p>
     </div>
     <div class="tab">Where are you currently studying?
-      <p><select id="university" oninput="this.className = ''" name="university" onchange="loadDegrees()">
-      <option value="" hidden>Please select your university</option>
-      </select></p>
+      <p>
+        <select id="university" oninput="this.className = ''" name="university" onchange="loadDegrees()">
+          <option value="" hidden>Please select your university</option>
+        </select>
+      </p>
       <span id="degreeQuestion" style="display: none">What degree are you currently studying?</span>
-      <p><select id="degree" oninput="this.className = ''" name="degree" style="display: none">
-        <option value="" hidden>Please select your degree</option>
-      </select></p>
+      <p>
+        <select id="degree" oninput="this.className = ''" name="degree" style="display: none">
+          <option value="" hidden>Please select your degree</option>
+        </select>
+      </p>
     </div>
     <div class="tab">What subjects are you currently taking?
-      <p><select id="subject1" oninput="this.className = ''" name="subject1">
-        <option value="" hidden>Please select your first course</option>
-      </select></p>
-      <p><select id="subject2" oninput="this.className = ''" name="subject2">
-        <option value="" hidden>Please select your second course</option>
-      </select></p>
-      <p><select id="subject3" oninput="this.className = ''" name="subject3">
-        <option value="" hidden>Please select your third course</option>
-      </select></p>
-      <p><select id="subject4" oninput="this.className = ''" name="subject4">
-        <option value="" hidden>Please select your fourth course</option>
-      </select></p>
+      <p>
+        <select id="subject1" oninput="this.className = ''" name="subject1">
+          <option value="" hidden>Please select your first course</option>
+        </select>
+      </p>
+      <p>
+        <select id="subject2" oninput="this.className = ''" name="subject2">
+          <option value="" hidden>Please select your second course</option>
+        </select>
+      </p>
+      <p>
+        <select id="subject3" oninput="this.className = ''" name="subject3">
+          <option value="" hidden>Please select your third course</option>
+        </select>
+      </p>
+      <p>
+        <select id="subject4" oninput="this.className = ''" name="subject4">
+          <option value="" hidden>Please select your fourth course</option>
+        </select>
+      </p>
     </div>
     <div class="tab">What are your interests?
-      <p><select id="interest1" oninput="this.className = ''" name="interest1">
-        <option value="" hidden>Interest 1</option>
-      </select></p>
-      <p><select id="interest2" oninput="this.className = ''" name="interest2">
-        <option value="" hidden>Interest 2</option>
-      </select></p>
-      <p><select id="interest3" oninput="this.className = ''" name="interest3">
-        <option value="" hidden>Interest 3</option>
-      </select></p>
+      <p>
+        <select id="interest1" oninput="this.className = ''" name="interest1">
+          <option value="" hidden>Interest 1</option>
+        </select>
+      </p>
+      <p>
+        <select id="interest2" oninput="this.className = ''" name="interest2">
+          <option value="" hidden>Interest 2</option>
+        </select>
+      </p>
+      <p>
+        <select id="interest3" oninput="this.className = ''" name="interest3">
+          <option value="" hidden>Interest 3</option>
+        </select>
+      </p>
     </div>
     <div style="overflow:auto;">
       <div style="float:right;">
@@ -71,19 +108,13 @@
       </div>
     </div>
     <!-- Circles which indicates the steps of the form: -->
-    <div style="text-align:center;margin-top:40px;">
-      <span class="step"></span>
-      <span class="step"></span>
-      <span class="step"></span>
-      <span class="step"></span>
-    </div>
+    <div style="text-align:center;margin-top:40px;"> <span class="step"></span> <span class="step"></span> <span class="step"></span> <span class="step"></span> <span class="step"></span> </div>
   </form>
-		</div>
-	<div class="image_panel">
-    <div class="header_image"></div>
-  </div>
-  
-  <script src="scripts/jquery.min.js"></script>
-  <script src="scripts/setup.js?1"></script>
+</div>
+<div class="image_panel">
+  <div class="header_image"></div>
+</div>
+<script src="scripts/jquery.min.js"></script> 
+<script src="scripts/setup.js?1"></script>
 </body>
 </html>

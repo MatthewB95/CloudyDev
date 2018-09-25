@@ -86,6 +86,14 @@ h1 {
 }
 
 
+.uploadImage {
+    height: 240px;
+    width: 240px;
+    border-radius: 32px;
+    border: white solid 8px;
+}
+
+
 input {
 /*
 	padding: 10px;
