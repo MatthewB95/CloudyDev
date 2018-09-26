@@ -48,15 +48,13 @@ firebase.auth().onAuthStateChanged(function (user) {
         }
 
         function addInterest() {
-            var newInterest = document.getElementById("newInterest").value;
-            newInterest.trim();
-
-            // Return if the new interest is an empty field
-            if (newInterest == "") {
-                return;
-            }
+            var newInterest = document.getElementById("newInterest").value.trim();
 
             document.getElementById("newInterest").value = "";
+            // Return if the new interest is an empty field
+            if (newInterest == "" || newInterest == null) {
+                return;
+            }
 
             // Add Backend Function Here
             loadInterests();

@@ -29,7 +29,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 					if (version == 0) {
 						version = matchData.version;
 						populateCollectionView(matchData);
-						console.log("Retrieved Matches: ", matchData);
+						console.log("Retrieved Matches.");
 					}
 					// Otherwise, listen for any changes in match version number
 					else if (matchData.version != version) {
@@ -73,7 +73,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 	}
 });
 
-function populateCollectionView(matchedData) {
+function populateCollectionView(matchData) {
 
 	var i;
 	var containingCard;
@@ -87,7 +87,11 @@ function populateCollectionView(matchedData) {
 	// Remove any existing matches from the page
 	document.getElementById("matchedCollectionView").innerHTML = "";
 
-	for (var key in matchedData) {
+	var sortedMatches = sortObjects(matchData);
+
+	console.log("Sorted Matches: ", sortedMatches);
+
+	for (var key in sortedMatches) {
 
 		if (key != "version") {
 
@@ -135,43 +139,8 @@ function populateCollectionView(matchedData) {
 					
 					percentageLabel = document.createElement('h3');
 					percentageLabel.setAttribute('class', 'profile_info_title primaryColour');
-					percentageLabel.innerHTML = matchedData[myData.uid] + "% matched";
+					percentageLabel.innerHTML = sortedMatches[myData.uid] + "% matched";
 					card.appendChild(percentageLabel);
-					
-					/*
-					shortcutsContainer = document.createElement('div');
-					shortcutsContainer.setAttribute("class", "shortcut_container");
-					card.appendChild(shortcutsContainer);
-
-					messageShortcut = document.createElement('img');
-					messageShortcut.src = "images/friend.png";
-					messageShortcut.setAttribute('class', 'shortcut_item');
-					shortcutsContainer.appendChild(messageShortcut);
-					
-					var currentUser = firebase.auth().currentUser;
-					if (currentUser != null) {
-						firestore.doc("friends/" + currentUser.uid).get().then(function (doc) {
-							var friends = doc.data();
-							for (var friendID in friendShortcut) {
-								if (friendID == myData.uid) {
-									messageShortcut.src = "images/activeFriend.png";
-									break;
-								}
-							}
-						})
-					}
-
-
-					friendShortcut = document.createElement('img');
-					friendShortcut.src = "images/message.png";
-					friendShortcut.setAttribute('class', 'shortcut_item');
-					shortcutsContainer.appendChild(friendShortcut);
-
-					moreShortcut = document.createElement('img');
-					moreShortcut.src = "images/more.png";
-					moreShortcut.setAttribute('class', 'shortcut_item');
-					shortcutsContainer.appendChild(moreShortcut);*/
-
 
 					document.getElementById("matchedCollectionView").appendChild(containingCard);
 
@@ -190,4 +159,38 @@ function populateCollectionView(matchedData) {
 function selectMatchedProfile(uid) {
 	window.localStorage.setItem("selectedProfileID", uid);
 	window.open("/user_profile.html", "_self");
+}
+
+// Sort an object numerically
+function sortProperties(obj) {
+  
+	var sortable=[];
+	for(var key in obj)
+		if(obj.hasOwnProperty(key))
+			sortable.push([key, obj[key]]); // each item is an array in format [key, value]
+	
+	// Sort items by value
+	sortable.sort(function(a, b)
+	{
+		//return a[1]-b[1]; For ascending order
+	  return b[1]-a[1]; // Compare numbers (Descending order)
+	});
+	return sortable; // array in format [ [ key1, val1 ], [ key2, val2 ], ... ]
+}
+
+// Turn sorted array back into object
+function sortObjects(objects) {
+
+    var newObject = {};
+
+    var sortedArray = sortProperties(objects);
+    for (var i = 0; i < sortedArray.length; i++) {
+        var key = sortedArray[i][0];
+        var value = sortedArray[i][1];
+
+        newObject[key] = value;
+    }
+
+    return newObject;
+
 }
