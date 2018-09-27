@@ -58,7 +58,8 @@ document.getElementById("signUpForm").addEventListener("submit", function() {
             user.sendEmailVerification().then(function() {
               // Email sent.
               console.log("Sent Verification Email.");
-              document.location.href = "verify";
+				document.location.href = "setup";
+//              document.location.href = "verify";
             }).catch(function(error) {
               $("#signUpButton").toggleClass('active', false);
               // An error happened.

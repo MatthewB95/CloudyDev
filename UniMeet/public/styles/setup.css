@@ -87,8 +87,8 @@ h1 {
 
 
 .uploadImage {
-    height: 240px;
-    width: 240px;
+    height: 128px;
+    width: 128px;
     border-radius: 32px;
     border: white solid 8px;
 }
@@ -119,6 +119,10 @@ input {
 /* Mark input boxes that gets an error on validation: */
 input.invalid {
 	background-color: #ffdddd;
+}
+
+.radioBtn {
+    display: inline-block;
 }
 
 select {

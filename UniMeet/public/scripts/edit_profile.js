@@ -5,12 +5,12 @@ const settings = { /* your settings... */
 };
 firestore.settings(settings);
 firebase.auth().onAuthStateChanged(function (user) {
-	
+
 	document.getElementById('profilePreview').style.display = "block";
 	document.getElementById('editProfileView').style.display = "block";
 	document.getElementById('friendRequestListView').style.display = "none";
 	document.getElementById('blockListView').style.display = "none";
-	
+
 	if (user) {
 		// User is signed in.
 		var user = firebase.auth().currentUser;
@@ -25,22 +25,22 @@ firebase.auth().onAuthStateChanged(function (user) {
 		}
 		// Set profile picture
 		document.getElementById('profilePicture').src = photoUrl;
-		
-		document.getElementById('editProfileMenuItem').addEventListener('click', function() {
+
+		document.getElementById('editProfileMenuItem').addEventListener('click', function () {
 			document.getElementById('profilePreview').style.display = "block";
 			document.getElementById('editProfileView').style.display = "block";
 			document.getElementById('friendRequestListView').style.display = "none";
 			document.getElementById('blockListView').style.display = "none";
 		});
-		
-		document.getElementById('friendRequestMenuItem').addEventListener('click', function() {
+
+		document.getElementById('friendRequestMenuItem').addEventListener('click', function () {
 			document.getElementById('profilePreview').style.display = "none";
 			document.getElementById('editProfileView').style.display = "none";
 			document.getElementById('friendRequestListView').style.display = "block";
 			document.getElementById('blockListView').style.display = "none";
 		});
-		
-		document.getElementById('blockMenuItem').addEventListener('click', function() {
+
+		document.getElementById('blockMenuItem').addEventListener('click', function () {
 			document.getElementById('profilePreview').style.display = "none";
 			document.getElementById('editProfileView').style.display = "none";
 			document.getElementById('friendRequestListView').style.display = "none";
@@ -65,8 +65,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 				if (myData.profile_image == null) {
 					document.getElementById('profilePicture').src = '/../images/profile_placeholder.png';
-				}
-				else {
+				} else {
 					document.getElementById('profilePicture').src = myData.profile_image;
 				}
 				//				document.getElementById('ageField').value = myData.age.toString();
@@ -78,11 +77,96 @@ firebase.auth().onAuthStateChanged(function (user) {
 				document.getElementById('personalEmailField').value = myData.personalEmail;
 				document.getElementById('mobileField').value = myData.mobile;
 
-				console.log(myData.course_1);
-				document.getElementById('subject1').value = myData.course_1;
-				document.getElementById('subject2').value = myData.course_2;
-				document.getElementById('subject3').value = myData.course_3;
-				document.getElementById('subject4').value = myData.course_4;
+
+				firestore.collection("degree").get().then(function (querySnapshot) {
+					querySnapshot.forEach(function (doc) {
+						const degrees = doc.data();
+						// Add the name of each university to list of options
+						document.getElementById('university').append(new Option(doc.id, doc.id));
+					});
+				});
+
+				const degreesRef = firestore.doc("degree/" + myData.university);
+				degreesRef.get().then(function (doc) {
+					if (doc && doc.exists) {
+						const degrees = doc.data();
+						var degreeArray = [];
+						console.log("Retrieved degrees: ", Object.values(degrees));
+
+						// Fill in the degree drop-down list with the new values
+						for (var key in degrees) {
+							document.getElementById('degree').append(new Option(degrees[key], degrees[key]));
+							degreeArray.push(degrees[key]);
+						}
+						var index1 = degreeArray.indexOf(myData.current_degree);
+						document.getElementById('degree').selectedIndex = index1;
+					}
+				}).catch(function (error) {
+					console.log("Failed to retrieve error: ", error)
+				});
+
+
+				const subjectsRef = firestore.doc("course/" + myData.university);
+				subjectsRef.get().then(function (doc) {
+					if (doc && doc.exists) {
+						var subjectArray = [];
+						const subjects = doc.data();
+						for (var key in subjects) {
+							document.getElementById('subject1').append(new Option(subjects[key], subjects[key]));
+							document.getElementById('subject2').append(new Option(subjects[key], subjects[key]));
+							document.getElementById('subject3').append(new Option(subjects[key], subjects[key]));
+							document.getElementById('subject4').append(new Option(subjects[key], subjects[key]));
+							subjectArray.push(subjects[key]);
+						}
+						var index1 = subjectArray.indexOf(myData.course_1);
+						document.getElementById('subject1').selectedIndex = index1;
+
+						var index2 = subjectArray.indexOf(myData.course_2);
+						document.getElementById('subject2').selectedIndex = index2;
+
+						var index3 = subjectArray.indexOf(myData.course_3);
+						document.getElementById('subject3').selectedIndex = index3;
+
+						var index4 = subjectArray.indexOf(myData.course_4);
+						document.getElementById('subject4').selectedIndex = index4;
+
+					}
+				}).catch(function (error) {
+					console.log("Failed to retrieve error: ", error)
+				});
+
+
+
+
+				const interestsRef = firestore.doc("interests/interests");
+				interestsRef.get().then(function (doc) {
+					if (doc && doc.exists) {
+						var interestsArray = [];
+						const interests = doc.data();
+						console.log("Values: ", Object.values(interests));
+						console.log("Count: ", Object.values(interests).length);
+
+						// Add each subject to the drop down list
+						for (var key in interests) {
+							console.log("Key: ", key, " Value: ", interests[key]);
+							document.getElementById('interest1').append(new Option(interests[key], interests[key]));
+							document.getElementById('interest2').append(new Option(interests[key], interests[key]));
+							document.getElementById('interest3').append(new Option(interests[key], interests[key]));
+							interestsArray.push(interests[key]);
+						}
+						var index1 = interestsArray.indexOf(myData.interest_1);
+						document.getElementById('interest1').selectedIndex = index1;
+
+						var index2 = interestsArray.indexOf(myData.interest_2);
+						document.getElementById('interest2').selectedIndex = index2;
+
+						var index3 = interestsArray.indexOf(myData.interest_3);
+						document.getElementById('interest3').selectedIndex = index3;
+
+					}
+				}).catch(function (error) {
+					console.log("Failed to retrieve error: ", error)
+				});
 			}
 		}).catch(function (error) {
 			console.log("Failed to retrieve error: ", error)
@@ -95,23 +179,38 @@ firebase.auth().onAuthStateChanged(function (user) {
 			const studentEmailToSame = document.getElementById('studentEmailField').value.trim();
 			const personalEmailToSave = document.getElementById('personalEmailField').value.trim();
 			const mobileToSave = document.getElementById('mobileField').value.trim();
-			//            const universityToSave = universityTextField.value.trim();
-			//            const degreeToSave = degreeTextField.value.trim();
-			//            console.log("Saving Name: " + nameToSave + ", University: " + universityToSave + ", Degree: " + degreeToSave + " to Firestore");
+			const universityToSave = document.getElementById('university').value;
+			const degreeToSave = document.getElementById('degree').value;
+			const course1ToSave = document.getElementById('subject1').value;
+			const course2ToSave = document.getElementById('subject2').value;
+			const course3ToSave = document.getElementById('subject3').value;
+			const course4ToSave = document.getElementById('subject4').value;
+
+			const interest1ToSave = document.getElementById('interest1').value;
+			const interest2ToSave = document.getElementById('interest2').value;
+			const interest3ToSave = document.getElementById('interest3').value;
+
 			docRef.update({
 				name: nameToSave,
 				bio: bioToSave,
 				studentEmail: studentEmailToSame,
 				personalEmail: personalEmailToSave,
-				mobile: mobileToSave
-					//                university: universityToSave,
-					//                current_degree: degreeToSave
-				}).then(function () {
-					console.log("Successfully Updated Profile.");
-				}).catch(function (error) {
-					console.log("Profile Update Error: ", error);
-				});
-			})
+				mobile: mobileToSave,
+				university: universityToSave,
+				current_degree: degreeToSave,
+				course_1: course1ToSave,
+				course_2: course2ToSave,
+				course_3: course3ToSave,
+				course_4: course4ToSave,
+				interest_1: interest1ToSave,
+				interest_2: interest2ToSave,
+				interest_3: interest3ToSave
+			}).then(function () {
+				console.log("Successfully Updated Profile.");
+			}).catch(function (error) {
+				console.log("Profile Update Error: ", error);
+			});
+		})
 
 		// Check for Firestore changes and update text labels
 		var getRealTimeUpdates = function () {
@@ -180,8 +279,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 						profileImage.setAttribute('class', 'profile_image');
 						if (myData.profile_image == null) {
 							profileImage.src = '../images/profile_placeholder.png';
-						}
-						else {
+						} else {
 							profileImage.src = myData.profile_image;
 						}
 						card.appendChild(profileImage);
@@ -212,8 +310,8 @@ firebase.auth().onAuthStateChanged(function (user) {
 				});
 			}
 		}
-		
-		
+
+
 		function selectMatchedProfile(uid) {
 			window.localStorage.setItem("selectedProfileID", uid);
 			window.open("/user_profile.html", "_self");
@@ -229,10 +327,3 @@ firebase.auth().onAuthStateChanged(function (user) {
 		document.location.href = "/";
 	}
 });
-
-
-
-
-
-
-
