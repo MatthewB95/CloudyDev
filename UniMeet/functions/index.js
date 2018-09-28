@@ -1026,8 +1026,10 @@ exports.adminRemove = functions.https.onCall(async(data) => {
     if((adminCheck != false) && (adminCheck >= 1) && (adminCheck <= 2))
     {
       //References to Database documents
-      var fromCourse = db.collection('course').doc(item);
-      var fromDegree = db.collection('degree').doc(item);
+      if(item != null){
+        var fromCourse = db.collection('course').doc(item);
+        var fromDegree = db.collection('degree').doc(item);
+      }
       var fromInterests = db.collection('interests').doc('interests');
       var cleaner = null;
       var delOne = null;
@@ -1136,6 +1138,9 @@ exports.adminAdd = functions.https.onCall(async(data) => {
   var subItem = data.subItem;
   var addOne = null;
   var addTwo = null;
+  console.log('command = ',command);
+  console.log('item = ',item);
+  console.log('subItem = ',subItem);
 
   //verify admin (returns admin privilege level or false if not admin)
   var adminCheck = await isAdmin(uid); 
@@ -1144,13 +1149,14 @@ exports.adminAdd = functions.https.onCall(async(data) => {
     {
       //References to Database documents
       var toCourse = db.collection('course');
-      var toCourseDoc = db.collection('course').doc(item);
       var toDegree = db.collection('degree');
-      var toDegreeDoc = db.collection('degree').doc(item);
       var toInterests = db.collection('interests').doc('interests');
       var toAdmin = db.collection('admin');
-      var toAdminDoc = db.collection('admin').doc(item);
-      
+      if(item != null){
+        var toCourseDoc = db.collection('course').doc(item);
+        var toDegreeDoc = db.collection('degree').doc(item);
+        var toAdminDoc = db.collection('admin').doc(item);
+      }
       if((adminCheck == 1) && (command == 1)){
         addOne = await addDoc(item, toAdmin);//adds user to admin collection
         addTwo = await addField(subItem, toAdminDoc);//adds privilege lvl
@@ -1249,7 +1255,7 @@ function addField(subItem, toLocation){
         [subItem]: subItem,
       }
       toLocation.update(data).then(function(){
-        console.log('field saved to document ', toLocation);
+        console.log('field saved to document: ', subItem);
         resolve(true);
       }).catch(function (error){
         reject(console.log('ERROR: field save fail: ', error));
@@ -1270,7 +1276,8 @@ function isAdmin(uid){
       //attempts to retrieve admin
       const getAdmin = await adminRef.get();
       if(getAdmin.exists){
-        var privLevel = getAdmin.privilege_level;
+        const adminPro = await Object.assign(getAdmin.data());
+        var privLevel = adminPro.privilege_level;
         resolve(privLevel);
       }else{
         console.log("User is not an admin [error]")
