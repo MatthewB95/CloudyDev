@@ -56,14 +56,45 @@ firebase.auth().onAuthStateChanged(function (user) {
                 return;
             }
 
-            // Add Backend Function Here
-            loadInterests();
+            var adminAdd = firebase.functions().httpsCallable('adminAdd');
+            console.log("FIREBASE: Adding Interest: " + newInterest);
+        
+            const data = {
+                uid     : user.uid,
+                command : 5,
+                item    : null,
+                subItem : newInterest
+            };
+
+            adminAdd(data).then(function(result) {
+                console.log("FIREBASE: Successfully added interest.");
+                // Refresh interests page
+                loadInterests();
+            }).catch(function(error) {
+                console.error("FIREBASE: Failed to add interest.", error);
+            });
         }
         
         
         function deleteInterest(interest) {
-            // Add Backend Function Here
-            loadInterests();
+
+            var adminRemove = firebase.functions().httpsCallable('adminRemove');
+            console.log("FIREBASE: Removing Interest: " + interest);
+        
+            const data = {
+                uid     : user.uid,
+                command : 5,
+                item    : null,
+                subItem : interest
+            };
+
+            adminRemove(data).then(function(result) {
+                console.log("FIREBASE: Successfully removed interest.");
+                // Refresh interests page
+                loadInterests();
+            }).catch(function(error) {
+                console.error("FIREBASE: Failed to remove interest.", error);
+            });
         }
 
         loadInterests();
