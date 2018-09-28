@@ -6,7 +6,7 @@ const FieldValue = require('firebase-admin').firestore.FieldValue;
 admin.initializeApp();
 
 ////////////////////////////////////////////////////////////////////////////////////////////
-//BELOW IS CHAT CODE
+//BELOW IS MESSAGING CODE
 
 /* // Adds a message that welcomes new users into the chat.
 exports.addWelcomeMessages = functions.auth.user().onCreate(async (user) => {
@@ -865,8 +865,8 @@ exports.friendStatus = functions.https.onCall(async(data) => {
         if(fb == true){
           await sendToFL(uid, tuid, tarFriendListRef, UserFriendListRef, block, unblocked);
           //removes user and target user from eachothers match lists 
-          await deleteField(tuid, UserMatchListRef);
-          await deleteField(uid, tarMatchListRef);
+          await deleteFieldByKey(tuid, UserMatchListRef);
+          await deleteFieldByKey(uid, tarMatchListRef);
           return({friendStat: fb});
         }
         else if((fb == "cantBlk") || (fb == false)){
@@ -941,7 +941,6 @@ function retrieveUser(uid){
       //creates a reference to the users profile
       var profileRef = db.collection('student').doc(uid);
 
-      //get the users current list of matches in an object
       const getProfile = await profileRef.get();
       if (getProfile.exists) {
         const profile = Object.assign(getProfile.data());
@@ -1010,7 +1009,6 @@ function singleMatch(userProfile, targetProfile){
 /*
 level 1 privileges: read, add, delete and create/delete admin users
 level 2 privileges: read, add and delete
-level 3 privileges: read only
 */
 exports.adminRemove = functions.https.onCall(async(data) => {
   //uid of admin running function
@@ -1025,45 +1023,80 @@ exports.adminRemove = functions.https.onCall(async(data) => {
   //verify admin (returns admin privilege level or false if not admin)
   var adminCheck = await isAdmin(uid); 
   if((command >= 1) && (command <= 6)){
-    if((adminCheck != false) && (adminCheck >= 1) && (adminCheck <= 3))
+    if((adminCheck != false) && (adminCheck >= 1) && (adminCheck <= 2))
     {
       //References to Database documents
       var fromCourse = db.collection('course').doc(item);
       var fromDegree = db.collection('degree').doc(item);
       var fromInterests = db.collection('interests').doc('interests');
+      var cleaner = null;
+      var delOne = null;
+      var delTwo = null;
 
-      if((adminCheck == 1) && (command >= 1) && (command <= 2)){ //remove number 2 as not adding here
-        //put code to add/remove admin accounts (when adding a privilege lvl must be selected 
-        //if account already exists only update priv num)
-      }
-      else if(((adminCheck == 2) || (adminCheck == 1)) && (command >= 3) && (command <= 6)){ 
-        if(command == 3){ //delete university
-          await studentLoop(command, item); //Need to also run this function twice more to remove degrees and courses only offered by this course
-          await deleteDoc(fromCourse);
-          await deleteDoc(fromDegree);//TODO: TEST IF BOTH CAN RUN AT SAME TIME BY REMOVING 'await'
+      if((adminCheck == 1) && (command == 1)){
+        if(command == 1){
+          //creates reference to admin
+          var adminRef = db.collection('admin').doc(item);
+          //delete admin from database
+          delOne = await deleteDoc(adminRef);
+          //return result to client
+          if((delOne == true)){ 
+            return({remove: true});
+          }
         }
-        else if(command == 4){ //delete degree
+      }
+      else if(((adminCheck == 2) || (adminCheck == 1)) && (command >= 2) && (command <= 6)){ 
+        if(command == 2){ //delete university
+          cleaner = await studentRemoveControl(command, item); 
+          delOne = await deleteDoc(fromCourse);//<---
+          delTwo = await deleteDoc(fromDegree);//<--- TODO: TEST IF BOTH CAN RUN AT SAME TIME BY REMOVING 'await'
+          //return result to client
+          if((cleaner == true) && (delOne == true) && (delTwo == true)){ //TODO: check if I can return this early whilst student cleaner is still not finished
+            return({remove: cleaner});
+          }
+        }
+        else if(command == 3){ //delete degree
           //delete degree from student profiles
-          await studentLoop(command, subItem);
+          cleaner = await studentRemoveControl(command, subItem);
           //delete degree from database
-          await deleteField(subItem, fromDegree);
+          delOne = await deleteFieldByKey(subItem, fromDegree);
+          //return result to client
+          if((cleaner == true) && (delOne == true)){ 
+            return({remove: cleaner});
+          }
         }
-        else if(command == 5){ //delete course
+        else if(command == 4){ //delete course
           //delete course from student profiles
-          await studentLoop(command, subItem);
+          cleaner = await studentRemoveControl(command, subItem);
           //delete course from database
-          await deleteField(subItem, fromCourse);
+          delOne = await deleteFieldByKey(subItem, fromCourse);
+          //return result to client
+          if((cleaner == true) && (delOne == true)){ 
+            return({remove: cleaner});
+          }
         }
-        else{ //command 6, delete interest
+        else if(command == 5){ //command 5, delete interest
           //delete interest from student profiles
-          await studentLoop(command, subItem);
+          cleaner = await studentRemoveControl(command, subItem);
           //delete interest from database
-          await deleteField(subItem, fromInterests);
+          delOne = await deleteFieldByKey(subItem, fromInterests);
+          //return result to client
+          if((cleaner == true) && (delOne == true)){ 
+            return({remove: cleaner});
+          }
+        }
+        else if(command == 6){//command 6, delete a user
+          delOne = await deleteUser(uid, item);
+          
+          //return result to client
+          if((delOne == true)){
+            return({remove: delOne});
+          }
         }
       }
-      else{ //assumed privilege level == 3 (read only)
-        console.log("ERROR: Admin has an insufficient privilege level");
-        throw new functions.https.HttpsError('aborted', "ERROR: This Admin has an insufficient privilege level!");
+      else{
+        console.log("ERROR: User has an insufficient privilege level");
+        throw new functions.https.HttpsError('aborted', "ERROR: Insufficient privilege level!");
       }
     }
     else{
@@ -1078,8 +1111,122 @@ exports.adminRemove = functions.https.onCall(async(data) => {
 });
 
 exports.adminAdd = functions.https.onCall(async(data) => {
+  //uid of admin running function
+  var uid = data.uid;
+  //Integer that chooses which remove function is run
+  var command = data.command;
+  //Reference to what needs to be deleted
+  var item = data.item;
+  //Specific field that needs to be deleted from item
+  var subItem = data.subItem;
+  var addOne = null;
+  var addTwo = null;
 
+  //verify admin (returns admin privilege level or false if not admin)
+  var adminCheck = await isAdmin(uid); 
+  if((command >= 1) && (command <= 5)){
+    if((adminCheck != false) && (adminCheck >= 1) && (adminCheck <= 2))
+    {
+      //References to Database documents
+      var toCourse = db.collection('course');
+      var toCourseDoc = db.collection('course').doc(item);
+      var toDegree = db.collection('degree');
+      var toDegreeDoc = db.collection('degree').doc(item);
+      var toInterests = db.collection('interests').doc('interests');
+      var toAdmin = db.collection('admin');
+      var toAdminDoc = db.collection('admin').doc(item);
+      
+      if((adminCheck == 1) && (command == 1)){
+        addOne = await addDoc(item, toAdmin);//adds user to admin collection
+        addTwo = await addField(subItem, toAdminDoc);//adds privilege lvl
+      }
+      else if(((adminCheck == 2) || (adminCheck == 1)) && (command >= 2) && (command <= 5)){ 
+        if(command == 2){ //add university
+          addOne = await addDoc(item, toCourse);
+          addTwo = await addDoc(item, toDegree);
+          //return result to client
+          if((addOne == true) && (addTwo == true)){ 
+            return({add: true});
+          }
+        }
+        else if(command == 3){ //add degree
+          addOne = await addField(subItem, toDegreeDoc);
+          //return result to client
+          if((addOne == true)){ 
+            return({add: true});
+          }
+        }
+        else if(command == 4){ //add course
+          addOne = await addField(subItem, toCourseDoc);
+          //return result to client
+          if((addOne == true)){ 
+            return({add: true});
+          }
+        }
+        else{ //command 5, add interest
+          addOne = await addField(subItem, toInterests);
+          //return result to client
+          if((addOne == true)){ 
+            return({add: true});
+          }
+        }
+      }
+      else{
+        console.log("ERROR: User has an insufficient privilege level");
+        throw new functions.https.HttpsError('aborted', "ERROR: Insufficient privilege level!");
+      }
+    }
+    else{
+      console.log("ERROR: User is not an admin");
+      throw new functions.https.HttpsError('aborted', "ERROR: User is not an admin");
+    }
+  } 
+  else{
+    console.log("ERROR: Command request is of incorrect type/value");
+    throw new functions.https.HttpsError('failed-precondition', 'ERROR: Command request is of incorrect type/value');
+  }
 });
+
+function addDoc(item, toLocation){
+  return new Promise(function(resolve, reject){
+    try{
+      var data = {
+
+      } 
+      var location = toLocation.doc(item);
+      location.set(data).then(function(){
+        console.log('doc saved to collection ', toLocation);
+        resolve(true);
+      }).catch(function (error){
+        reject(console.log('ERROR: doc save fail: ', error));
+        throw new functions.https.HttpsError('aborted', 'ERROR: doc save fail: ', error);
+      });
+    }
+    catch(e){
+      reject(e);
+    }
+  });
+}
+
+function addField(subItem, toLocation){
+  return new Promise(function(resolve, reject){
+    try{
+      var data = {
+        [subItem]: subItem,
+      }
+      toLocation.update(data).then(function(){
+        console.log('field saved to document ', toLocation);
+        resolve(true);
+      }).catch(function (error){
+        reject(console.log('ERROR: field save fail: ', error));
+        throw new functions.https.HttpsError('aborted', 'ERROR: field save fail: ', error);
+      });
+    }
+    catch(e){
+      reject(e);
+    }
+  });
+}
 
 function isAdmin(uid){
   return new Promise(async function(resolve, reject){
@@ -1101,14 +1248,108 @@ function isAdmin(uid){
   });
 }
 
+//deletes a user and all of its related data from database
+function deleteUser(uid, item){
+  return new Promise(async function(resolve, reject){
+    try{
+      var uidCheck = isAdmin(uid);
+      var itemCheck = isAdmin(item);
+      var checkPoint = false;
+      var secondCheckPoint = false;
+      var adminSelfDel = false;
+      
+      if(uidCheck == false){//user calling function is not an admin
+        if(uid == item){//user is deleting own account
+          checkPoint = true;
+        }
+        else{
+          resolve(false);
+        }
+      }
+      
+      if((uidCheck != false) || (checkPoint == true)){//either user is an admin or regular user is self deleting
+        if(itemCheck == false){//target is not an admin
+          secondCheckPoint = true;
+        }
+        else if(itemCheck != false){//target is an admin
+          if(uid == item){//admin deleting self
+            secondCheckPoint = true;
+            adminSelfDel = true;
+          }
+        }
+
+        if(secondCheckPoint == true){//either target is not an admin or user is self deleting
+          var friendListRef = db.collection('friends').doc(item);
+          var matchListRef = db.collection('match').doc(item);
+          var ratingsRef = db.collection('ratings').doc(item);
+          var profileRef = db.collection('student').doc(item);
+          if(adminSelfDel == true){ 
+            //creates reference to admin
+            var adminRef = db.collection('admin').doc(item);
+            //delete admin from database
+            await deleteDoc(adminRef);
+          }
+          //rest of delete here
+          await deleteDoc(friendListRef);
+          await deleteDoc(matchListRef);
+          await deleteDoc(ratingsRef);
+          await deleteDoc(profileRef); //admin may not have a student profile?
+          //delete target from other user friend lists
+          await delFromfList(item);
+          //delete target from other user match lists  
+          await removeUserMatches(item);
+          resolve(true);
+        }
+        else{
+          resolve(false);
+        }
+      }
+
+    }catch(e){
+      reject(e);
+    }
+  });
+}
+
+function delFromfList(uid){
+  return new Promise(function(resolve, reject){
+    try{
+      var friendColRef = db.collection('friends');
+      friendColRef.get().then(snapshot => {
+        snapshot.forEach(async doc => {
+          //student friend list object
+          var friendList = doc.data();
+          for(var rkey in friendList){
+            if(friendList.hasOwnProperty(rkey)){
+              if(rkey.localeCompare(uid) == 0){
+                var friendColDocRef = db.collection('friends').doc(doc.id);
+                console.log('The student: ', rkey ,' is being removed from -> ',doc.id);
+                //delete user from friends list
+                deleteFieldByKey(uid, friendColDocRef);//fix this passing stuff
+              }
+            }
+          }
+        });
+        resolve(true);
+      }).catch(err => {
+        reject(console.log('Error getting documents', err));
+      });
+    }
+    catch(e){
+      reject(e);
+    }
+  });
+}
+
 //removes tarField from tarCollectionDoc in Database
-function deleteField(tarField, tarCollectionDoc){ //TODO: might need to make another function that actually deletes both key and value
+function deleteFieldByKey(tarField, tarCollectionDoc){ //TODO: might need to make another function that actually deletes both key and value
   return new Promise(function(resolve, reject) {
     try{
       tarCollectionDoc.update({
         [tarField]: FieldValue.delete(),
       }).then(function() {
-        resolve(console.log("Successfully removed ", tarField, " from ", tarCollectionDoc));
+        console.log("Successfully removed ", tarField, " from ", tarCollectionDoc)
+        resolve(true);
       }).catch(function(){
         reject(console.log("ERROR: failed to remove ", tarField, " from ", tarCollectionDoc));
       });
@@ -1124,7 +1365,8 @@ function deleteDoc(tarCollectionDoc){
   return new Promise(function(resolve, reject) {
     try{
       tarCollectionDoc.delete().then(function() {
-        resolve(console.log("Successfully removed ", tarCollectionDoc));
+        console.log("Successfully removed ", tarCollectionDoc);
+        resolve(true);
       }).catch(function(error){
         reject(console.log("ERROR: failed to remove ", ' -> ', error));
       });
@@ -1136,17 +1378,137 @@ function deleteDoc(tarCollectionDoc){
 }
 
 //loops through and removes certain items (fields) from student profiles
-function studentLoop(command, item){
+function studentRemoveControl(command, item){
   return new Promise(function(resolve, reject) {
     try{
-      if(command == 3){
+      var studProfile = db.collection('student');
 
+      if(command == 2){//Delete University (removing related info from student profiles)
+        //query for all students with university field == to item
+        studProfile.where('university', '==', item).get().then(snapshot => {
+          snapshot.forEach(async doc => {
+            //student profile object
+            var userProfile = doc.data();
+            console.log('The student: ', userProfile.uid ,' is having there profile cleaned by remove Uni function');
+            //reset courses, uni and degree to null
+            studProfile.doc(doc.id).update({
+              course_1: null,
+              course_2: null,
+              course_3: null,
+              course_4: null,
+              course_5: null,
+              course_6: null,
+              current_degree: null,
+              university: null,
+            });
+          });
+          resolve(true);
+        }).catch(err => {
+          reject(console.log('Error getting documents', err));
+        });
       }
-      else if(command == 4){//for removing a uni remove all courses in user profiles when a user has a degree in the uni
-        //likely need a foreach loop that wraps around all these ifs
+      else if(command == 3){//Delete Degree (removing related info from student profiles)
+        //query for all students with degree field == to item
+        studProfile.where('current_degree', '==', item).get().then(snapshot => {
+          snapshot.forEach(async doc => {
+            //student profile object
+            var userProfile = doc.data();
+            console.log('The student: ', userProfile.uid ,' is having there profile cleaned by remove Degree function');
+            //reset courses and degree to null
+            studProfile.doc(doc.id).update({
+              course_1: null,
+              course_2: null,
+              course_3: null,
+              course_4: null,
+              course_5: null,
+              course_6: null,
+              current_degree: null,
+            });
+          });
+          resolve(true);
+        }).catch(err => {
+          reject(console.log('Error getting documents', err));
+        });
       }
-      else if(command == 5){
-
+      else if(command == 4){//Remove a course from student profile
+        //query for all students 
+        studProfile.get().then(snapshot => {
+          snapshot.forEach(async doc => {
+            //student profile object
+            var userProfile = doc.data();
+            console.log('The student: ', userProfile.uid ,' is having there profile cleaned by remove Course function');
+            //reset course to null
+            if(userProfile.course_1 == item)
+            {
+              studProfile.doc(doc.id).update({
+                course_1: null,
+              });
+            }
+            else if(userProfile.course_2 == item){
+              studProfile.doc(doc.id).update({
+                course_2: null,
+              });
+            }
+            else if(userProfile.course_3 == item){
+              studProfile.doc(doc.id).update({
+                course_3: null,
+              });
+            }
+            else if(userProfile.course_4 == item){
+              studProfile.doc(doc.id).update({
+                course_4: null,
+              });
+            }
+            else if(userProfile.course_5 == item){
+              studProfile.doc(doc.id).update({
+                course_5: null,
+              });
+            }
+            else if(userProfile.course_6 == item){
+              studProfile.doc(doc.id).update({
+                course_6: null,
+              });
+            }
+          });
+          resolve(true);
+        }).catch(err => {
+          reject(console.log('Error getting documents', err));
+        });
+      }
+      else if(command == 5){//Remove an interest from student profile
+        //query for all students 
+        studProfile.get().then(snapshot => {
+          snapshot.forEach(async doc => {
+            //student profile object
+            var userProfile = doc.data();
+            console.log('The student: ', userProfile.uid ,' is having there profile cleaned by remove Interest function');
+            //reset course to null
+            if(userProfile.interest_1 == item)
+            {
+              studProfile.doc(doc.id).update({
+                interest_1: null,
+              });
+            }
+            else if(userProfile.interest_2 == item){
+              studProfile.doc(doc.id).update({
+                interest_2: null,
+              });
+            }
+            else if(userProfile.interest_3 == item){
+              studProfile.doc(doc.id).update({
+                interest_3: null,
+              });
+            }
+            else if(userProfile.interest_4 == item){
+              studProfile.doc(doc.id).update({
+                interest_4: null,
+              });
+            }
+          });
+          resolve(true);
+        }).catch(err => {
+          reject(console.log('Error getting documents', err));
+        });
       }
       else{
         reject(console.log("ERROR: incorrect command has been requested"));
