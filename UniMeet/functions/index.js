@@ -1054,6 +1054,9 @@ exports.adminRemove = functions.https.onCall(async(data) => {
           if((cleaner == true) && (delOne == true) && (delTwo == true)){ //TODO: check if I can return this early whilst student cleaner is still not finished
             return({remove: cleaner});
           }
+          else{
+            return({remove: false});
+          }
         }
         else if(command == 3){ //delete degree
           //delete degree from student profiles
@@ -1063,6 +1066,9 @@ exports.adminRemove = functions.https.onCall(async(data) => {
           //return result to client
           if((cleaner == true) && (delOne == true)){ 
             return({remove: cleaner});
+          }
+          else{
+            return({remove: false});
           }
         }
         else if(command == 4){ //delete course
@@ -1074,6 +1080,9 @@ exports.adminRemove = functions.https.onCall(async(data) => {
           if((cleaner == true) && (delOne == true)){ 
             return({remove: cleaner});
           }
+          else{
+            return({remove: false});
+          }
         }
         else if(command == 5){ //command 5, delete interest
           //delete interest from student profiles
@@ -1084,6 +1093,9 @@ exports.adminRemove = functions.https.onCall(async(data) => {
           if((cleaner == true) && (delOne == true)){ 
             return({remove: cleaner});
           }
+          else{
+            return({remove: false});
+          }
         }
         else if(command == 6){//command 6, delete a user
           delOne = await deleteUser(uid, item);
@@ -1091,6 +1103,9 @@ exports.adminRemove = functions.https.onCall(async(data) => {
           //return result to client
           if((delOne == true)){
             return({remove: delOne});
+          }
+          else{
+            return({remove: false});
           }
         }
       }
@@ -1139,6 +1154,13 @@ exports.adminAdd = functions.https.onCall(async(data) => {
       if((adminCheck == 1) && (command == 1)){
         addOne = await addDoc(item, toAdmin);//adds user to admin collection
         addTwo = await addField(subItem, toAdminDoc);//adds privilege lvl
+        //return result to client
+        if((addOne == true) && (addTwo == true)){
+          return({add: true});
+        }
+        else{
+          return({add: false});
+        }
       }
       else if(((adminCheck == 2) || (adminCheck == 1)) && (command >= 2) && (command <= 5)){ 
         if(command == 2){ //add university
@@ -1148,12 +1170,18 @@ exports.adminAdd = functions.https.onCall(async(data) => {
           if((addOne == true) && (addTwo == true)){ 
             return({add: true});
           }
+          else{
+            return({add: false});
+          }
         }
         else if(command == 3){ //add degree
           addOne = await addField(subItem, toDegreeDoc);
           //return result to client
           if((addOne == true)){ 
             return({add: true});
+          }
+          else{
+            return({add: false});
           }
         }
         else if(command == 4){ //add course
@@ -1162,12 +1190,18 @@ exports.adminAdd = functions.https.onCall(async(data) => {
           if((addOne == true)){ 
             return({add: true});
           }
+          else{
+            return({add: false});
+          }
         }
         else{ //command 5, add interest
           addOne = await addField(subItem, toInterests);
           //return result to client
           if((addOne == true)){ 
             return({add: true});
+          }
+          else{
+            return({add: false});
           }
         }
       }
@@ -1252,8 +1286,8 @@ function isAdmin(uid){
 function deleteUser(uid, item){
   return new Promise(async function(resolve, reject){
     try{
-      var uidCheck = isAdmin(uid);
-      var itemCheck = isAdmin(item);
+      var uidCheck = await isAdmin(uid);
+      var itemCheck = await isAdmin(item);
       var checkPoint = false;
       var secondCheckPoint = false;
       var adminSelfDel = false;
