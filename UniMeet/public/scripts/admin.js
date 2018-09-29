@@ -74,28 +74,6 @@ firebase.auth().onAuthStateChanged(function (user) {
                 console.error("FIREBASE: Failed to add interest.", error);
             });
         }
-        
-        
-        function deleteInterest(interest) {
-
-            var adminRemove = firebase.functions().httpsCallable('adminRemove');
-            console.log("FIREBASE: Removing Interest: " + interest);
-        
-            const data = {
-                uid     : user.uid,
-                command : 5,
-                item    : null,
-                subItem : interest
-            };
-
-            adminRemove(data).then(function(result) {
-                console.log("FIREBASE: Successfully removed interest.");
-                // Refresh interests page
-                loadInterests();
-            }).catch(function(error) {
-                console.error("FIREBASE: Failed to remove interest.", error);
-            });
-        }
 
         loadInterests();
 
@@ -116,3 +94,26 @@ firebase.auth().onAuthStateChanged(function (user) {
         window.location.replace("/");
     }
 });
+
+function deleteInterest(interest) {
+
+    var user = firebase.auth().currentUser;
+
+    var adminRemove = firebase.functions().httpsCallable('adminRemove');
+    console.log("FIREBASE: Removing Interest: " + interest);
+
+    const data = {
+        uid     : user.uid,
+        command : 5,
+        item    : null,
+        subItem : interest
+    };
+
+    adminRemove(data).then(function(result) {
+        console.log("FIREBASE: Successfully removed interest.");
+        // Refresh interests page
+        loadInterests();
+    }).catch(function(error) {
+        console.error("FIREBASE: Failed to remove interest.", error);
+    });
+}
