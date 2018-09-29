@@ -8,37 +8,6 @@ firestore.settings(settings);
 
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
-        // User is signed in.
-        var user = firebase.auth().currentUser;
-        var uid = user.uid;
-
-        function addInterest() {
-            var newInterest = document.getElementById("newInterest").value.trim();
-
-            document.getElementById("newInterest").value = "";
-            // Return if the new interest is an empty field
-            if (newInterest == "" || newInterest == null) {
-                return;
-            }
-
-            var adminAdd = firebase.functions().httpsCallable('adminAdd');
-            console.log("FIREBASE: Adding Interest: " + newInterest);
-        
-            const data = {
-                uid     : user.uid,
-                command : 5,
-                item    : null,
-                subItem : newInterest
-            };
-
-            adminAdd(data).then(function(result) {
-                console.log("FIREBASE: Successfully added interest.");
-                // Refresh interests page
-                loadInterests();
-            }).catch(function(error) {
-                console.error("FIREBASE: Failed to add interest.", error);
-            });
-        }
 
         loadInterests();
 
@@ -67,7 +36,7 @@ function loadInterests() {
     var interestsList = document.getElementById("task-list");
     // Remove any existing matches from the page
     interestsList.innerHTML = "";
-    
+
     const interestsRef = firestore.doc("interests/interests");
     interestsRef.get().then(function (doc) {
         if (doc && doc.exists) {
@@ -88,6 +57,35 @@ function loadInterests() {
         }
     }).catch(function (error) {
         console.log("Failed to retrieve error: ", error)
+    });
+}
+
+function addInterest() {
+
+    var user = firebase.auth().currentUser;
+
+    var newInterest = document.getElementById("newInterest").value.trim();
+    document.getElementById("newInterest").value = "";
+    // Return if the new interest is an empty field
+    if (newInterest == "" || newInterest == null) {
+        return;
+    }
+
+    var adminAdd = firebase.functions().httpsCallable('adminAdd');
+    console.log("FIREBASE: Adding Interest: " + newInterest);
+
+    const data = {
+        uid     : user.uid,
+        command : 5,
+        item    : null,
+        subItem : newInterest
+    };
+    adminAdd(data).then(function(result) {
+        console.log("FIREBASE: Successfully added interest.");
+        // Refresh interests page
+        loadInterests();
+    }).catch(function(error) {
+        console.error("FIREBASE: Failed to add interest.", error);
     });
 }
 
