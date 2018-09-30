@@ -6,8 +6,13 @@ const settings = { /* your settings... */
 };
 firestore.settings(settings);
 
+var uid;
+
 firebase.auth().onAuthStateChanged(function (user) {
     if (user) {
+
+        var user = firebase.auth().currentUser;
+        uid = user.uid;
 
         loadAdmins();
         loadUniversities();
@@ -76,6 +81,19 @@ function loadAdmins() {
         // doc.data() is never undefined for query doc snapshots
         console.log(admin.id, " => ", admin.data());
 
+        // Disable/enable privilege buttons depending on privilege level
+        if (admin.id == uid) {
+            const thisAdmin = admin.data();
+            if (thisAdmin.privilege_level == 1) {
+                document.getElementById("privilege-1").disabled = false;
+                document.getElementById("privilege-2").disabled = false;
+            }
+            else {
+                document.getElementById("privilege-1").disabled = true;
+                document.getElementById("privilege-2").disabled = true;
+            }
+        }
+
         $("#admin-list").append("<li class='list-group-item _task'><span class='_todo-text'>" + admin.id + "</span>" +
         "<div class='btn-group pull-right _task-controls' role='group'>" +
         "<button class='btn btn-light _todo-remove' type='button' value='" + admin.id + "' onclick='deleteAdmin(this.value)'>" + 
@@ -98,6 +116,10 @@ function addAdmin() {
         return;
     }
 
+    // Get the selected privilege level and make it an integer
+    var privilegeString = document.querySelector('input[name="privilege"]:checked').value;
+    var privilege = parseInt(privilegeString, 10);
+
     var adminAdd = firebase.functions().httpsCallable('adminAdd');
     console.log("FIREBASE: Adding admin: " + newAdmin);
 
@@ -105,7 +127,7 @@ function addAdmin() {
         uid     : user.uid,
         command : 1,
         item    : newAdmin,
-        subItem : 1 // Privilege level
+        subItem : privilege
     };
     adminAdd(data).then(function(result) {
         console.log("FIREBASE: Successfully added admin.");
