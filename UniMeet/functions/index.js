@@ -1134,17 +1134,20 @@ exports.adminAdd = functions.https.onCall(async(data) => {
   var command = data.command;
   //Reference to what needs to be deleted
   var item = data.item;
+  //name of admin
+  var name = data.name;
   //Specific field that needs to be deleted from item
   var subItem = data.subItem;
   var addOne = null;
   var addTwo = null;
+  var addThree = null;
   var key = null;
   console.log('command = ',command);
   console.log('item = ',item);
   console.log('subItem = ',subItem);
 
-  //verify admin (returns admin privilege level or false if not admin)
   console.log('ADMIN running add function = ',uid); 
+  //verify admin (returns admin privilege level or false if not admin)
   var adminCheck = await isAdmin(uid);
   if((command >= 1) && (command <= 5)){
     if((adminCheck != false) && (adminCheck >= 1) && (adminCheck <= 2))
@@ -1163,8 +1166,10 @@ exports.adminAdd = functions.https.onCall(async(data) => {
         key = "privilege_level";
         addOne = await addDoc(item, toAdmin);//adds user to admin collection
         addTwo = await addField(subItem, toAdminDoc, key);//adds privilege lvl
+        key = "name";
+        addThree = await addField(name, toAdminDoc, key);
         //return result to client
-        if((addOne == true) && (addTwo == true)){
+        if((addOne == true) && (addTwo == true) && addThree == true){
           return({add: true});
         }
         else{
