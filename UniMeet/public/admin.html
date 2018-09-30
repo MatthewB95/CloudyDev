@@ -39,8 +39,8 @@
                             <ul class="nav nav-tabs card-header-tabs" role="tablist">
                                 <li class="nav-item"><a class="nav-link active" href="#item-1-1" id="item-1-1-tab" data-toggle="tab" role="tab" aria-controls="item-1-1" aria-selected="true" onclick="loadAdmins()">Admin</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#item-1-2" id="item-1-2-tab" data-toggle="tab" role="tab" aria-controls="item-1-2" aria-selected="false" onclick="loadUniversities()">University</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#item-1-3" id="item-1-3-tab" data-toggle="tab" role="tab" aria-controls="item-1-3" aria-selected="false">Degree</a></li>
-                                <li class="nav-item"><a class="nav-link" href="#item-1-4" id="item-1-4-tab" data-toggle="tab" role="tab" aria-controls="item-1-4" aria-selected="false">Course</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#item-1-3" id="item-1-3-tab" data-toggle="tab" role="tab" aria-controls="item-1-3" aria-selected="false" onclick="loadDegrees()">Degree</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#item-1-4" id="item-1-4-tab" data-toggle="tab" role="tab" aria-controls="item-1-4" aria-selected="false" onclick="loadCourses()">Course</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#item-1-5" id="item-1-5-tab" data-toggle="tab" role="tab" aria-controls="item-1-5" aria-selected="false" onclick="loadInterests()">Interests</a></li>
                                 <li class="nav-item"><a class="nav-link" href="#item-1-6" id="item-1-6-tab" data-toggle="tab" role="tab" aria-controls="item-1-6" aria-selected="false" onclick="loadUsers()">Users</a></li>
                             </ul>
@@ -52,8 +52,9 @@
                                     <section class="_add-task-form">
                                         <div style="padding-bottom: 10px"><button class="btn btn-light" id="adminRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
                                         <div class="form-group"><input class="form-control" type="text" placeholder="Add an admin" id="newAdmin"></div>
+                                        <div class="form-group"><input class="form-control" type="text" placeholder="Add name here" id="newAdminName"></div>
                                         <div class="form-group">
-                                        <input type="radio" name="privilege" id="privilege-1" value="1" disabled> Privilege Level 1<br>
+                                            <input type="radio" name="privilege" id="privilege-1" value="1" disabled> Privilege Level 1<br>
                                             <input type="radio" name="privilege" id="privilege-2" value="2" disabled checked> Privilege Level 2<br>
                                         </div>
                                         <div class="form-group"><button class="btn btn-success" type="button" id="newAdminButton">Submit </button></div>
@@ -70,11 +71,11 @@
                                 <div id="item-1-2" class="tab-pane fade" role="tabpanel" aria-labelledby="item-1-2-tab">
                                     <h4>University</h4>
                                     <section class="_add-task-form">
-                                     <div style="padding-bottom: 10px"><button class="btn btn-light" id="universityRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
-                                     <div class="form-group"><input class="form-control" type="text" placeholder="Add a university" id="newUniversity"></div>
-                                     <div class="form-group"><button class="btn btn-success" type="button" id="newUniversityButton">Submit </button></div>
-                                 </section>
-                                 <section id="universityList-cont" class="_todo-list" style="display: none">
+                                       <div style="padding-bottom: 10px"><button class="btn btn-light" id="universityRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
+                                       <div class="form-group"><input class="form-control" type="text" placeholder="Add a university" id="newUniversity"></div>
+                                       <div class="form-group"><button class="btn btn-success" type="button" id="newUniversityButton">Submit </button></div>
+                                   </section>
+                                   <section id="universityList-cont" class="_todo-list" style="display: none">
                                     <ul class="list-group _to-do-list-group sortable" id="university-list">
                                         <li class="list-group-item _task"><span class="_todo-text">University</span>
                                             <div class="btn-group pull-right _task-controls" role="group"><button class="btn btn-light _todo-remove" type="button"> <i class="fa fa-trash"></i></button></div>
@@ -85,45 +86,63 @@
                             </div>
                             <div id="item-1-3" class="tab-pane fade" role="tabpanel" aria-labelledby="item-1-3-tab">
                                 <h4>Degree</h4>
-                            </div>
-                            <div id="item-1-4" class="tab-pane fade" role="tabpanel" aria-labelledby="item-1-4-tab">
-                                <h4>Course</h4>
-                            </div>
-                            <div id="item-1-5" class="tab-pane fade" role="tabpanel" aria-labelledby="item-1-5-tab">
-                                <h4>Interests</h4>
                                 <section class="_add-task-form">
-                                 <div style="padding-bottom: 10px"><button class="btn btn-light" id="interestRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
-                                 <div class="form-group"><input class="form-control" type="text" placeholder="Add an interest" id="newInterest"></div>
-                                 <div class="form-group"><button class="btn btn-success" type="button" id="newInterestButton">Submit </button></div>
-                                </section>
-                                <section id="interestList-cont" class="_todo-list" style="display: none">
-                                    <ul class="list-group _to-do-list-group sortable" id="interest-list">
-                                        <li class="list-group-item _task"><span class="_todo-text">Interest</span>
+                                   <div style="padding-bottom: 10px"><button class="btn btn-light" id="degreeRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
+                                   <div class="form-group">
+                                    <select class="form-control" id="universitySelect" name="universitySelect">
+                                    <option value="" hidden>University</option>
+                                    </select>
+                                </div>
+                                <div class="form-group"><input class="form-control" type="text" placeholder="Degree name" id="newDegree"></div>
+                                <div class="form-group"><button class="btn btn-success" type="button" id="newDegreeButton">Submit </button></div>
+                            </section>
+                            <section id="degreeList-cont" class="_todo-list" style="display: none">
+                                <ul class="list-group _to-do-list-group sortable" id="degree-list">
+                                    <li class="list-group-item _task"><span class="_todo-text">Degree</span>
                                         <div class="btn-group pull-right _task-controls" role="group"><button class="btn btn-light _todo-remove" type="button"> <i class="fa fa-trash"></i></button></div>
                                         <div class="clearfix"></div>
-                                        </li>
-                                    </ul>
-                                </section>
-                            </div>
-                            <div id="item-1-6" class="tab-pane fade" role="tabpanel" aria-labelledby="item-1-6-tab">
-                                <h4>Users</h4>
-                                <section class="_add-task-form">
-                                 <div style="padding-bottom: 10px"><button class="btn btn-light" id="userRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
-                                </section>
-                                <section id="userList-cont" class="_todo-list" style="display: none">
-                                    <ul class="list-group _to-do-list-group sortable" id="user-list">
-                                        <li class="list-group-item _task"><span class="_todo-text">User</span>
-                                        <div class="btn-group pull-right _task-controls" role="group"><button class="btn btn-light _todo-remove" type="button"> <i class="fa fa-trash"></i></button></div>
-                                        <div class="clearfix"></div>
-                                        </li>
-                                    </ul>
-                                </section>
-                            </div>
+                                    </li>
+                                </ul>
+                            </section>
+                        </div>
+                        <div id="item-1-4" class="tab-pane fade" role="tabpanel" aria-labelledby="item-1-4-tab">
+                            <h4>Course</h4>
+                        </div>
+                        <div id="item-1-5" class="tab-pane fade" role="tabpanel" aria-labelledby="item-1-5-tab">
+                            <h4>Interests</h4>
+                            <section class="_add-task-form">
+                               <div style="padding-bottom: 10px"><button class="btn btn-light" id="interestRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
+                               <div class="form-group"><input class="form-control" type="text" placeholder="Add an interest" id="newInterest"></div>
+                               <div class="form-group"><button class="btn btn-success" type="button" id="newInterestButton">Submit </button></div>
+                           </section>
+                           <section id="interestList-cont" class="_todo-list" style="display: none">
+                            <ul class="list-group _to-do-list-group sortable" id="interest-list">
+                                <li class="list-group-item _task"><span class="_todo-text">Interest</span>
+                                    <div class="btn-group pull-right _task-controls" role="group"><button class="btn btn-light _todo-remove" type="button"> <i class="fa fa-trash"></i></button></div>
+                                    <div class="clearfix"></div>
+                                </li>
+                            </ul>
+                        </section>
                     </div>
+                    <div id="item-1-6" class="tab-pane fade" role="tabpanel" aria-labelledby="item-1-6-tab">
+                        <h4>Users</h4>
+                        <section class="_add-task-form">
+                           <div style="padding-bottom: 10px"><button class="btn btn-light" id="userRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
+                       </section>
+                       <section id="userList-cont" class="_todo-list" style="display: none">
+                        <ul class="list-group _to-do-list-group sortable" id="user-list">
+                            <li class="list-group-item _task"><span class="_todo-text">User</span>
+                                <div class="btn-group pull-right _task-controls" role="group"><button class="btn btn-light _todo-remove" type="button"> <i class="fa fa-trash"></i></button></div>
+                                <div class="clearfix"></div>
+                            </li>
+                        </ul>
+                    </section>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
+</section>
+</div>
 </div>
 </div>
 <script src="scripts/jquery.min.js"></script>

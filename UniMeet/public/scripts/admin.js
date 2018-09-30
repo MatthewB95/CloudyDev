@@ -22,6 +22,9 @@ firebase.auth().onAuthStateChanged(function (user) {
 
         document.getElementById("newUniversityButton").addEventListener("click", addUniversity);
         document.getElementById("universityRefreshButton").addEventListener("click", loadUniversities);
+
+        document.getElementById("newDegreeButton").addEventListener("click", addDegree);
+        document.getElementById("degreeRefreshButton").addEventListener("click", loadDegrees);
         
         document.getElementById("newInterestButton").addEventListener("click", addInterest);
         document.getElementById("interestRefreshButton").addEventListener("click", loadInterests);
@@ -37,12 +40,30 @@ firebase.auth().onAuthStateChanged(function (user) {
             }
         });
 
+        // Add new admin when the ENTER key is hit
+        var adminNameField = document.getElementById("newAdminName");
+        adminNameField.addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                document.getElementById("newAdminButton").click();
+            }
+        });
+
         // Add new university when the ENTER key is hit
         var universityField = document.getElementById("newUniversity");
         universityField.addEventListener("keyup", function(event) {
             event.preventDefault();
             if (event.keyCode === 13) {
                 document.getElementById("newUniversityButton").click();
+            }
+        });
+
+        // Add new degree when the ENTER key is hit
+        var degreeField = document.getElementById("newDegree");
+        degreeField.addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                document.getElementById("newDegreeButton").click();
             }
         });
 
@@ -75,13 +96,13 @@ function loadAdmins() {
     adminsList.innerHTML = "";
 
     firestore.collection("admin").get().then(function (querySnapshot) {
-    querySnapshot.forEach(function(admin) {
+        querySnapshot.forEach(function(admin) {
         // doc.data() is never undefined for query doc snapshots
         console.log(admin.id, " => ", admin.data());
 
+        const thisAdmin = admin.data();
         // Disable/enable privilege buttons depending on privilege level
         if (admin.id == uid) {
-            const thisAdmin = admin.data();
             if (thisAdmin.privilege_level == 1) {
                 document.getElementById("privilege-1").disabled = false;
                 document.getElementById("privilege-2").disabled = false;
@@ -92,13 +113,13 @@ function loadAdmins() {
             }
         }
 
-        $("#admin-list").append("<li class='list-group-item _task'><span class='_todo-text'>" + admin.id + "</span>" +
-        "<div class='btn-group pull-right _task-controls' role='group'>" +
-        "<button class='btn btn-light _todo-remove' type='button' value='" + admin.id + "' onclick='deleteAdmin(this.value)'>" + 
-        "<i class='fa fa-trash'></i></button></div>" +
-        "<div class='clearfix'></div>"
-        );
-        });
+        $("#admin-list").append("<li class='list-group-item _task'><span class='_todo-text'>" + thisAdmin.name + " | " + admin.id + "</span>" +
+            "<div class='btn-group pull-right _task-controls' role='group'>" +
+            "<button class='btn btn-light _todo-remove' type='button' value='" + admin.id + "' onclick='deleteAdmin(this.value)'>" + 
+            "<i class='fa fa-trash'></i></button></div>" +
+            "<div class='clearfix'></div>"
+            );
+    });
         $("#adminList-cont").fadeIn(1000);
     });
 }
@@ -114,6 +135,13 @@ function addAdmin() {
         return;
     }
 
+    // Return if the new admin has no name
+    var newAdminName = document.getElementById("newAdminName").value.trim();
+    document.getElementById("newAdminName").value = "";
+    if (newAdminName == "" || newAdminName == null) {
+        return;
+    }
+
     // Get the selected privilege level and make it an integer
     var privilegeString = document.querySelector('input[name="privilege"]:checked').value;
     var privilege = parseInt(privilegeString, 10);
@@ -125,6 +153,7 @@ function addAdmin() {
         uid     : user.uid,
         command : 1,
         item    : newAdmin,
+        name    : newAdminName,
         subItem : privilege
     };
     adminAdd(data).then(function(result) {
@@ -171,17 +200,17 @@ function loadUniversities() {
     universitiesList.innerHTML = "";
 
     firestore.collection("degree").get().then(function (querySnapshot) {
-    querySnapshot.forEach(function(universities) {
+        querySnapshot.forEach(function(universities) {
         // doc.data() is never undefined for query doc snapshots
         console.log(universities.id, " => ", universities.data());
 
         $("#university-list").append("<li class='list-group-item _task'><span class='_todo-text'>" + universities.id + "</span>" +
-        "<div class='btn-group pull-right _task-controls' role='group'>" +
-        "<button class='btn btn-light _todo-remove' type='button' value='" + universities.id + "' onclick='deleteUniversity(this.value)'>" + 
-        "<i class='fa fa-trash'></i></button></div>" +
-        "<div class='clearfix'></div>"
-        );
-        });
+            "<div class='btn-group pull-right _task-controls' role='group'>" +
+            "<button class='btn btn-light _todo-remove' type='button' value='" + universities.id + "' onclick='deleteUniversity(this.value)'>" + 
+            "<i class='fa fa-trash'></i></button></div>" +
+            "<div class='clearfix'></div>"
+            );
+    });
         $("#universityList-cont").fadeIn(1000);
     });
 }
@@ -241,8 +270,106 @@ function deleteUniversity(university) {
 
 ////////////////////////////   UNIVERSITY   //////////////////////////////////
 
+/////////////////////////////   DEGREES  ////////////////////////////////////
+// Loads list of degrees from database and add them to the drop down-lists
+function loadDegrees() {
+    // Fade all collections onto page
+    $("#degreeList-cont").fadeOut(500);
+    var degreesList = document.getElementById("degree-list");
+    // Remove any existing collections from the page
+    degreesList.innerHTML = "";
+
+    // Remove all existing options from drop-down list
+    document.getElementById('universitySelect').options.length = 0;
+    // Add the placeholder option
+    $('#universitySelect').append(new Option("Please select a university", ""));
+
+    firestore.collection("degree").get().then(function (querySnapshot) {
+        querySnapshot.forEach(function(degree) {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(degree.id, " => ", degree.data());
+        const degrees = degree.data();
+
+        $('#universitySelect').append(new Option(degree.id, degree.id));
+
+        for (var key in degrees) {
+            $("#degree-list").append("<li class='list-group-item _task'><span class='_todo-text'>" + degree.id + " | " + key + "</span>" +
+                "<div class='btn-group pull-right _task-controls' role='group'>" +
+                "<button class='btn btn-light _todo-remove' type='button' value='" + degree.id + "|" + key + "' onclick='deleteDegree(this.value)'>" + 
+                "<i class='fa fa-trash'></i></button></div>" +
+                "<div class='clearfix'></div>"
+                );
+        }
+
+    });
+        $("#degreeList-cont").fadeIn(1000);
+    });
+}
+
+function addDegree() {
+
+    var user = firebase.auth().currentUser;
+
+    var university = document.getElementById('universitySelect').value;
+    // Return if the new admin is an empty field
+    if (university == "" || university == null) {
+        return;
+    }
+
+    var newDegree = document.getElementById("newDegree").value.trim();
+    document.getElementById("newDegree").value = "";
+    // Return if the new admin is an empty field
+    if (newDegree == "" || newDegree == null) {
+        return;
+    }
+
+    var adminAdd = firebase.functions().httpsCallable('adminAdd');
+    console.log("FIREBASE: Adding degree: " + newDegree);
+
+    const data = {
+        uid     : user.uid,
+        command : 3,
+        item    : university,
+        subItem : newDegree
+    };
+    adminAdd(data).then(function(result) {
+        console.log("FIREBASE: Successfully added degree.");
+        // Refresh degrees page
+        loadDegrees();
+    }).catch(function(error) {
+        console.error("FIREBASE: Failed to add degree.", error);
+    });
+}
 
 
+function deleteDegree(degree) {
+
+    var user = firebase.auth().currentUser;
+
+    var split = degree.split("|");
+
+    var universityName = split[0];
+    var degreeName = split[1];
+
+    var adminRemove = firebase.functions().httpsCallable('adminRemove');
+    console.log("FIREBASE: Removing degree: " + degree);
+
+    const data = {
+        uid     : user.uid,
+        command : 3,
+        item    : universityName,
+        subItem : degreeName
+    };
+
+    adminRemove(data).then(function(result) {
+        console.log("FIREBASE: Successfully removed degree.");
+        // Refresh admins page
+        loadDegrees();
+    }).catch(function(error) {
+        console.error("FIREBASE: Failed to remove degree.", error);
+    });
+}
+/////////////////////////////   DEGREES  ////////////////////////////////////
 
 /////////////////////////////   COURSES  ////////////////////////////////////
 
@@ -251,8 +378,6 @@ function deleteUniversity(university) {
 
 
 /////////////////////////////   COURSES  ////////////////////////////////////
-
-
 
 ////////////////////////////  INTERESTS  ///////////////////////////////////
 
@@ -273,11 +398,11 @@ function loadInterests() {
             // Add each interest to the list
             for (var key in interests) {
                 $("#interest-list").append("<li class='list-group-item _task'><span class='_todo-text'>" + key + "</span>" +
-                 "<div class='btn-group pull-right _task-controls' role='group'>" +
-                 "<button class='btn btn-light _todo-remove' type='button' value='" + key + "' onclick='deleteInterest(this.value)'>" + 
-                 "<i class='fa fa-trash'></i></button></div>" +
-                 "<div class='clearfix'></div>"
-                 );
+                   "<div class='btn-group pull-right _task-controls' role='group'>" +
+                   "<button class='btn btn-light _todo-remove' type='button' value='" + key + "' onclick='deleteInterest(this.value)'>" + 
+                   "<i class='fa fa-trash'></i></button></div>" +
+                   "<div class='clearfix'></div>"
+                   );
             }
             // Fade all collections onto page
             $("#interestList-cont").fadeIn(1000);
@@ -351,18 +476,18 @@ function loadUsers() {
     usersList.innerHTML = "";
 
     firestore.collection("student").get().then(function (querySnapshot) {
-    querySnapshot.forEach(function(user) {
+        querySnapshot.forEach(function(user) {
         // doc.data() is never undefined for query doc snapshots
         console.log(user.id, " => ", user.data());
         const thisUser = user.data();
 
         $("#user-list").append("<li class='list-group-item _task'><span class='_todo-text'>" + thisUser.name + " | " + user.id + "</span>" +
-        "<div class='btn-group pull-right _task-controls' role='group'>" +
-        "<button class='btn btn-light _todo-remove' type='button' value='" + user.id + "' onclick='deleteUser(this.value)'>" + 
-        "<i class='fa fa-trash'></i></button></div>" +
-        "<div class='clearfix'></div>"
-        );
-        });
+            "<div class='btn-group pull-right _task-controls' role='group'>" +
+            "<button class='btn btn-light _todo-remove' type='button' value='" + user.id + "' onclick='deleteUser(this.value)'>" + 
+            "<i class='fa fa-trash'></i></button></div>" +
+            "<div class='clearfix'></div>"
+            );
+    });
         $("#userList-cont").fadeIn(1000);
     });
 }
