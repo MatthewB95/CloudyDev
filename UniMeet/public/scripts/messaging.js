@@ -8,9 +8,9 @@ firestore.settings(settings);
 
 var selectedProfileID = window.localStorage.getItem("selectedProfileID");
 
-var currentUser
+var currentUser;
 var collectionOfMessagedUsers = {};
-var selectedUser
+var selectedUser;
 
 
 

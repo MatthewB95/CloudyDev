@@ -139,7 +139,9 @@ function populateCollectionView(matchData) {
 					
 					percentageLabel = document.createElement('h3');
 					percentageLabel.setAttribute('class', 'profile_info_title primaryColour');
-					percentageLabel.innerHTML = sortedMatches[myData.uid] + "% matched";
+					// Round match percentage to nearest whole number
+					var matchPercentage = Math.round(sortedMatches[myData.uid]);
+					percentageLabel.innerHTML = matchPercentage + "% matched";
 					card.appendChild(percentageLabel);
 
 					document.getElementById("matchedCollectionView").appendChild(containingCard);
