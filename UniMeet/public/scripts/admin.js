@@ -25,6 +25,9 @@ firebase.auth().onAuthStateChanged(function (user) {
 
         document.getElementById("newDegreeButton").addEventListener("click", addDegree);
         document.getElementById("degreeRefreshButton").addEventListener("click", loadDegrees);
+
+        document.getElementById("newCourseButton").addEventListener("click", addCourse);
+        document.getElementById("courseRefreshButton").addEventListener("click", loadCourses);
         
         document.getElementById("newInterestButton").addEventListener("click", addInterest);
         document.getElementById("interestRefreshButton").addEventListener("click", loadInterests);
@@ -64,6 +67,15 @@ firebase.auth().onAuthStateChanged(function (user) {
             event.preventDefault();
             if (event.keyCode === 13) {
                 document.getElementById("newDegreeButton").click();
+            }
+        });
+
+        // Add new course when the ENTER key is hit
+        var courseField = document.getElementById("newCourse");
+        courseField.addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                document.getElementById("newCourseButton").click();
             }
         });
 
@@ -280,9 +292,9 @@ function loadDegrees() {
     degreesList.innerHTML = "";
 
     // Remove all existing options from drop-down list
-    document.getElementById('universitySelect').options.length = 0;
+    document.getElementById('universityDegreeSelect').options.length = 0;
     // Add the placeholder option
-    $('#universitySelect').append(new Option("Please select a university", ""));
+    $('#universityDegreeSelect').append(new Option("Please select a university", ""));
 
     firestore.collection("degree").get().then(function (querySnapshot) {
         querySnapshot.forEach(function(degree) {
@@ -290,7 +302,7 @@ function loadDegrees() {
         console.log(degree.id, " => ", degree.data());
         const degrees = degree.data();
 
-        $('#universitySelect').append(new Option(degree.id, degree.id));
+        $('#universityDegreeSelect').append(new Option(degree.id, degree.id));
 
         for (var key in degrees) {
             $("#degree-list").append("<li class='list-group-item _task'><span class='_todo-text'>" + degree.id + " | " + key + "</span>" +
@@ -310,7 +322,7 @@ function addDegree() {
 
     var user = firebase.auth().currentUser;
 
-    var university = document.getElementById('universitySelect').value;
+    var university = document.getElementById('universityDegreeSelect').value;
     // Return if the new admin is an empty field
     if (university == "" || university == null) {
         return;
@@ -372,7 +384,104 @@ function deleteDegree(degree) {
 /////////////////////////////   DEGREES  ////////////////////////////////////
 
 /////////////////////////////   COURSES  ////////////////////////////////////
+// Loads list of courses from database and add them to the drop down-lists
+function loadCourses() {
+    // Fade all collections onto page
+    $("#courseList-cont").fadeOut(500);
+    var coursesList = document.getElementById("course-list");
+    // Remove any existing collections from the page
+    coursesList.innerHTML = "";
 
+    // Remove all existing options from drop-down list
+    document.getElementById('universityCourseSelect').options.length = 0;
+    // Add the placeholder option
+    $('#universityCourseSelect').append(new Option("Please select a university", ""));
+
+    firestore.collection("course").get().then(function (querySnapshot) {
+        querySnapshot.forEach(function(course) {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(course.id, " => ", course.data());
+        const courses = course.data();
+
+        $('#universityCourseSelect').append(new Option(course.id, course.id));
+
+        for (var key in courses) {
+            $("#course-list").append("<li class='list-group-item _task'><span class='_todo-text'>" + course.id + " | " + key + "</span>" +
+                "<div class='btn-group pull-right _task-controls' role='group'>" +
+                "<button class='btn btn-light _todo-remove' type='button' value='" + course.id + "|" + key + "' onclick='deleteCourse(this.value)'>" + 
+                "<i class='fa fa-trash'></i></button></div>" +
+                "<div class='clearfix'></div>"
+                );
+        }
+
+    });
+        $("#courseList-cont").fadeIn(1000);
+    });
+}
+
+function addCourse() {
+
+    var user = firebase.auth().currentUser;
+
+    var university = document.getElementById('universityCourseSelect').value;
+    // Return if the new admin is an empty field
+    if (university == "" || university == null) {
+        return;
+    }
+
+    var newCourse = document.getElementById("newCourse").value.trim();
+    document.getElementById("newCourse").value = "";
+    // Return if the new admin is an empty field
+    if (newCourse == "" || newCourse == null) {
+        return;
+    }
+
+    var adminAdd = firebase.functions().httpsCallable('adminAdd');
+    console.log("FIREBASE: Adding course: " + newCourse);
+
+    const data = {
+        uid     : user.uid,
+        command : 4,
+        item    : university,
+        subItem : newCourse
+    };
+    adminAdd(data).then(function(result) {
+        console.log("FIREBASE: Successfully added course.");
+        // Refresh degrees page
+        loadCourses();
+    }).catch(function(error) {
+        console.error("FIREBASE: Failed to add course.", error);
+    });
+}
+
+
+function deleteCourse(course) {
+
+    var user = firebase.auth().currentUser;
+
+    var split = course.split("|");
+
+    var universityName = split[0];
+    var courseName = split[1];
+
+    var adminRemove = firebase.functions().httpsCallable('adminRemove');
+    console.log("FIREBASE: Removing course: " + course);
+
+    const data = {
+        uid     : user.uid,
+        command : 4,
+        item    : universityName,
+        subItem : courseName
+    };
+
+    adminRemove(data).then(function(result) {
+        console.log("FIREBASE: Successfully removed course.");
+        // Refresh admins page
+        loadCourses();
+    }).catch(function(error) {
+        console.error("FIREBASE: Failed to remove course.", error);
+    });
+}
 
 
 
@@ -514,7 +623,4 @@ function deleteUser(targetUser) {
         console.error("FIREBASE: Failed to remove user.", error);
     });
 }
-
-
-
 /////////////////////////////   USERS   ////////////////////////////////////

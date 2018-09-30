@@ -89,8 +89,8 @@
                                 <section class="_add-task-form">
                                    <div style="padding-bottom: 10px"><button class="btn btn-light" id="degreeRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
                                    <div class="form-group">
-                                    <select class="form-control" id="universitySelect" name="universitySelect">
-                                    <option value="" hidden>University</option>
+                                    <select class="form-control" id="universityDegreeSelect" name="universityDegreeSelect">
+                                        <option value="" hidden>University</option>
                                     </select>
                                 </div>
                                 <div class="form-group"><input class="form-control" type="text" placeholder="Degree name" id="newDegree"></div>
@@ -107,6 +107,24 @@
                         </div>
                         <div id="item-1-4" class="tab-pane fade" role="tabpanel" aria-labelledby="item-1-4-tab">
                             <h4>Course</h4>
+                            <section class="_add-task-form">
+                                <div style="padding-bottom: 10px"><button class="btn btn-light" id="courseRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
+                                <div class="form-group">
+                                <select class="form-control" id="universityCourseSelect" name="universityCourseSelect">
+                                        <option value="" hidden>University</option>
+                                    </select>
+                                </div>
+                                <div class="form-group"><input class="form-control" type="text" placeholder="Course name" id="newCourse"></div>
+                                <div class="form-group"><button class="btn btn-success" type="button" id="newCourseButton">Submit </button></div>
+                            </section>
+                            <section id="courseList-cont" class="_todo-list" style="display: none">
+                                <ul class="list-group _to-do-list-group sortable" id="course-list">
+                                    <li class="list-group-item _task"><span class="_todo-text">Course</span>
+                                        <div class="btn-group pull-right _task-controls" role="group"><button class="btn btn-light _todo-remove" type="button"> <i class="fa fa-trash"></i></button></div>
+                                        <div class="clearfix"></div>
+                                    </li>
+                                </ul>
+                            </section>
                         </div>
                         <div id="item-1-5" class="tab-pane fade" role="tabpanel" aria-labelledby="item-1-5-tab">
                             <h4>Interests</h4>
