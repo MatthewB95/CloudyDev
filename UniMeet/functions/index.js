@@ -1054,7 +1054,7 @@ exports.adminRemove = functions.https.onCall(async(data) => {
           delTwo = await deleteDoc(fromDegree);//<--- TODO: TEST IF BOTH CAN RUN AT SAME TIME BY REMOVING 'await'
           //return result to client
           if((cleaner == true) && (delOne == true) && (delTwo == true)){ //TODO: check if I can return this early whilst student cleaner is still not finished
-            return({remove: cleaner});
+            return({remove: true});
           }
           else{
             return({remove: false});
@@ -1067,7 +1067,7 @@ exports.adminRemove = functions.https.onCall(async(data) => {
           delOne = await deleteFieldByKey(subItem, fromDegree);
           //return result to client
           if((cleaner == true) && (delOne == true)){ 
-            return({remove: cleaner});
+            return({remove: true});
           }
           else{
             return({remove: false});
@@ -1080,7 +1080,7 @@ exports.adminRemove = functions.https.onCall(async(data) => {
           delOne = await deleteFieldByKey(subItem, fromCourse);
           //return result to client
           if((cleaner == true) && (delOne == true)){ 
-            return({remove: cleaner});
+            return({remove: true});
           }
           else{
             return({remove: false});
@@ -1093,7 +1093,7 @@ exports.adminRemove = functions.https.onCall(async(data) => {
           delOne = await deleteFieldByKey(subItem, fromInterests);
           //return result to client
           if((cleaner == true) && (delOne == true)){ 
-            return({remove: cleaner});
+            return({remove: true});
           }
           else{
             return({remove: false});
@@ -1138,12 +1138,14 @@ exports.adminAdd = functions.https.onCall(async(data) => {
   var subItem = data.subItem;
   var addOne = null;
   var addTwo = null;
+  var key = null;
   console.log('command = ',command);
   console.log('item = ',item);
   console.log('subItem = ',subItem);
 
   //verify admin (returns admin privilege level or false if not admin)
-  var adminCheck = await isAdmin(uid); 
+  console.log('ADMIN running add function = ',uid); 
+  var adminCheck = await isAdmin(uid);
   if((command >= 1) && (command <= 5)){
     if((adminCheck != false) && (adminCheck >= 1) && (adminCheck <= 2))
     {
@@ -1158,8 +1160,9 @@ exports.adminAdd = functions.https.onCall(async(data) => {
         var toAdminDoc = db.collection('admin').doc(item);
       }
       if((adminCheck == 1) && (command == 1)){
+        key = "privilege_level";
         addOne = await addDoc(item, toAdmin);//adds user to admin collection
-        addTwo = await addField(subItem, toAdminDoc);//adds privilege lvl
+        addTwo = await addField(subItem, toAdminDoc, key);//adds privilege lvl
         //return result to client
         if((addOne == true) && (addTwo == true)){
           return({add: true});
@@ -1181,7 +1184,7 @@ exports.adminAdd = functions.https.onCall(async(data) => {
           }
         }
         else if(command == 3){ //add degree
-          addOne = await addField(subItem, toDegreeDoc);
+          addOne = await addField(subItem, toDegreeDoc, subItem);
           //return result to client
           if((addOne == true)){ 
             return({add: true});
@@ -1191,7 +1194,7 @@ exports.adminAdd = functions.https.onCall(async(data) => {
           }
         }
         else if(command == 4){ //add course
-          addOne = await addField(subItem, toCourseDoc);
+          addOne = await addField(subItem, toCourseDoc, subItem);
           //return result to client
           if((addOne == true)){ 
             return({add: true});
@@ -1201,7 +1204,7 @@ exports.adminAdd = functions.https.onCall(async(data) => {
           }
         }
         else{ //command 5, add interest
-          addOne = await addField(subItem, toInterests);
+          addOne = await addField(subItem, toInterests, subItem);
           //return result to client
           if((addOne == true)){ 
             return({add: true});
@@ -1248,11 +1251,11 @@ function addDoc(item, toLocation){
   });
 }
 
-function addField(subItem, toLocation){
+function addField(subItem, toLocation, key){
   return new Promise(function(resolve, reject){
     try{
       var data = {
-        [subItem]: subItem,
+        [key]: subItem,
       }
       toLocation.update(data).then(function(){
         console.log('field saved to document: ', subItem);
