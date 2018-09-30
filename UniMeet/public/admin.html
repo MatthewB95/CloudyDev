@@ -6,8 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin</title>
     <link rel="stylesheet" href="styles/bootstrap.min.css">
+    <link rel="stylesheet" href="styles/Navigation-with-Button.css">
     <link rel="stylesheet" href="styles/font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="styles/list.css">
+
 
     <!-- FIREBASE -->
     <script src="/__/firebase/5.4.0/firebase-app.js"></script>
@@ -19,10 +21,19 @@
 </head>
 
 <body>
+    <div>
+        <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
+            <div class="container"><a class="navbar-brand" href="#">uniMeet</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse"
+                id="navcol-1">
+                <ul class="nav navbar-nav mr-auto"></ul><span class="navbar-text actions"> <button id="logOutButton" class="btn btn-light action-button" role="button">Log out</button></span></div>
+            </div>
+        </nav>
+    </div>
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <section class="_app-container" style="margin:0px; padding-top:10px;">
+                <section class="_app-container">
                     <div class="card">
                         <div class="card-header">
                             <ul class="nav nav-tabs card-header-tabs" role="tablist">
@@ -54,11 +65,11 @@
                                 <div id="item-1-2" class="tab-pane fade" role="tabpanel" aria-labelledby="item-1-2-tab">
                                     <h4>University</h4>
                                     <section class="_add-task-form">
-                                       <div style="padding-bottom: 10px"><button class="btn btn-light" id="universityRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
-                                       <div class="form-group"><input class="form-control" type="text" placeholder="Add a university" id="newUniversity"></div>
-                                       <div class="form-group"><button class="btn btn-success" type="button" id="newUniversityButton">Submit </button></div>
-                                   </section>
-                                   <section id="universityList-cont" class="_todo-list" style="display: none">
+                                     <div style="padding-bottom: 10px"><button class="btn btn-light" id="universityRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
+                                     <div class="form-group"><input class="form-control" type="text" placeholder="Add a university" id="newUniversity"></div>
+                                     <div class="form-group"><button class="btn btn-success" type="button" id="newUniversityButton">Submit </button></div>
+                                 </section>
+                                 <section id="universityList-cont" class="_todo-list" style="display: none">
                                     <ul class="list-group _to-do-list-group sortable" id="university-list">
                                         <li class="list-group-item _task"><span class="_todo-text">University</span>
                                             <div class="btn-group pull-right _task-controls" role="group"><button class="btn btn-light _todo-remove" type="button"> <i class="fa fa-trash"></i></button></div>
@@ -76,11 +87,11 @@
                             <div id="item-1-5" class="tab-pane fade" role="tabpanel" aria-labelledby="item-1-5-tab">
                                 <h4>Interests</h4>
                                 <section class="_add-task-form">
-                                   <div style="padding-bottom: 10px"><button class="btn btn-light" id="interestRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
-                                   <div class="form-group"><input class="form-control" type="text" placeholder="Add an interest" id="newInterest"></div>
-                                   <div class="form-group"><button class="btn btn-success" type="button" id="newInterestButton">Submit </button></div>
-                               </section>
-                               <section id="interestList-cont" class="_todo-list" style="display: none">
+                                 <div style="padding-bottom: 10px"><button class="btn btn-light" id="interestRefreshButton" type="button"> <i class="fa fa-undo"></i></button></div>
+                                 <div class="form-group"><input class="form-control" type="text" placeholder="Add an interest" id="newInterest"></div>
+                                 <div class="form-group"><button class="btn btn-success" type="button" id="newInterestButton">Submit </button></div>
+                             </section>
+                             <section id="interestList-cont" class="_todo-list" style="display: none">
                                 <ul class="list-group _to-do-list-group sortable" id="interest-list">
                                     <li class="list-group-item _task"><span class="_todo-text">Interest</span>
                                         <div class="btn-group pull-right _task-controls" role="group"><button class="btn btn-light _todo-remove" type="button"> <i class="fa fa-trash"></i></button></div>
