@@ -15,8 +15,6 @@ firebase.auth().onAuthStateChanged(function (user) {
         uid = user.uid;
 
         loadAdmins();
-        loadUniversities();
-        loadInterests();
 
         // Add button listeners
         document.getElementById("newAdminButton").addEventListener("click", addAdmin);
@@ -342,3 +340,56 @@ function deleteInterest(interest) {
     });
 }
 ////////////////////////////  INTERESTS  ///////////////////////////////////
+
+/////////////////////////////   USERS   ////////////////////////////////////
+// Loads list of users from database and add them to the drop down-lists
+function loadUsers() {
+    // Fade all collections onto page
+    $("#userList-cont").fadeOut(500);
+    var usersList = document.getElementById("user-list");
+    // Remove any existing matches from the page
+    usersList.innerHTML = "";
+
+    firestore.collection("student").get().then(function (querySnapshot) {
+    querySnapshot.forEach(function(user) {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(user.id, " => ", user.data());
+        const thisUser = user.data();
+
+        $("#user-list").append("<li class='list-group-item _task'><span class='_todo-text'>" + thisUser.name + " | " + user.id + "</span>" +
+        "<div class='btn-group pull-right _task-controls' role='group'>" +
+        "<button class='btn btn-light _todo-remove' type='button' value='" + user.id + "' onclick='deleteUser(this.value)'>" + 
+        "<i class='fa fa-trash'></i></button></div>" +
+        "<div class='clearfix'></div>"
+        );
+        });
+        $("#userList-cont").fadeIn(1000);
+    });
+}
+
+function deleteUser(targetUser) {
+
+    var user = firebase.auth().currentUser;
+
+    var adminRemove = firebase.functions().httpsCallable('adminRemove');
+    console.log("FIREBASE: Removing user: " + targetUser);
+
+    const data = {
+        uid     : user.uid,
+        command : 6,
+        item    : targetUser,
+        subItem : null
+    };
+
+    adminRemove(data).then(function(result) {
+        console.log("FIREBASE: Successfully removed user.");
+        // Refresh interests page
+        loadUsers();
+    }).catch(function(error) {
+        console.error("FIREBASE: Failed to remove user.", error);
+    });
+}
+
+
+
+/////////////////////////////   USERS   ////////////////////////////////////
