@@ -22,20 +22,15 @@
 	background-position: 50% 50%;
 	height: 280px;
 	width: 280px;
-	background-size: cover;
 	border-radius: 32px;
 	left: 10vw;
 	bottom: 0px;
 	background-color: white;
 	border: 5px solid #F9F9F9;
 	overflow: hidden;
+	background: url(../images/profile_placeholder.png) no-repeat center center;
+	background-size: cover;
 }
-
-.profilePicture {
-	height: 100%;
-	width: 100%;
-}
-
 
 .shortcut_container {
 	width: 100%;

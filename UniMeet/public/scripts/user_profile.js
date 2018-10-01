@@ -188,11 +188,12 @@ function getStudent(docRef) {
 
 			document.getElementById('profileNameLabel').innerHTML = student.name;
 			
-			if (student.profile_image == null) {
-				document.getElementById('profilePicture').src = '/../images/white_profile_placeholder.png';
-			}
-			else {
-				document.getElementById('profilePicture').src = student.profile_image;
+			if (student.profile_image != null) {
+				var profileImage = document.getElementById('avatar');
+				profileImage.style.backgroundColor = "white";
+				profileImage.style.background = 'url(' + student.profile_image + ') no-repeat center center';
+						profileImage.style.backgroundSize = 'cover';
+//						profileImage.style.borderRadius = '32px';
 			}
 
 			

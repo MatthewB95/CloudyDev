@@ -73,13 +73,14 @@ function populateCollectionView(matchedData) {
 				});
 				containingCard.appendChild(card);
 
-				profileImage = document.createElement('img');
-				profileImage.setAttribute('class', 'profile_image');
-				profileImage.src = '../images/profile_placeholder.png';
-				if (myData.profile_image != null) {
-					profileImage.src = myData.profile_image;
-				}
-				card.appendChild(profileImage);
+				profileImage = document.createElement('div');
+					profileImage.setAttribute('class', 'profile_image');
+					if (myData.profile_image != null) {
+						profileImage.style.background = 'url(' + myData.profile_image + ') no-repeat center center';
+						profileImage.style.backgroundSize = 'cover';
+						profileImage.style.borderRadius = '32px';
+					}
+					card.appendChild(profileImage);
 
 				nameLabel = document.createElement('h1');
 				nameLabel.setAttribute('class', 'profile_name_title');

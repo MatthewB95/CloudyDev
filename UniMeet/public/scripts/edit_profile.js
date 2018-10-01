@@ -24,7 +24,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 			// you have one. Use User.getToken() instead.
 		}
 		// Set profile picture
-		document.getElementById('profilePicture').src = photoUrl;
+//		document.getElementById('profilePicture').src = photoUrl;
 
 		document.getElementById('editProfileMenuItem').addEventListener('click', function () {
 			document.getElementById('profilePreview').style.display = "block";
@@ -46,6 +46,10 @@ firebase.auth().onAuthStateChanged(function (user) {
 			document.getElementById('friendRequestListView').style.display = "none";
 			document.getElementById('blockListView').style.display = "block";
 		});
+		
+		document.getElementById('signOutMenuItem').addEventListener('click', function () {
+			logOut();
+		});
 
 		// Designate Firestore documents to write to.
 		// Needs to be made secure later on by requesting token instead of UID.
@@ -62,11 +66,19 @@ firebase.auth().onAuthStateChanged(function (user) {
 		docRef.get().then(function (doc) {
 			if (doc && doc.exists) {
 				const myData = doc.data();
-
-				document.getElementById('profilePicture').src = '/../images/profile_placeholder.png';
+				
 				if (myData.profile_image != null) {
-					document.getElementById('profilePicture').src = myData.profile_image;
-				}
+				var profileImage = document.getElementById('avatar');
+				profileImage.style.backgroundColor = "white";
+				profileImage.style.background = 'url(' + myData.profile_image + ') no-repeat center center';
+						profileImage.style.backgroundSize = 'cover';
+//						profileImage.style.borderRadius = '32px';
+			}
+
+//				document.getElementById('profilePicture').src = '/../images/profile_placeholder.png';
+//				if (myData.profile_image != null) {
+//					document.getElementById('profilePicture').src = myData.profile_image;
+//				}
 				//				document.getElementById('ageField').value = myData.age.toString();
 				document.getElementById('nameField').value = myData.name;
 				document.getElementById('bioField').value = myData.bio;
@@ -78,60 +90,23 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 
 				firestore.collection("degree").get().then(function (querySnapshot) {
+					var i = 0
 					querySnapshot.forEach(function (doc) {
 						const degrees = doc.data();
 						// Add the name of each university to list of options
 						document.getElementById('university').append(new Option(doc.id, doc.id));
+						if (doc.id == myData.university) {
+							document.getElementById('university').selectedIndex = i;
+						}
+						i++;
 					});
 				});
 
-				const degreesRef = firestore.doc("degree/" + myData.university);
-				degreesRef.get().then(function (doc) {
-					if (doc && doc.exists) {
-						const degrees = doc.data();
-						var degreeArray = [];
-						console.log("Retrieved degrees: ", Object.values(degrees));
-
-						// Fill in the degree drop-down list with the new values
-						for (var key in degrees) {
-							document.getElementById('degree').append(new Option(degrees[key], degrees[key]));
-							degreeArray.push(degrees[key]);
-						}
-						var index1 = degreeArray.indexOf(myData.current_degree);
-						document.getElementById('degree').selectedIndex = index1;
-					}
-				}).catch(function (error) {
-					console.log("Failed to retrieve error: ", error)
-				});
-
-
-				const subjectsRef = firestore.doc("course/" + myData.university);
-				subjectsRef.get().then(function (doc) {
-					if (doc && doc.exists) {
-						var subjectArray = [];
-						const subjects = doc.data();
-						for (var key in subjects) {
-							document.getElementById('subject1').append(new Option(subjects[key], subjects[key]));
-							document.getElementById('subject2').append(new Option(subjects[key], subjects[key]));
-							document.getElementById('subject3').append(new Option(subjects[key], subjects[key]));
-							document.getElementById('subject4').append(new Option(subjects[key], subjects[key]));
-							subjectArray.push(subjects[key]);
-						}
-						var index1 = subjectArray.indexOf(myData.course_1);
-						document.getElementById('subject1').selectedIndex = index1;
-
-						var index2 = subjectArray.indexOf(myData.course_2);
-						document.getElementById('subject2').selectedIndex = index2;
-
-						var index3 = subjectArray.indexOf(myData.course_3);
-						document.getElementById('subject3').selectedIndex = index3;
-
-						var index4 = subjectArray.indexOf(myData.course_4);
-						document.getElementById('subject4').selectedIndex = index4;
-
-					}
-				}).catch(function (error) {
-					console.log("Failed to retrieve error: ", error)
+				getDegrees(myData, myData.university);
+				getCourses(myData, myData.university);
+				document.getElementById('university').addEventListener('change', function() {
+					getDegrees(myData, document.getElementById('university').value);
+					getCourses(myData, document.getElementById('university').value);
 				});
 
 
@@ -326,3 +301,97 @@ firebase.auth().onAuthStateChanged(function (user) {
 		document.location.href = "/";
 	}
 });
+
+
+
+
+
+
+
+function getDegrees(myData, fromUniversity) {
+	
+	document.getElementById('degree').innerHTML = null;
+	
+		const degreesRef = firestore.doc("degree/" + fromUniversity);
+				degreesRef.get().then(function (doc) {
+					if (doc && doc.exists) {
+						const degrees = doc.data();
+						var degreeArray = [];
+						console.log("Retrieved degrees: ", Object.values(degrees));
+
+						// Fill in the degree drop-down list with the new values
+						for (var key in degrees) {
+							document.getElementById('degree').append(new Option(degrees[key], degrees[key]));
+							degreeArray.push(degrees[key]);
+						}
+						var index1 = degreeArray.indexOf(myData.current_degree);
+						document.getElementById('degree').selectedIndex = index1;
+					}
+				}).catch(function (error) {
+					console.log("Failed to retrieve error: ", error)
+				});
+}
+
+
+
+
+
+
+function getCourses(myData, fromUniversity) {
+
+	document.getElementById('subject1').innerHTML = null;
+	document.getElementById('subject2').innerHTML = null;
+	document.getElementById('subject3').innerHTML = null;
+	document.getElementById('subject4').innerHTML = null;
+	
+	const subjectsRef = firestore.doc("course/" + fromUniversity);
+	subjectsRef.get().then(function (doc) {
+		if (doc && doc.exists) {
+			var subjectArray = [];
+			const subjects = doc.data();
+			for (var key in subjects) {
+				document.getElementById('subject1').append(new Option(subjects[key], subjects[key]));
+				document.getElementById('subject2').append(new Option(subjects[key], subjects[key]));
+				document.getElementById('subject3').append(new Option(subjects[key], subjects[key]));
+				document.getElementById('subject4').append(new Option(subjects[key], subjects[key]));
+				subjectArray.push(subjects[key]);
+			}
+			var index1 = subjectArray.indexOf(myData.course_1);
+			document.getElementById('subject1').selectedIndex = index1;
+
+			var index2 = subjectArray.indexOf(myData.course_2);
+			document.getElementById('subject2').selectedIndex = index2;
+
+			var index3 = subjectArray.indexOf(myData.course_3);
+			document.getElementById('subject3').selectedIndex = index3;
+
+			var index4 = subjectArray.indexOf(myData.course_4);
+			document.getElementById('subject4').selectedIndex = index4;
+
+		}
+	}).catch(function (error) {
+		console.log("Failed to retrieve error: ", error)
+	});
+}
+
+
+
+function logOut() {
+	firebase.auth().signOut();
+	window.location.replace("/");
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

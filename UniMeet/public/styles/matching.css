@@ -28,8 +28,13 @@
 }
 
 .profile_image {
+	margin: auto;
 	width: 50%;
+	padding-top: 50%;
 	border-radius: 32px;
+	background: url(../images/profile_placeholder.png) no-repeat center center;
+	background-size: cover;
+	
 }
 
 .profile_name_title {

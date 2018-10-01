@@ -112,11 +112,12 @@ function populateCollectionView(matchData) {
 					});
 					containingCard.appendChild(card);
 
-					profileImage = document.createElement('img');
+					profileImage = document.createElement('div');
 					profileImage.setAttribute('class', 'profile_image');
-					profileImage.src = '../images/profile_placeholder.png';
 					if (myData.profile_image != null) {
-						profileImage.src = myData.profile_image;
+						profileImage.style.background = 'url(' + myData.profile_image + ') no-repeat center center';
+						profileImage.style.backgroundSize = 'cover';
+						profileImage.style.borderRadius = '32px';
 					}
 					card.appendChild(profileImage);
 
