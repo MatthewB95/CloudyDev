@@ -24,6 +24,8 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 		document.getElementById('submitBtn').addEventListener('click', function () {
 			saveMessage(document.getElementById('message').value.trim());
+			// Clear message section when message is sent
+			document.getElementById('message').value = "";
 		});
 		document.getElementById('refreshButton').addEventListener('click', function () {
 			checkHistory();
@@ -88,6 +90,7 @@ function createUserCell(user) {
 	cell.setAttribute('class', 'userCell');
 	cell.addEventListener('click', function () {
 		console.log("Active");
+		selectedProfileID = user.uid;
 		// Set active highlight
 		$(this).removeClass('userCell').addClass('userCellActive').siblings().removeClass('userCellActive').addClass('userCell');
 		loadMessages(user.uid);
@@ -126,19 +129,18 @@ function checkHistory() {
 		console.log(key, collectionOfMessagedUsers[key]);
 	}
 
+	console.log("Not in history");
+	firestore.doc("student/" + selectedProfileID).get().then(function (doc) {
+		if (doc && doc.exists) {
+			const user = doc.data();
+			collectionOfMessagedUsers[user.uid] = user;
+			createUserCell(user);
+		}
+	});
+
 	if (selectedProfileID in collectionOfMessagedUsers) {
 		console.log("In history");
 		loadMessages(selectedProfileID);
-	} else {
-		console.log("Not in history");
-		firestore.doc("student/" + selectedProfileID).get().then(function (doc) {
-			if (doc && doc.exists) {
-				const user = doc.data();
-
-				collectionOfMessagedUsers[user.uid] = user;
-				createUserCell(user);
-			}
-		})
 	}
 }
 
@@ -464,12 +466,12 @@ function displayMessage(user, text) {
 //}
 //
 //// Template for messages.
-var MESSAGE_TEMPLATE =
-	'<div class="message-container">' +
-	'<div class="spacing"><div class="pic"></div></div>' +
-	'<div class="message"></div>' +
-	'<div class="name"></div>' +
-	'</div>';
+//var MESSAGE_TEMPLATE =
+//	'<div class="message-container">' +
+//	'<div class="spacing"><div class="pic"></div></div>' +
+//	'<div class="message"></div>' +
+//	'<div class="name"></div>' +
+//	'</div>';
 //
 //// A loading image URL.
 //var LOADING_IMAGE_URL = 'https://www.google.com/images/spin-32.gif?a';
