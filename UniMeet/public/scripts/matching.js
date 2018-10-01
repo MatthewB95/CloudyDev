@@ -114,10 +114,8 @@ function populateCollectionView(matchData) {
 
 					profileImage = document.createElement('img');
 					profileImage.setAttribute('class', 'profile_image');
-					if (myData.profile_image == null) {
-						profileImage.src = '../images/profile_placeholder.png';
-					}
-					else {
+					profileImage.src = '../images/profile_placeholder.png';
+					if (myData.profile_image != null) {
 						profileImage.src = myData.profile_image;
 					}
 					card.appendChild(profileImage);

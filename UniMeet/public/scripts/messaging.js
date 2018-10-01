@@ -13,33 +13,31 @@ var collectionOfMessagedUsers = {};
 var selectedUser;
 
 
-
 firebase.auth().onAuthStateChanged(function (user) {
 	if (user) {
 		// User is signed in.
 		var user = firebase.auth().currentUser;
-		if (user != null) {
 
-			const docRef = firestore.doc("student/" + user.uid);
+		const docRef = firestore.doc("student/" + user.uid);
 
-			getCurrentUser(docRef);
+		getCurrentUser(docRef);
 
-			document.getElementById('submitBtn').addEventListener('click', function () {
-				saveMessage(document.getElementById('message').value);
-			});
-			document.getElementById('refreshButton').addEventListener('click', function () {
-				checkHistory();
-			});
-			document.getElementById('newConversation').addEventListener('click', function () {
-				window.open("/friends.html", "_self");
-			});
-
-		} else {
-			// No user is signed in.
-			// Redirect them to home page
-			document.location.href = "/";
-		}
+		document.getElementById('submitBtn').addEventListener('click', function () {
+			saveMessage(document.getElementById('message').value.trim());
+		});
+		document.getElementById('refreshButton').addEventListener('click', function () {
+			checkHistory();
+		});
+		document.getElementById('newConversation').addEventListener('click', function () {
+			window.open("/friends.html", "_self");
+		});
+	} else {
+		// No user is signed in.
+		// Redirect them to home page
+		document.location.href = "/";
 	}
+
+
 });
 
 
@@ -78,8 +76,8 @@ function loadUserConversations() {
 				})
 			}
 		});
-	});
-//	checkHistory();
+		//checkHistory();
+	});	
 }
 
 
@@ -120,6 +118,9 @@ function createUserCell(user) {
 
 
 function checkHistory() {
+
+	// Clear the contents of the user bar
+	document.getElementById("userBar").innerHTML = "";
 
 	for (var key in collectionOfMessagedUsers) {
 		console.log(key, collectionOfMessagedUsers[key]);
@@ -521,16 +522,16 @@ var MESSAGE_TEMPLATE =
 //}
 //
 //// Checks that the Firebase SDK has been correctly setup and configured.
-//function checkSetup() {
-//	if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
-//		window.alert('You have not configured and imported the Firebase SDK. ' +
-//			'Make sure you go through the codelab setup instructions and make ' +
-//			'sure you are running the codelab using `firebase serve`');
-//	}
-//}
+function checkSetup() {
+	if (!window.firebase || !(firebase.app instanceof Function) || !firebase.app().options) {
+		window.alert('You have not configured and imported the Firebase SDK. ' +
+			'Make sure you go through the codelab setup instructions and make ' +
+			'sure you are running the codelab using `firebase serve`');
+	}
+}
 //
 //// Checks that Firebase has been imported.
-//checkSetup();
+checkSetup();
 //
 // Shortcuts to DOM Elements.
 //var messageListElement = document.getElementById('messages');
@@ -565,6 +566,8 @@ var MESSAGE_TEMPLATE =
 //mediaCaptureElement.addEventListener('change', onMediaFileSelected);
 //
 //// initialize Firebase
+
+// Initiate firebase auth.
 //initFirebaseAuth();
 //
 //// We load currently existing chat messages and listen to new ones.

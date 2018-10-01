@@ -13,11 +13,10 @@ firebase.auth().onAuthStateChanged(function (user) {
                 if (doc && doc.exists) {
                     const myData = doc.data();
 
-                    if (myData.profile_image == null) {
-						document.getElementById('profileIcon').src = '/../images/profile_placeholder.png';
-					}
-					else {
-						document.getElementById('profileIcon').src = myData.profile_image;
+                    document.getElementById('profileIcon').src = '/../images/profile_placeholder.png';
+                    if (myData.profile_image != null) {
+                    	document.getElementById('profileIcon').src = myData.profile_image;
+						
 					}
 					//document.getElementById('nav_profile_title').innerHTML = myData.name;
 				}
