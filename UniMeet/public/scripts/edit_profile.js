@@ -24,7 +24,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 			// you have one. Use User.getToken() instead.
 		}
 		// Set profile picture
-//		document.getElementById('profilePicture').src = photoUrl;
+		//		document.getElementById('profilePicture').src = photoUrl;
 
 		document.getElementById('editProfileMenuItem').addEventListener('click', function () {
 			document.getElementById('profilePreview').style.display = "block";
@@ -46,7 +46,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 			document.getElementById('friendRequestListView').style.display = "none";
 			document.getElementById('blockListView').style.display = "block";
 		});
-		
+
 		document.getElementById('signOutMenuItem').addEventListener('click', function () {
 			logOut();
 		});
@@ -66,19 +66,19 @@ firebase.auth().onAuthStateChanged(function (user) {
 		docRef.get().then(function (doc) {
 			if (doc && doc.exists) {
 				const myData = doc.data();
-				
-				if (myData.profile_image != null) {
-				var profileImage = document.getElementById('avatar');
-				profileImage.style.backgroundColor = "white";
-				profileImage.style.background = 'url(' + myData.profile_image + ') no-repeat center center';
-						profileImage.style.backgroundSize = 'cover';
-//						profileImage.style.borderRadius = '32px';
-			}
 
-//				document.getElementById('profilePicture').src = '/../images/profile_placeholder.png';
-//				if (myData.profile_image != null) {
-//					document.getElementById('profilePicture').src = myData.profile_image;
-//				}
+				if (myData.profile_image != null) {
+					var profileImage = document.getElementById('avatar');
+					profileImage.style.backgroundColor = "white";
+					profileImage.style.background = 'url(' + myData.profile_image + ') no-repeat center center';
+					profileImage.style.backgroundSize = 'cover';
+					//						profileImage.style.borderRadius = '32px';
+				}
+
+				//				document.getElementById('profilePicture').src = '/../images/profile_placeholder.png';
+				//				if (myData.profile_image != null) {
+				//					document.getElementById('profilePicture').src = myData.profile_image;
+				//				}
 				//				document.getElementById('ageField').value = myData.age.toString();
 				document.getElementById('nameField').value = myData.name;
 				document.getElementById('bioField').value = myData.bio;
@@ -104,7 +104,7 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 				getDegrees(myData, myData.university);
 				getCourses(myData, myData.university);
-				document.getElementById('university').addEventListener('change', function() {
+				document.getElementById('university').addEventListener('change', function () {
 					getDegrees(myData, document.getElementById('university').value);
 					getCourses(myData, document.getElementById('university').value);
 				});
@@ -214,16 +214,10 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 		function populateCollectionView(matchedData) {
 			var i;
-			var containingCard;
 			var card;
 			var profileImage;
 			var nameLabel;
-			var degreeLabel;
-			var infoLabel;
-			var shortcutsContainer;
-			var messageShortcut;
-			var friendShortcut;
-			var moreShortcut;
+			var unblockBtn;
 
 			// Remove any existing matches from the page
 			document.getElementById("friendRequestView").innerHTML = "";
@@ -239,44 +233,37 @@ firebase.auth().onAuthStateChanged(function (user) {
 						const myData = doc.data();
 						console.log("Returning value");
 
-						containingCard = document.createElement('div');
-						containingCard.setAttribute('class', 'col-lg-4 col-md-6 col-sm-12 text-center');
 
 						card = document.createElement('div');
-						card.setAttribute('class', 'matched_profile_card');
+						card.setAttribute('class', 'profile_card');
 						card.addEventListener('click', function () {
 							selectMatchedProfile(myData.uid);
 						});
-						containingCard.appendChild(card);
 
-						profileImage = document.createElement('img');
-						profileImage.setAttribute('class', 'profile_image');
-						if (myData.profile_image == null) {
-							profileImage.src = '../images/profile_placeholder.png';
-						} else {
-							profileImage.src = myData.profile_image;
+						profileImage = document.createElement('div');
+						profileImage.setAttribute('class', 'blockedImage');
+						if (myData.profile_image != null) {
+							profileImage.style.background = 'url(' + myData.profile_image + ') no-repeat center center';
+							profileImage.style.backgroundSize = 'cover';
+							profileImage.style.borderRadius = '8px';
 						}
 						card.appendChild(profileImage);
 
 						nameLabel = document.createElement('h1');
-						nameLabel.setAttribute('class', 'profile_name_title');
+						nameLabel.setAttribute('class', 'bodyText blockedName');
 						nameLabel.innerHTML = myData.name;
 						card.appendChild(nameLabel);
 
-						degreeLabel = document.createElement('h2');
-						degreeLabel.innerHTML = myData.current_degree;
-						degreeLabel.setAttribute('class', 'profile_degree_title');
-						card.appendChild(degreeLabel);
-
-						infoLabel = document.createElement('h3');
-						infoLabel.innerHTML = myData.university;
-						infoLabel.setAttribute('class', 'profile_info_title');
-						card.appendChild(infoLabel);
+						unblockBtn = document.createElement('button');
+						unblockBtn.setAttribute('class', 'button unblockBtn primaryColour');
+						card.appendChild(unblockBtn);
 
 						if (matchedData[myData.uid] == 2) {
-							document.getElementById("friendRequestView").appendChild(containingCard);
+							document.getElementById("friendRequestView").appendChild(card);
+							unblockBtn.innerHTML = "Accept";
 						} else if (matchedData[myData.uid] == 6 || matchedData[myData.uid] == 7) {
-							document.getElementById("blockedUsersView").appendChild(containingCard);
+							document.getElementById("blockedUsersView").appendChild(card);
+							unblockBtn.innerHTML = "Unblock";
 						}
 					}
 				}).catch(function (error) {
@@ -309,27 +296,27 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 
 function getDegrees(myData, fromUniversity) {
-	
-	document.getElementById('degree').innerHTML = null;
-	
-		const degreesRef = firestore.doc("degree/" + fromUniversity);
-				degreesRef.get().then(function (doc) {
-					if (doc && doc.exists) {
-						const degrees = doc.data();
-						var degreeArray = [];
-						console.log("Retrieved degrees: ", Object.values(degrees));
 
-						// Fill in the degree drop-down list with the new values
-						for (var key in degrees) {
-							document.getElementById('degree').append(new Option(degrees[key], degrees[key]));
-							degreeArray.push(degrees[key]);
-						}
-						var index1 = degreeArray.indexOf(myData.current_degree);
-						document.getElementById('degree').selectedIndex = index1;
-					}
-				}).catch(function (error) {
-					console.log("Failed to retrieve error: ", error)
-				});
+	document.getElementById('degree').innerHTML = null;
+
+	const degreesRef = firestore.doc("degree/" + fromUniversity);
+	degreesRef.get().then(function (doc) {
+		if (doc && doc.exists) {
+			const degrees = doc.data();
+			var degreeArray = [];
+			console.log("Retrieved degrees: ", Object.values(degrees));
+
+			// Fill in the degree drop-down list with the new values
+			for (var key in degrees) {
+				document.getElementById('degree').append(new Option(degrees[key], degrees[key]));
+				degreeArray.push(degrees[key]);
+			}
+			var index1 = degreeArray.indexOf(myData.current_degree);
+			document.getElementById('degree').selectedIndex = index1;
+		}
+	}).catch(function (error) {
+		console.log("Failed to retrieve error: ", error)
+	});
 }
 
 
@@ -343,7 +330,7 @@ function getCourses(myData, fromUniversity) {
 	document.getElementById('subject2').innerHTML = null;
 	document.getElementById('subject3').innerHTML = null;
 	document.getElementById('subject4').innerHTML = null;
-	
+
 	const subjectsRef = firestore.doc("course/" + fromUniversity);
 	subjectsRef.get().then(function (doc) {
 		if (doc && doc.exists) {
@@ -376,22 +363,44 @@ function getCourses(myData, fromUniversity) {
 
 
 
-function logOut() {
-	firebase.auth().signOut();
-	window.location.replace("/");
+
+
+
+function getFriendRequests() {
+	//TESTING
+	var i;
+	var card;
+	var image;
+	var name;
+	var unblockBtn;
+
+	for (i = 0; i < 10; i++) {
+		card = document.createElement('div');
+		card.setAttribute('class', 'profile_card');
+
+		image = document.createElement('div');
+		image.setAttribute('class', 'blockedImage');
+		card.appendChild(image);
+
+		name = document.createElement('h2');
+		name.setAttribute('class', 'bodyText blockedName');
+		name.innerHTML = "Blocked Users Name";
+		card.appendChild(name);
+
+		unblockBtn = document.createElement('button');
+		unblockBtn.setAttribute('class', 'button unblockBtn primaryColour');
+		unblockBtn.innerHTML = "Unblock";
+		card.appendChild(unblockBtn);
+
+		document.getElementById("blockedUsersView").appendChild(card);
+	}
 }
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
+function logOut() {
+	firebase.auth().signOut();
+	window.location.replace("/");
+}
