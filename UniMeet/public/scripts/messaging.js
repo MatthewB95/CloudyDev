@@ -62,7 +62,6 @@ function getCurrentUser(docRef) {
 }
 
 
-
 function loadUserConversations() {
 
 	console.log("Loading friends and messages...");
@@ -80,9 +79,11 @@ function loadUserConversations() {
 				firestore.doc("student/" + key).get().then(function (friend) {
 					if (friend && friend.exists) {
 						const thisFriend = friend.data();
-						collectionOfMessagedUsers[thisFriend.uid] = thisFriend;
-						console.log("Displaying Friend: " + thisFriend.name);
-						createUserCell(thisFriend);
+						if (friendsData[key] == 4) {
+							collectionOfMessagedUsers[thisFriend.uid] = thisFriend;
+							console.log("Displaying Friend: " + thisFriend.name);
+							createUserCell(thisFriend);
+						}
 					}
 				});
 			}

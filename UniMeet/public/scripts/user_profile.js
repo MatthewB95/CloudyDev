@@ -46,6 +46,7 @@ function checkFriend() {
 	if (currentUser != null) {
 
 		var friendButton = document.getElementById('friendBtn');
+		var messageButton = document.getElementById('messageBtn');
 		var rejButton = document.getElementById('rejBtn');
 		var blockButton = document.getElementById('blockBtn');
 
@@ -55,10 +56,13 @@ function checkFriend() {
 			for (var friendID in friends) {
 				if (friendID == uid) {
 
-					// Display the Your Rating section on page
-					document.getElementById("yourRatingText").style.display = "block";
-					document.getElementById("yourRating").style.display = "block";
+					if (friends[friendID] != 6 && friends[friendID] != 7) {
+						// Display the Your Rating section on page
+						document.getElementById("yourRatingText").style.display = "block";
+						document.getElementById("yourRating").style.display = "block";
+					}
 
+					messageButton.style.display = "none";
 					rejButton.style.display = "none";
 
 					friendButton.addEventListener('click', addFriend, false);
@@ -73,12 +77,14 @@ function checkFriend() {
 					// If the users are not currently friends
 					if (friends[friendID] == 0 || friends[friendID] == 5 || friends[friendID] == 3) {
 						friendButton.disabled = false;
+						blockButton.innerHTML = "Block";
 						friendButton.innerHTML = "Add Friend";
 						friendButton.addEventListener('click', addFriend, false);
 						return;
 					}
 					// If the users are both friends
 					else if (friends[friendID] == 4) {
+						messageButton.style.display = "inline";
 						friendButton.disabled = false;
 						friendButton.innerHTML = "Unfriend";
 						friendButton.addEventListener('click', unfriend, false);
@@ -111,12 +117,16 @@ function checkFriend() {
 						blockButton.innerHTML = "Unblock";
 						blockButton.removeEventListener('click', blkUser, false);
 						blockButton.addEventListener('click', unBlkUser, false);
+						document.getElementById("yourRatingText").style.display = "none";
+						document.getElementById("yourRating").style.display = "none";
 						return;
 					}
 					// If the user has been blocked
 					else if (friends[friendID] == 7) {
 						friendButton.disabled = true;
 						friendButton.innerHTML = "Blocked";
+						document.getElementById("yourRatingText").style.display = "none";
+						document.getElementById("yourRating").style.display = "none";
 						return;
 					}
 				}
