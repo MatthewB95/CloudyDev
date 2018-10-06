@@ -12,35 +12,40 @@ var currentUser;
 var collectionOfMessagedUsers = {};
 var selectedUser;
 
+var callback;
+
 
 firebase.auth().onAuthStateChanged(function (user) {
 	if (user) {
-		// User is signed in.
-		var user = firebase.auth().currentUser;
 
 		const docRef = firestore.doc("student/" + user.uid);
 
 		getCurrentUser(docRef);
 
-		document.getElementById('submitBtn').addEventListener('click', function () {
-			saveMessage(document.getElementById('message').value.trim());
-			// Clear message section when message is sent
-			document.getElementById('message').value = "";
-		});
-		document.getElementById('refreshButton').addEventListener('click', function () {
-			checkHistory();
-		});
-		document.getElementById('newConversation').addEventListener('click', function () {
-			window.open("/friends.html", "_self");
-		});
+		document.getElementById("refreshButton").addEventListener("click", loadUserConversations);
+
+		// Send message on button click
+		document.getElementById("submitBtn").addEventListener("click", saveMessage);
+
+		// Send message when the ENTER key is hit
+        document.getElementById("submitBtn").addEventListener("keyup", function(event) {
+            event.preventDefault();
+            if (event.keyCode === 13) {
+                document.getElementById("submitBtn").click();
+            }
+        });
+		
+		//document.getElementById('newConversation').addEventListener('click', function () {
+		//	window.open("/friends.html", "_self");
+		//});
 	} else {
 		// No user is signed in.
 		// Redirect them to home page
 		document.location.href = "/";
 	}
-
-
 });
+
+
 
 
 function getCurrentUser(docRef) {
@@ -51,7 +56,6 @@ function getCurrentUser(docRef) {
 			currentUser = student;
 
 			loadUserConversations();
-
 		}
 	})
 
@@ -60,45 +64,65 @@ function getCurrentUser(docRef) {
 
 
 function loadUserConversations() {
-	firebase.database().ref('/messages/').on('value', function (snapshot) {
-		snapshot.forEach(function (childSnapshot) {
 
-			var uids = childSnapshot.key.split("-");
+	console.log("Loading friends and messages...");
 
-			if (uids.indexOf(currentUser.uid) > -1) {
-				let currentUserIndex = uids.indexOf(currentUser.uid);
-				let selectedUserID = uids[1 - currentUserIndex];
+	document.getElementById("userBar").innerHTML = "";
+	document.getElementById("messages").innerHTML = "";
 
-				firestore.doc("student/" + selectedUserID).get().then(function (doc) {
-					if (doc && doc.exists) {
-						const user = doc.data();
-						collectionOfMessagedUsers[user.uid] = user;
-						createUserCell(user);
+	const friendsRef = firestore.doc("friends/" + currentUser.uid);
+	friendsRef.get().then(function (doc) {
+		if (doc && doc.exists) {
+
+			const friendsData = doc.data();
+
+			for (var key in friendsData) {
+				firestore.doc("student/" + key).get().then(function (friend) {
+					if (friend && friend.exists) {
+						const thisFriend = friend.data();
+						collectionOfMessagedUsers[thisFriend.uid] = thisFriend;
+						console.log("Displaying Friend: " + thisFriend.name);
+						createUserCell(thisFriend);
 					}
-				})
+				});
 			}
-		});
-		//checkHistory();
-	});	
+		}
+	});
+	
 }
 
 
-
-function createUserCell(user) {
+function createUserCell(thisUser) {
 
 	var cell = document.createElement('div');
+	cell.setAttribute("id", thisUser.uid);
 	cell.setAttribute('class', 'userCell');
-	cell.addEventListener('click', function () {
-		console.log("Active");
-		selectedProfileID = user.uid;
-		// Set active highlight
+	cell.onclick = function() {
+
+		// If user clicks on the same person, don't reload
+		if (selectedProfileID == thisUser.uid)
+			return;
+
+		// Remove event listeners
+		var uids = [selectedProfileID, currentUser.uid].sort();
+		firebase.database().ref('/messages/' + uids[0] + '-' + uids[1]).off('child_added', callback);
+		firebase.database().ref('/messages/' + uids[0] + '-' + uids[1]).off('child_changed', callback);
+
+		selectedProfileID = thisUser.uid;
+		// Set active highlight effect - Sam
 		$(this).removeClass('userCell').addClass('userCellActive').siblings().removeClass('userCellActive').addClass('userCell');
-		loadMessages(user.uid);
-	});
+
+		// Remove event listeners
+		uids = [thisUser.uid, currentUser.uid].sort();
+		firebase.database().ref('/messages/' + uids[0] + '-' + uids[1]).off('child_added', callback);
+		firebase.database().ref('/messages/' + uids[0] + '-' + uids[1]).off('child_changed', callback);
+
+		loadMessages(thisUser.uid);
+	};
 
 	var userImage = document.createElement('img');
 	userImage.setAttribute('class', 'userImage');
-	userImage.src = user.profile_image;
+	userImage.src = thisUser.profile_image;
 	cell.appendChild(userImage);
 
 	var textContainer = document.createElement('div');
@@ -106,48 +130,52 @@ function createUserCell(user) {
 
 	var nameLabel = document.createElement('div');
 	nameLabel.setAttribute('class', 'bodyText boldText');
-	nameLabel.innerHTML = user.name;
+	nameLabel.innerHTML = thisUser.name;
 	textContainer.appendChild(nameLabel);
 
 	var messagePreview = document.createElement('div');
 	messagePreview.setAttribute('class', 'smallText lightTextColour');
-	messagePreview.innerHTML = "Message preview";
+	// No message preview for now
+	//messagePreview.innerHTML = "Message preview";
 	textContainer.appendChild(messagePreview);
 
 	cell.appendChild(textContainer);
 
 	document.getElementById("userBar").appendChild(cell);
+
+	// Auto-select the last conversatoin tab opened by the user
+	checkHistory(thisUser.uid, selectedProfileID);
 }
 
+// If user clicked on the message button from their friend's profile page, select their profile
+// Remembers the user's selection for who they talked to and auto-selects it when they reload
+function checkHistory(thisUID, selectedProfileID) {
 
-function checkHistory() {
+	if (selectedProfileID != null) {
+		if (thisUID == selectedProfileID) {
+			console.log("Selecting Profile: " + selectedProfileID);
+			// Remove event listeners
+			var uids = [selectedProfileID, currentUser.uid].sort();
+			firebase.database().ref('/messages/' + uids[0] + '-' + uids[1]).off('child_added', callback);
+			firebase.database().ref('/messages/' + uids[0] + '-' + uids[1]).off('child_changed', callback);
 
-	// Clear the contents of the user bar
-	document.getElementById("userBar").innerHTML = "";
+			uids = [thisUID, currentUser.uid].sort();
+			firebase.database().ref('/messages/' + uids[0] + '-' + uids[1]).off('child_added', callback);
+			firebase.database().ref('/messages/' + uids[0] + '-' + uids[1]).off('child_changed', callback);
 
-	for (var key in collectionOfMessagedUsers) {
-		console.log(key, collectionOfMessagedUsers[key]);
-	}
-
-	console.log("Not in history");
-	firestore.doc("student/" + selectedProfileID).get().then(function (doc) {
-		if (doc && doc.exists) {
-			const user = doc.data();
-			collectionOfMessagedUsers[user.uid] = user;
-			createUserCell(user);
+			// Set active highlight effect
+			$("#" + selectedProfileID).removeClass('userCell').addClass('userCellActive').siblings().removeClass('userCellActive').addClass('userCell');
+			loadMessages(selectedProfileID);
 		}
-	});
-
-	if (selectedProfileID in collectionOfMessagedUsers) {
-		console.log("In history");
-		loadMessages(selectedProfileID);
 	}
-}
 
+}
 
 
 // Loads chat messages history and listens for upcoming ones.
 function loadMessages(key) {
+
+	console.log("Load Messages");
 
 	if (key in collectionOfMessagedUsers) {
 		selectedUser = collectionOfMessagedUsers[key];
@@ -160,27 +188,43 @@ function loadMessages(key) {
 
 	var uids = [key, currentUser.uid].sort();
 
-	// Loads the last 12 messages and listen for new ones.
-	var callback = function (snap) {
+	
+	// Loads messages and listen for new ones.
+	callback = function (snap) {
 		var data = snap.val();
-		if (data.uid == currentUser.uid) {
-			displayMessage(currentUser, data.text);
-		} else if (data.uid == selectedUser.uid) {
-			displayMessage(selectedUser, data.text);
-		} else {
-			console.log("ERROR");
-		}
-	}
+		displayMessage(data.uid, data.text);
+	};
+
 	firebase.database().ref('/messages/' + uids[0] + '-' + uids[1]).on('child_added', callback);
 	firebase.database().ref('/messages/' + uids[0] + '-' + uids[1]).on('child_changed', callback);
 }
 
 
 
-function saveMessage(messageText) {
+function saveMessage() {
 
+	console.log("Sending Message");
+	// Trim white spaces from the message
+	var messageText = document.getElementById('message').value.trim();
+
+	// If nothing to send, return.
+	if (messageText == "" || messageText == null) {
+		return;
+	}
+
+	// Clear message section before sending the message
+	document.getElementById('message').value = "";
+
+	// Smooth scroll to bottom of messages view
+	var div = document.getElementById('messagesView');
+   		$('#messagesView').animate({
+      		scrollTop: div.scrollHeight - div.clientHeight
+   	}, 250);
+
+   	// Sort UIDs by alphabetical order
 	var uids = [selectedUser.uid, currentUser.uid].sort();
 
+	// Save the new message to firebase
 	return firebase.database().ref('/messages/' + uids[0] + '-' + uids[1]).push({
 		uid: currentUser.uid,
 		text: messageText
@@ -191,9 +235,10 @@ function saveMessage(messageText) {
 
 
 
-
 // Displays a Message in the UI.
-function displayMessage(user, text) {
+function displayMessage(uid, text) {
+
+	console.log("Display Message");
 
 	var container = document.createElement('div');
 	container.setAttribute('class', 'messageContainer');
@@ -202,8 +247,9 @@ function displayMessage(user, text) {
 //	sender.setAttribute('class', 'messageName lightTextColour');
 //	sender.innerHTML = user.name;
 //	container.appendChild(sender);
-
-	if (user.uid == currentUser.uid) {
+	
+	// If the user is sending the message themselves
+	if (uid == currentUser.uid) {
 
 		var messageBubble = document.createElement('div');
 		messageBubble.setAttribute('class', 'messageInlineBlockSent');
@@ -215,32 +261,38 @@ function displayMessage(user, text) {
 
 		var imageIcon = document.createElement('img');
 		imageIcon.setAttribute('class', 'messageImageIconSent');
-		imageIcon.src = user.profile_image;
+		imageIcon.src = currentUser.profile_image;
 		messageBubble.appendChild(imageIcon);
 
 		container.appendChild(messageBubble);
 
 		document.getElementById('messages').appendChild(container);
+		return;
 
+	// The message is from someone else
 	} else {
 
-		var messageBubble = document.createElement('div');
-		messageBubble.setAttribute('class', 'messageInlineBlockRecieved');
+		for (key in collectionOfMessagedUsers) {
+			if (collectionOfMessagedUsers[uid].uid == uid) {
+				var messageBubble = document.createElement('div');
+				messageBubble.setAttribute('class', 'messageInlineBlockRecieved');
 
-		var message = document.createElement('div');
-		message.setAttribute('class', 'messageBubbleRecieved');
-		message.innerHTML = text;
-		messageBubble.appendChild(message);
+				var message = document.createElement('div');
+				message.setAttribute('class', 'messageBubbleRecieved');
+				message.innerHTML = text;
+				messageBubble.appendChild(message);
 
-		var imageIcon = document.createElement('img');
-		imageIcon.setAttribute('class', 'messageImageIconRecieved');
-		imageIcon.src = user.profile_image;
-		messageBubble.appendChild(imageIcon);
+				var imageIcon = document.createElement('img');
+				imageIcon.setAttribute('class', 'messageImageIconRecieved');
+				imageIcon.src = collectionOfMessagedUsers[uid].profile_image;
+				messageBubble.appendChild(imageIcon);
 
-		container.appendChild(messageBubble);
+				container.appendChild(messageBubble);
 
-		document.getElementById('messages').appendChild(container);
-
+				document.getElementById('messages').appendChild(container);
+				return;
+			}
+		}
 	}
 
 	//	if (picUrl) {

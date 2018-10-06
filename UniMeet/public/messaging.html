@@ -1,33 +1,31 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Messages</title>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <title>Messages</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- FIREBASE -->
-<script src="/__/firebase/5.4.0/firebase-app.js"></script>
-<script src="/__/firebase/5.4.0/firebase-auth.js"></script>
-<script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
-<script src="/__/firebase/5.4.0/firebase-database.js"></script>
-<script src="/__/firebase/init.js"></script>
-<!-- FIREBASE -->
+  <!-- FIREBASE -->
+  <script src="/__/firebase/5.4.0/firebase-app.js"></script>
+  <script src="/__/firebase/5.4.0/firebase-auth.js"></script>
+  <script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
+  <script src="/__/firebase/5.4.0/firebase-database.js"></script>
+  <script src="/__/firebase/init.js"></script>
+  <!-- FIREBASE -->
 
-<title>uniMeet</title>
-<script src="scripts/jquery.min.js"></script>
-<script src="scripts/messaging.js"></script>
-	<script src="scripts/navigation.js"></script>
-<script src="scripts/main.js"></script>
+  <title>uniMeet</title>
+  <script src="scripts/jquery.min.js"></script>
+  <script src="scripts/navigation.js"></script>
 
-<!-- Bootstrap -->
-<link href="css/bootstrap-4.0.0.css" rel="stylesheet">
-<link rel="stylesheet" href="styles/main.css">
-<link href="styles/navigation.css" rel="stylesheet">
-<link href="styles/messaging.css" rel="stylesheet">
+  <!-- Bootstrap -->
+  <link href="css/bootstrap-4.0.0.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <link href="styles/navigation.css" rel="stylesheet">
+  <link href="styles/messaging.css" rel="stylesheet">
 </head>
-	
+
 <header>
   <nav class="navigationBar">
     <a href="/"><img src="images/logo.png" class="logoPos" alt="uniMeet"></a>
@@ -41,21 +39,23 @@
 </header>
 
 <body>
-<div style="height: 64px"></div>
-<div class="mainView">
-  <div id="userBarButtons" class="userBar">
-	 <button id="refreshButton" type="submit"> Refresh </button>
-	 <button id="newConversation" class="Conversation" type="submit">New Conversation</button>
-     <div id="userBar">
-  </div>
-	</div>
-  <div class="messagesView">
-	  <div id="messages" class="messages"></div>
-    <form id="messageForm" class="messageForm" action="#">
+  <div style="height: 64px"></div>
+  <div class="mainView">
+    <div id="userBarButtons" class="userBar">
+      <button id="refreshButton" type="submit"> Refresh </button>
+      <!--   <button id="newConversation" class="Conversation" type="submit">New Conversation</button>    -->
+      <div id="userBar"></div>
+    </div>
+    <div class="messagesView" id="messagesView">
+     <div id="messages" class="messages"></div>
+     <form id="messageForm" class="messageForm" onsubmit="return false;">
       <input type="text" id="message" class="textFeild" placeholder="Type Here...">
       <button id="submitBtn" class="submitBtn" type="submit"> Send </button>
     </form>
   </div>
 </div>
+
+<script src="scripts/messaging.js"></script>
+
 </body>
 </html>
