@@ -168,37 +168,63 @@ firebase.auth().onAuthStateChanged(function (user) {
 			const interest2ToSave = document.getElementById('interest2').value;
 			const interest3ToSave = document.getElementById('interest3').value;
 
-			var storageRef = firebase.storage().ref();
-			var profileImageStorageRed = storageRef.child('userProfileImages/' + imageFile.name);
-			profileImageStorageRed.put(imageFile).then(function (snapshot) {
-				snapshot.ref.getDownloadURL().then(function (downloadURL) {
-					console.log('File available at', downloadURL);
-
-					docRef.update({
-						profile_image: downloadURL,
-						name: nameToSave,
-						bio: bioToSave,
-						studentEmail: studentEmailToSame,
-						personalEmail: personalEmailToSave,
-						mobile: mobileToSave,
-						university: universityToSave,
-						current_degree: degreeToSave,
-						course_1: course1ToSave,
-						course_2: course2ToSave,
-						course_3: course3ToSave,
-						course_4: course4ToSave,
-						interest_1: interest1ToSave,
-						interest_2: interest2ToSave,
-						interest_3: interest3ToSave
-					}).then(function () {
-						console.log("Successfully Updated Profile.");
-						document.getElementById("saveProfile").innerHTML = "<b>Saved</b>";
-						document.getElementById("saveProfile").style.opacity = "1";
-					}).catch(function (error) {
-						console.log("Profile Update Error: ", error);
+			if (imageFile != null) {
+				console.log('ImageFile is not nil')
+				var storageRef = firebase.storage().ref();
+				var profileImageStorageRed = storageRef.child('userProfileImages/' + imageFile.name);
+				profileImageStorageRed.put(imageFile).then(function (snapshot) {
+					snapshot.ref.getDownloadURL().then(function (downloadURL) {
+						console.log('File available at', downloadURL);
+						docRef.update({
+							profile_image: downloadURL,
+							name: nameToSave,
+							bio: bioToSave,
+							studentEmail: studentEmailToSame,
+							personalEmail: personalEmailToSave,
+							mobile: mobileToSave,
+							university: universityToSave,
+							current_degree: degreeToSave,
+							course_1: course1ToSave,
+							course_2: course2ToSave,
+							course_3: course3ToSave,
+							course_4: course4ToSave,
+							interest_1: interest1ToSave,
+							interest_2: interest2ToSave,
+							interest_3: interest3ToSave
+						}).then(function () {
+							console.log("Successfully Updated Profile.");
+							document.getElementById("saveProfile").innerHTML = "<b>Saved</b>";
+							document.getElementById("saveProfile").style.opacity = "1";
+						}).catch(function (error) {
+							console.log("Profile Update Error: ", error);
+						});
 					});
 				});
-			});
+			} else {
+				console.log('ImageFile is nil')
+				docRef.update({
+					name: nameToSave,
+					bio: bioToSave,
+					studentEmail: studentEmailToSame,
+					personalEmail: personalEmailToSave,
+					mobile: mobileToSave,
+					university: universityToSave,
+					current_degree: degreeToSave,
+					course_1: course1ToSave,
+					course_2: course2ToSave,
+					course_3: course3ToSave,
+					course_4: course4ToSave,
+					interest_1: interest1ToSave,
+					interest_2: interest2ToSave,
+					interest_3: interest3ToSave
+				}).then(function () {
+					console.log("Successfully Updated Profile.");
+					document.getElementById("saveProfile").innerHTML = "<b>Saved</b>";
+					document.getElementById("saveProfile").style.opacity = "1";
+				}).catch(function (error) {
+					console.log("Profile Update Error: ", error);
+				});
+			}
 		})
 
 		// Check for Firestore changes and update text labels
