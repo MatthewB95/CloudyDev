@@ -80,11 +80,12 @@
     font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-weight: normal;
     font-size: 16px;
-    float: left;
+	position: absolute;
+    right: 0px;
     -webkit-transition-duration: 0.2s; /* Safari */
     border-radius: 32px;
     transition-duration: 0.2s;
-    margin-top: 15px;
+    margin-top: -44px;
     margin-bottom: 15px;
 }
 

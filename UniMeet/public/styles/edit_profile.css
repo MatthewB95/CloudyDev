@@ -47,7 +47,17 @@
 
 
 
+.headerSave {
+	position: relative;
+	padding-bottom: 8px;
+}
 
+.saveBtn {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	
+}
 
 
 

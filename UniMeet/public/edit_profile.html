@@ -9,6 +9,7 @@
 <script src="/__/firebase/5.4.0/firebase-auth.js"></script>
 <script src="/__/firebase/5.4.0/firebase-firestore.js"></script>
 <script src="/__/firebase/5.4.0/firebase-functions.js"></script>
+	<script src="/__/firebase/5.4.0/firebase-storage.js"></script>
 <script src="/__/firebase/init.js"></script>
 <!-- FIREBASE -->
 	
@@ -49,13 +50,17 @@
     <div class="backgroundColorView"></div>
     <div class="shortcut_container">
     </div>
-    <div id="avatar" class="avatar"> </div>
+    <div id="avatar" class="avatar"> 
+		  <input type="file" id="files">
+		  </div>
   </div>
 	
 	<div id="editProfileView" class="editProfileView">
-	  
-    <h1 class="headerText">Edit Profile</h1>
-    <button id="saveProfile">Save</button>
+	
+		<div class="headerSave">
+    <h1 class="headerText"><b>Edit Profile</b></h1>
+			<button id="saveProfile" class="saveBtn button purpleBackground"><b>Save</b></button>
+			</div>
 	  
 	  
 	  
@@ -102,14 +107,14 @@
   </div>
 	
 	<div id="friendRequestListView" class="editProfileView">
-		<h1 class="headerText">Friend Requests</h1>
+		<h1 class="headerText"><b>Friend Requests</b></h1>
     <div class="container">
       <div id="friendRequestView" class="row"></div>
     </div>
 	</div>
 	
 	<div id="blockListView" class="editProfileView">
-		<h1 class="headerText">Blocked List</h1>
+		<h1 class="headerText"><b>Blocked List</b></h1>
     <div class="container">
       <div id="blockedUsersView" class="row"></div>
     </div>

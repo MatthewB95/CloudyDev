@@ -11,6 +11,8 @@ firebase.auth().onAuthStateChanged(function (user) {
 	document.getElementById('friendRequestListView').style.display = "none";
 	document.getElementById('blockListView').style.display = "none";
 
+	document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
 	if (user) {
 		// User is signed in.
 		var user = firebase.auth().currentUser;
@@ -148,6 +150,8 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 		// Updates the user's profile information when they hit save
 		document.getElementById("saveProfile").addEventListener("click", function () {
+			document.getElementById("saveProfile").innerHTML = "<b>Saving</b>";
+			document.getElementById("saveProfile").style.opacity = "0.5";
 			const nameToSave = document.getElementById('nameField').value.trim();
 			const bioToSave = document.getElementById('bioField').value.trim();
 			const studentEmailToSame = document.getElementById('studentEmailField').value.trim();
@@ -164,25 +168,36 @@ firebase.auth().onAuthStateChanged(function (user) {
 			const interest2ToSave = document.getElementById('interest2').value;
 			const interest3ToSave = document.getElementById('interest3').value;
 
-			docRef.update({
-				name: nameToSave,
-				bio: bioToSave,
-				studentEmail: studentEmailToSame,
-				personalEmail: personalEmailToSave,
-				mobile: mobileToSave,
-				university: universityToSave,
-				current_degree: degreeToSave,
-				course_1: course1ToSave,
-				course_2: course2ToSave,
-				course_3: course3ToSave,
-				course_4: course4ToSave,
-				interest_1: interest1ToSave,
-				interest_2: interest2ToSave,
-				interest_3: interest3ToSave
-			}).then(function () {
-				console.log("Successfully Updated Profile.");
-			}).catch(function (error) {
-				console.log("Profile Update Error: ", error);
+			var storageRef = firebase.storage().ref();
+			var profileImageStorageRed = storageRef.child('userProfileImages/' + imageFile.name);
+			profileImageStorageRed.put(imageFile).then(function (snapshot) {
+				snapshot.ref.getDownloadURL().then(function (downloadURL) {
+					console.log('File available at', downloadURL);
+
+					docRef.update({
+						profile_image: downloadURL,
+						name: nameToSave,
+						bio: bioToSave,
+						studentEmail: studentEmailToSame,
+						personalEmail: personalEmailToSave,
+						mobile: mobileToSave,
+						university: universityToSave,
+						current_degree: degreeToSave,
+						course_1: course1ToSave,
+						course_2: course2ToSave,
+						course_3: course3ToSave,
+						course_4: course4ToSave,
+						interest_1: interest1ToSave,
+						interest_2: interest2ToSave,
+						interest_3: interest3ToSave
+					}).then(function () {
+						console.log("Successfully Updated Profile.");
+						document.getElementById("saveProfile").innerHTML = "<b>Saved</b>";
+						document.getElementById("saveProfile").style.opacity = "1";
+					}).catch(function (error) {
+						console.log("Profile Update Error: ", error);
+					});
+				});
 			});
 		})
 
@@ -236,9 +251,9 @@ firebase.auth().onAuthStateChanged(function (user) {
 
 						card = document.createElement('div');
 						card.setAttribute('class', 'profile_card');
-						card.addEventListener('click', function () {
-							selectMatchedProfile(myData.uid);
-						});
+						//						card.addEventListener('click', function () {
+						//							selectMatchedProfile(myData.uid);
+						//						});
 
 						profileImage = document.createElement('div');
 						profileImage.setAttribute('class', 'blockedImage');
@@ -261,9 +276,15 @@ firebase.auth().onAuthStateChanged(function (user) {
 						if (matchedData[myData.uid] == 2) {
 							document.getElementById("friendRequestView").appendChild(card);
 							unblockBtn.innerHTML = "Accept";
+							unblockBtn.addEventListener('click', function () {
+								updateFriendStatus(myData.uid, 4);
+							});
 						} else if (matchedData[myData.uid] == 6 || matchedData[myData.uid] == 7) {
 							document.getElementById("blockedUsersView").appendChild(card);
 							unblockBtn.innerHTML = "Unblock";
+							unblockBtn.addEventListener('click', function () {
+								updateFriendStatus(myData.uid, 7);
+							})
 						}
 					}
 				}).catch(function (error) {
@@ -289,6 +310,50 @@ firebase.auth().onAuthStateChanged(function (user) {
 	}
 });
 
+
+var imageFile;
+
+function handleFileSelect(evt) {
+
+	console.log("in");
+
+	var files = evt.target.files; // FileList object
+
+	// Loop through the FileList and render image files as thumbnails.
+	for (var i = 0, f; f = files[i]; i++) {
+
+		// Only process image files.
+		if (!f.type.match('image.*')) {
+			continue;
+		}
+
+		var reader = new FileReader();
+
+		// Closure to capture the file information.
+		reader.onload = (function (theFile) {
+			return function (e) {
+
+				var profileImage = document.getElementById('avatar');
+				profileImage.style.backgroundColor = "white";
+				profileImage.style.background = 'url(' + e.target.result + ') no-repeat center center';
+				profileImage.style.backgroundSize = 'cover';
+				//				document.getElementById('avatar').src = e.target.result;
+
+				imageFile = theFile;
+
+				//                // Render thumbnail.
+				//                var span = document.createElement('span');
+				//                                span.innerHTML = ['<img class="thumb" src="', e.target.result,
+				//                                    '" title="', escape(theFile.name), '"/>'
+				//                                ].join('');
+				//                document.getElementById('list').insertBefore(span, null);
+			};
+		})(f);
+
+		// Read in the image file as a data URL.
+		reader.readAsDataURL(f);
+	}
+}
 
 
 
@@ -365,35 +430,57 @@ function getCourses(myData, fromUniversity) {
 
 
 
+//
+//function getFriendRequests() {
+//	//TESTING
+//	var i;
+//	var card;
+//	var image;
+//	var name;
+//	var unblockBtn;
+//
+//	for (i = 0; i < 10; i++) {
+//		card = document.createElement('div');
+//		card.setAttribute('class', 'profile_card');
+//
+//		image = document.createElement('div');
+//		image.setAttribute('class', 'blockedImage');
+//		card.appendChild(image);
+//
+//		name = document.createElement('h2');
+//		name.setAttribute('class', 'bodyText blockedName');
+//		name.innerHTML = "Blocked Users Name";
+//		card.appendChild(name);
+//
+//		unblockBtn = document.createElement('button');
+//		unblockBtn.setAttribute('class', 'button unblockBtn primaryColour');
+//		unblockBtn.innerHTML = "Unblock";
+//		card.appendChild(unblockBtn);
+//
+//		document.getElementById("blockedUsersView").appendChild(card);
+//	}
+//}
 
-function getFriendRequests() {
-	//TESTING
-	var i;
-	var card;
-	var image;
-	var name;
-	var unblockBtn;
+function updateFriendStatus(uid, status) {
 
-	for (i = 0; i < 10; i++) {
-		card = document.createElement('div');
-		card.setAttribute('class', 'profile_card');
+	var currentUser = firebase.auth().currentUser;
 
-		image = document.createElement('div');
-		image.setAttribute('class', 'blockedImage');
-		card.appendChild(image);
+	const data = {
+		uid: currentUser.uid,
+		tuid: uid,
+		status: status
+	};
 
-		name = document.createElement('h2');
-		name.setAttribute('class', 'bodyText blockedName');
-		name.innerHTML = "Blocked Users Name";
-		card.appendChild(name);
+	var friendStatus = firebase.functions().httpsCallable('friendStatus');
+	friendStatus(data).then(function (result) {
+		console.log("FIREBASE: Successfully updated friend status.");
 
-		unblockBtn = document.createElement('button');
-		unblockBtn.setAttribute('class', 'button unblockBtn primaryColour');
-		unblockBtn.innerHTML = "Unblock";
-		card.appendChild(unblockBtn);
-
-		document.getElementById("blockedUsersView").appendChild(card);
-	}
+	}).catch(function (error) {
+		var code = error.code;
+		var message = error.message;
+		var details = error.details;
+		console.error("FIREBASE: Failed to update friend status.", error);
+	});
 }
 
 

@@ -79,6 +79,15 @@
 }
 
 
+.refreshButton {
+	position: fixed;
+	z-index: 5;
+	bottom: 0px;
+	left: 0px;
+	font-size: 32px;
+}
+
+
 
 /*
 
