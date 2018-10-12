@@ -70,7 +70,7 @@ exports.sendNotifications = functions.database.ref('/messages/{messageId}').onCr
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ABOVE IS MATCH MESSAGING CODE
+// ABOVE IS MESSAGING CODE
 var db = admin.firestore();
 
 /**
@@ -434,6 +434,7 @@ function match(student, tarUserProfile){
   });
 }
 
+//calculates percentage
 function getPercent(profile, getCount, percentage){
   return new Promise(function(resolve, reject) {
     try{
@@ -458,7 +459,7 @@ function getPercent(profile, getCount, percentage){
       }
   });
 }
-
+//counts how many matches between two profiles with a filter
 function numOfMatches(userProfile, tarProfile, getCount){
   return new Promise(function(resolve, reject) {
     try{
@@ -490,7 +491,7 @@ function numOfMatches(userProfile, tarProfile, getCount){
       }
   });
 }
-
+//totals the match score between two users
 function calcMatchTotal(usScore, taScore, uniDegPer){
   return new Promise(function(resolve, reject){
     try{
@@ -585,7 +586,7 @@ function isFriend(uid, tuid, func){
                     resolve(isFriend);
                   }
                   else if((frKey.localeCompare(tuid) == 0) && ((FriendLt[frKey] == 1) || (FriendLt[frKey] == 2) || (FriendLt[frKey] == 4))){
-                    isFriend = "cantBlk";  //remove this else if later to make block always work
+                    isFriend = "cantBlk";  
                     resolve(isFriend);
                   }              
                 }
@@ -651,7 +652,7 @@ exports.rateStudent = functions.https.onCall(async(data) => {
       throw new functions.https.HttpsError('invalid-argument', 'ERROR: rating sent from client has incorrect format')
     }
 });
-
+//save users rating to firestore 
 function addRating(rating, uid, ratingListRef){
   return new Promise(async function(resolve, reject) {
     try{
@@ -668,7 +669,7 @@ function addRating(rating, uid, ratingListRef){
     }
   });
 }
-
+//calculate a users average rating
 function calcAvgRating(tuid, ratingListRef){
   return new Promise(async function(resolve, reject) {
     try{
@@ -708,7 +709,7 @@ function calcAvgRating(tuid, ratingListRef){
     }
   });
 }
-
+//save avg rating to users profile for quick display purposes
 function saveAvgRating(uid, avgRating){
   return new Promise(function(resolve, reject) {
     try{
@@ -728,7 +729,7 @@ function saveAvgRating(uid, avgRating){
     }
   });
 }
-
+//find the relation between two users
 exports.friendStatus = functions.https.onCall(async(data) => {
   var uid = data.uid;
   var tuid = data.tuid;
@@ -855,7 +856,7 @@ exports.friendStatus = functions.https.onCall(async(data) => {
           if((userProfile != false) && (targetProfile != false)){
             await singleMatch(userProfile, targetProfile);
           }
-          return({friendStat: fb}); //TODO: ask sam to refresh match list on front end when this returns "unBlock"
+          return({friendStat: fb}); 
         }
       }
       else{
@@ -917,7 +918,7 @@ function sendToFL(uid, tuid, tarFL, userFL, userVal, tarVal){
       }
   });
 }
-
+//count how many items are inside a single object
 function getObSize(dataSet){
   return new Promise(function(resolve, reject){
     try{
@@ -1050,10 +1051,10 @@ exports.adminRemove = functions.https.onCall(async(data) => {
       else if(((adminCheck == 2) || (adminCheck == 1)) && (command >= 2) && (command <= 6)){ 
         if(command == 2){ //delete university
           cleaner = await studentRemoveControl(command, item); 
-          delOne = await deleteDoc(fromCourse);//<---
-          delTwo = await deleteDoc(fromDegree);//<--- TODO: TEST IF BOTH CAN RUN AT SAME TIME BY REMOVING 'await'
+          delOne = await deleteDoc(fromCourse);
+          delTwo = await deleteDoc(fromDegree);
           //return result to client
-          if((cleaner == true) && (delOne == true) && (delTwo == true)){ //TODO: check if I can return this early whilst student cleaner is still not finished
+          if((cleaner == true) && (delOne == true) && (delTwo == true)){ 
             return({remove: true});
           }
           else{
@@ -1104,9 +1105,10 @@ exports.adminRemove = functions.https.onCall(async(data) => {
           
           //return result to client
           if((delOne == true)){
-            return({remove: delOne});
+            return({remove: true});
           }
           else{
+            console.log('returning FALSE');
             return({remove: false});
           }
         }
@@ -1255,7 +1257,7 @@ function addDoc(item, toLocation){
     }
   });
 }
-
+//add a field to a specified location in the firestore
 function addField(subItem, toLocation, key){
   return new Promise(function(resolve, reject){
     try{
@@ -1275,7 +1277,7 @@ function addField(subItem, toLocation, key){
     }
   });
 }
-
+//Authenticate if a user is of 'Admin' status
 function isAdmin(uid){
   return new Promise(async function(resolve, reject){
     try{
@@ -1342,7 +1344,7 @@ function deleteUser(uid, item){
           await deleteDoc(friendListRef);
           await deleteDoc(matchListRef);
           await deleteDoc(ratingsRef);
-          await deleteDoc(profileRef); //admin may not have a student profile?
+          await deleteDoc(profileRef);
           //delete target from other user friend lists
           await delFromfList(item);
           //delete target from other user match lists  
@@ -1391,7 +1393,7 @@ function delFromfList(uid){
 }
 
 //removes tarField from tarCollectionDoc in Database
-function deleteFieldByKey(tarField, tarCollectionDoc){ //TODO: might need to make another function that actually deletes both key and value
+function deleteFieldByKey(tarField, tarCollectionDoc){ 
   return new Promise(function(resolve, reject) {
     try{
       tarCollectionDoc.update({
