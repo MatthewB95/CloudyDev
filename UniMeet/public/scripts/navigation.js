@@ -13,6 +13,10 @@ firebase.auth().onAuthStateChanged(function (user) {
                 if (doc && doc.exists) {
                     const myData = doc.data();
 
+                    if (myData.university == null || myData.university == "") {
+                    	document.location.href = "setup";
+                    }
+
                     document.getElementById('profileIcon').src = '/../images/profile_placeholder.png';
                     if (myData.profile_image != null) {
                     	document.getElementById('profileIcon').src = myData.profile_image;

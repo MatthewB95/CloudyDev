@@ -278,7 +278,7 @@ function submit() {
 				interest_3: interest_3
 			}).then(function () {
 				console.log("Successfully Updated Profile.");
-				document.location.href = "verify";
+				document.location.href = "matching";
 			}).catch(function (error) {
 				console.log("Profile Update Error: ", error);
 			});
